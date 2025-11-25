@@ -1,13 +1,16 @@
 import { useEffect } from "react";
 import { useLoadGraph, ControlsContainer, ZoomControl, FullScreenControl } from "@react-sigma/core";
 import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
-import { MiniMap } from "@react-sigma/minimap";
+// import { MiniMap } from "@react-sigma/minimap";
 import Graph from "graphology";
 import { GraphContainer } from "./components/Graph/GraphContainer";
 import type { NodeAttributes, EdgeAttributes } from "./types/graph";
 import nodesData from "./data/nodes.json";
-import { getColorByLabel } from "./utils/colors";
+import { getUniqueColor } from "./utils/colors";
 import "@react-sigma/core/lib/style.css";
+
+import { SearchControl } from "./components/Graph/SearchControl";
+import { LayoutControls } from "./components/Graph/LayoutControls";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
@@ -19,11 +22,12 @@ const MyGraph = () => {
     nodesData.nodes.forEach((node) => {
       const { type, ...otherProps } = node.properties;
       graph.addNode(node.id, {
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: 15,
+        // Start closer to 0,0 to encourage centering
+        x: (Math.random() - 0.5) * 10,
+        y: (Math.random() - 0.5) * 10,
+        size: 10,
         label: node.properties.name,
-        color: getColorByLabel(node.labels[0]),
+        color: getUniqueColor(node.id),
         ...otherProps
       });
     });
@@ -45,7 +49,7 @@ const MyGraph = () => {
       // Connect each node to the next one in the same group (chain)
       for (let i = 0; i < nodeIds.length - 1; i++) {
         graph.addEdge(nodeIds[i], nodeIds[i + 1], {
-          size: 2,
+          size: 1,
           label: `Same ${label}`,
           color: "#666"
         });
@@ -61,16 +65,22 @@ const MyGraph = () => {
 
 function App() {
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-gray-900 text-white">
+    <div className="w-full h-screen flex justify-center items-center bg-gray-900 /*text-white*/">
       <GraphContainer>
         <MyGraph />
-        <ControlsContainer position={"bottom-right"}>
+        <ControlsContainer position={"top-left"}>
+          <SearchControl />
+        </ControlsContainer>
+        <ControlsContainer position={"bottom-left"}>
+          <LayoutControls />
+        </ControlsContainer>
+        <ControlsContainer position={"bottom-right"} className="flex flex-col border-2 border-gray-500">
           <ZoomControl />
           <FullScreenControl />
         </ControlsContainer>
-        <ControlsContainer position={"top-right"}>
+        {/* <ControlsContainer position={"top-right"}>
           <MiniMap width="200px" height="150px" />
-        </ControlsContainer>
+        </ControlsContainer> */}
       </GraphContainer>
     </div>
   );

@@ -14,3 +14,27 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Fix for React Sigma controls with Tailwind */
+button.react-sigma-control-item {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  margin-top: 5px !important;
+}
+
+button.react-sigma-control-item:hover {
+  background-color: #f0f0f0 !important;
+}
+
+button.react-sigma-control-item svg {
+  width: 16px !important;
+  height: 16px !important;
+}
