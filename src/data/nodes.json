@@ -1,0 +1,165 @@
+{
+  "count": 14,
+  "nodes": [
+    {
+      "id": "0",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Python Programming",
+        "description": "General purpose coding",
+        "id": "SK_001",
+        "type": "Language"
+      }
+    },
+    {
+      "id": "1",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Data Analysis",
+        "description": "Analyzing raw data",
+        "id": "SK_002",
+        "type": "Capability"
+      }
+    },
+    {
+      "id": "2",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Pandas Library",
+        "description": "Data manipulation tool",
+        "id": "SK_003",
+        "type": "Library"
+      }
+    },
+    {
+      "id": "3",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Machine Learning",
+        "description": "Predictive modeling",
+        "id": "SK_004",
+        "type": "Capability"
+      }
+    },
+    {
+      "id": "4",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Deep Learning",
+        "description": "Neural networks",
+        "id": "SK_005",
+        "type": "Specialization"
+      }
+    },
+    {
+      "id": "5",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "name": "Ethics in AI",
+        "description": "Safety and bias prevention",
+        "id": "SK_006",
+        "type": "Compliance"
+      }
+    },
+    {
+      "id": "6",
+      "labels": [
+        "Role"
+      ],
+      "properties": {
+        "name": "Senior Data Scientist",
+        "id": "ROLE_001",
+        "category": "Job"
+      }
+    },
+    {
+      "id": "7",
+      "labels": [
+        "Role"
+      ],
+      "properties": {
+        "name": "Backend Developer",
+        "id": "ROLE_002",
+        "category": "Job"
+      }
+    },
+    {
+      "id": "8",
+      "labels": [
+        "Resource"
+      ],
+      "properties": {
+        "name": "Intro to Python",
+        "id": "RES_001",
+        "category": "Course"
+      }
+    },
+    {
+      "id": "9",
+      "labels": [
+        "Resource"
+      ],
+      "properties": {
+        "name": "Advanced ML Concepts",
+        "id": "RES_002",
+        "category": "Module"
+      }
+    },
+    {
+      "id": "10",
+      "labels": [
+        "Assessment"
+      ],
+      "properties": {
+        "name": "Fix the Bug",
+        "id": "PROB_001",
+        "category": "Problem"
+      }
+    },
+    {
+      "id": "11",
+      "labels": [
+        "Assessment"
+      ],
+      "properties": {
+        "name": "Deploy Model Sim",
+        "id": "SIM_001",
+        "category": "Simulation"
+      }
+    },
+    {
+      "id": "12",
+      "labels": [
+        "Person"
+      ],
+      "properties": {
+        "name": "Jane Doe",
+        "id": "PERS_001",
+        "category": "Employee"
+      }
+    },
+    {
+      "id": "13",
+      "labels": [
+        "Tool"
+      ],
+      "properties": {
+        "name": "Jupyter Notebook",
+        "id": "TOOL_001",
+        "category": "IDE"
+      }
+    }
+  ]
+}
