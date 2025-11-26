@@ -22,15 +22,13 @@ const MyGraph = () => {
     const graph = new Graph<NodeAttributes, EdgeAttributes>({ multi: true, type: "directed", allowSelfLoops: true });
 
     nodesData.nodes.forEach((node) => {
-      const { category, ...otherProps } = node.properties;
       graph.addNode(node.id, {
-        // Start closer to 0,0 to encourage centering
         x: (Math.random() - 0.5) * 10,
         y: (Math.random() - 0.5) * 10,
         size: 10,
         label: node.properties.name,
         color: getUniqueColor(node.id),
-        ...otherProps
+        ...node.properties
       });
     });
 
@@ -61,7 +59,7 @@ function App() {
       <GraphContainer>
         <MyGraph />
         <NodeHoverInfo />
-        <ControlsContainer position={"top-left"} className="flex flex-row gap-2 !items-start">
+        <ControlsContainer position={"top-left"} className="flex flex-col gap-2">
           <SearchControl />
           <FilterControl />
         </ControlsContainer>

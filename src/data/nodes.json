@@ -1,6 +1,6 @@
 {
   "nodesCount": 68,
-  "relationshipsCount": 45,
+  "relationshipsCount": 87,
   "nodes": [
     {
       "id": "0",
@@ -1270,6 +1270,302 @@
       "properties": {
         "context": "async management"
       }
+    },
+    {
+      "id": "45",
+      "type": "PREREQUISITE",
+      "start": "0",
+      "end": "1",
+      "properties": {
+        "mandatory": true
+      }
+    },
+    {
+      "id": "46",
+      "type": "PART_OF",
+      "start": "13",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "47",
+      "type": "PART_OF",
+      "start": "15",
+      "end": "14",
+      "properties": {}
+    },
+    {
+      "id": "48",
+      "type": "PREREQUISITE",
+      "start": "14",
+      "end": "15",
+      "properties": {}
+    },
+    {
+      "id": "49",
+      "type": "PART_OF",
+      "start": "17",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "50",
+      "type": "PART_OF",
+      "start": "18",
+      "end": "17",
+      "properties": {}
+    },
+    {
+      "id": "51",
+      "type": "PART_OF",
+      "start": "19",
+      "end": "17",
+      "properties": {}
+    },
+    {
+      "id": "52",
+      "type": "PART_OF",
+      "start": "20",
+      "end": "17",
+      "properties": {}
+    },
+    {
+      "id": "53",
+      "type": "PART_OF",
+      "start": "21",
+      "end": "17",
+      "properties": {}
+    },
+    {
+      "id": "54",
+      "type": "PART_OF",
+      "start": "24",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "55",
+      "type": "PART_OF",
+      "start": "28",
+      "end": "60",
+      "properties": {}
+    },
+    {
+      "id": "56",
+      "type": "PART_OF",
+      "start": "31",
+      "end": "63",
+      "properties": {}
+    },
+    {
+      "id": "57",
+      "type": "PART_OF",
+      "start": "32",
+      "end": "63",
+      "properties": {}
+    },
+    {
+      "id": "58",
+      "type": "PART_OF",
+      "start": "33",
+      "end": "35",
+      "properties": {}
+    },
+    {
+      "id": "59",
+      "type": "PART_OF",
+      "start": "34",
+      "end": "35",
+      "properties": {}
+    },
+    {
+      "id": "60",
+      "type": "PART_OF",
+      "start": "38",
+      "end": "36",
+      "properties": {}
+    },
+    {
+      "id": "61",
+      "type": "PART_OF",
+      "start": "40",
+      "end": "36",
+      "properties": {}
+    },
+    {
+      "id": "62",
+      "type": "PART_OF",
+      "start": "41",
+      "end": "36",
+      "properties": {}
+    },
+    {
+      "id": "63",
+      "type": "PART_OF",
+      "start": "45",
+      "end": "61",
+      "properties": {}
+    },
+    {
+      "id": "64",
+      "type": "PART_OF",
+      "start": "46",
+      "end": "61",
+      "properties": {}
+    },
+    {
+      "id": "65",
+      "type": "PART_OF",
+      "start": "47",
+      "end": "61",
+      "properties": {}
+    },
+    {
+      "id": "66",
+      "type": "PART_OF",
+      "start": "43",
+      "end": "61",
+      "properties": {}
+    },
+    {
+      "id": "67",
+      "type": "PART_OF",
+      "start": "48",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "68",
+      "type": "PART_OF",
+      "start": "49",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "69",
+      "type": "PART_OF",
+      "start": "50",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "70",
+      "type": "PART_OF",
+      "start": "51",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "71",
+      "type": "PART_OF",
+      "start": "52",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "72",
+      "type": "PART_OF",
+      "start": "53",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "73",
+      "type": "PART_OF",
+      "start": "54",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "74",
+      "type": "PART_OF",
+      "start": "57",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "75",
+      "type": "PART_OF",
+      "start": "58",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "76",
+      "type": "PART_OF",
+      "start": "26",
+      "end": "60",
+      "properties": {}
+    },
+    {
+      "id": "77",
+      "type": "PART_OF",
+      "start": "27",
+      "end": "60",
+      "properties": {}
+    },
+    {
+      "id": "78",
+      "type": "PART_OF",
+      "start": "60",
+      "end": "59",
+      "properties": {}
+    },
+    {
+      "id": "79",
+      "type": "PART_OF",
+      "start": "30",
+      "end": "63",
+      "properties": {}
+    },
+    {
+      "id": "80",
+      "type": "PREREQUISITE",
+      "start": "8",
+      "end": "13",
+      "properties": {}
+    },
+    {
+      "id": "81",
+      "type": "PREREQUISITE",
+      "start": "8",
+      "end": "12",
+      "properties": {}
+    },
+    {
+      "id": "82",
+      "type": "PART_OF",
+      "start": "10",
+      "end": "9",
+      "properties": {}
+    },
+    {
+      "id": "83",
+      "type": "PART_OF",
+      "start": "11",
+      "end": "9",
+      "properties": {}
+    },
+    {
+      "id": "84",
+      "type": "PART_OF",
+      "start": "23",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "85",
+      "type": "PREREQUISITE",
+      "start": "59",
+      "end": "8",
+      "properties": {}
+    },
+    {
+      "id": "86",
+      "type": "PART_OF",
+      "start": "62",
+      "end": "59",
+      "properties": {}
     }
   ]
 }

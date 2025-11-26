@@ -12,6 +12,7 @@ export const FilterControl = () => {
         level: [],
         category: [],
         source: [],
+        name: [],
     });
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -41,6 +42,12 @@ export const FilterControl = () => {
 
             if (isVisible && selectedFilters.source.length > 0) {
                 if (!selectedFilters.source.includes(attributes.source as string)) {
+                    isVisible = false;
+                }
+            }
+
+            if (isVisible && selectedFilters.name.length > 0) {
+                if (!selectedFilters.name.includes(attributes.label as string)) {
                     isVisible = false;
                 }
             }
@@ -128,9 +135,27 @@ export const FilterControl = () => {
                         </div>
                     </div>
 
+                    {/* Name Filter */}
+                    <div className="mb-4">
+                        <h4 className="font-semibold text-sm mb-2 text-gray-700">Name</h4>
+                        <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+                            {filtersData.name.map((item) => (
+                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedFilters.name.includes(item)}
+                                        onChange={() => handleCheckboxChange("name", item)}
+                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                    />
+                                    {item}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
                     <button
                         className="text-xs text-blue-600 hover:underline mt-2"
-                        onClick={() => setSelectedFilters({ level: [], category: [], source: [] })}
+                        onClick={() => setSelectedFilters({ level: [], category: [], source: [], name: [] })}
                     >
                         Clear All Filters
                     </button>
