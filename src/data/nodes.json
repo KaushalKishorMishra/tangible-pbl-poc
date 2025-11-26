@@ -1,5 +1,6 @@
 {
-  "count": 14,
+  "nodesCount": 68,
+  "relationshipsCount": 45,
   "nodes": [
     {
       "id": "0",
@@ -7,10 +8,10 @@
         "Skill"
       ],
       "properties": {
-        "name": "Python Programming",
-        "description": "General purpose coding",
-        "id": "SK_001",
-        "type": "Language"
+        "level": "Awareness",
+        "name": "JavaScript",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Language"
       }
     },
     {
@@ -19,10 +20,10 @@
         "Skill"
       ],
       "properties": {
-        "name": "Data Analysis",
-        "description": "Analyzing raw data",
-        "id": "SK_002",
-        "type": "Capability"
+        "level": "Awareness",
+        "name": "Syntax",
+        "source": "nodejs-roadmap.pdf",
+        "category": "JavaScript"
       }
     },
     {
@@ -31,10 +32,10 @@
         "Skill"
       ],
       "properties": {
-        "name": "Pandas Library",
-        "description": "Data manipulation tool",
-        "id": "SK_003",
-        "type": "Library"
+        "level": "Awareness",
+        "name": "Variables",
+        "source": "nodejs-roadmap.pdf",
+        "category": "JavaScript"
       }
     },
     {
@@ -43,10 +44,10 @@
         "Skill"
       ],
       "properties": {
-        "name": "Machine Learning",
-        "description": "Predictive modeling",
-        "id": "SK_004",
-        "type": "Capability"
+        "level": "Awareness",
+        "name": "Functions",
+        "source": "nodejs-roadmap.pdf",
+        "category": "JavaScript"
       }
     },
     {
@@ -55,10 +56,10 @@
         "Skill"
       ],
       "properties": {
-        "name": "Deep Learning",
-        "description": "Neural networks",
-        "id": "SK_005",
-        "type": "Specialization"
+        "level": "Awareness",
+        "name": "Async Programming",
+        "source": "nodejs-roadmap.pdf",
+        "category": "JavaScript"
       }
     },
     {
@@ -67,98 +68,1207 @@
         "Skill"
       ],
       "properties": {
-        "name": "Ethics in AI",
-        "description": "Safety and bias prevention",
-        "id": "SK_006",
-        "type": "Compliance"
+        "level": "Awareness",
+        "name": "Promises",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
       }
     },
     {
       "id": "6",
       "labels": [
-        "Role"
+        "Skill"
       ],
       "properties": {
-        "name": "Senior Data Scientist",
-        "id": "ROLE_001",
-        "category": "Job"
+        "level": "Awareness",
+        "name": "async/await",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
       }
     },
     {
       "id": "7",
       "labels": [
-        "Role"
+        "Skill"
       ],
       "properties": {
-        "name": "Backend Developer",
-        "id": "ROLE_002",
-        "category": "Job"
+        "level": "Awareness",
+        "name": "Callbacks",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
       }
     },
     {
       "id": "8",
       "labels": [
-        "Resource"
+        "Skill"
       ],
       "properties": {
-        "name": "Intro to Python",
-        "id": "RES_001",
-        "category": "Course"
+        "level": "Awareness",
+        "name": "Node.js",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Runtime"
       }
     },
     {
       "id": "9",
       "labels": [
-        "Resource"
+        "Skill"
       ],
       "properties": {
-        "name": "Advanced ML Concepts",
-        "id": "RES_002",
-        "category": "Module"
+        "level": "Awareness",
+        "name": "Modules",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Node Core"
       }
     },
     {
       "id": "10",
       "labels": [
-        "Assessment"
+        "Skill"
       ],
       "properties": {
-        "name": "Fix the Bug",
-        "id": "PROB_001",
-        "category": "Problem"
+        "level": "Awareness",
+        "name": "CommonJS",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Modules"
       }
     },
     {
       "id": "11",
       "labels": [
-        "Assessment"
+        "Skill"
       ],
       "properties": {
-        "name": "Deploy Model Sim",
-        "id": "SIM_001",
-        "category": "Simulation"
+        "level": "Awareness",
+        "name": "ESM",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Modules"
       }
     },
     {
       "id": "12",
       "labels": [
-        "Person"
+        "Skill"
       ],
       "properties": {
-        "name": "Jane Doe",
-        "id": "PERS_001",
-        "category": "Employee"
+        "level": "Awareness",
+        "name": "Event Loop",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
       }
     },
     {
       "id": "13",
       "labels": [
-        "Tool"
+        "Skill"
       ],
       "properties": {
-        "name": "Jupyter Notebook",
-        "id": "TOOL_001",
-        "category": "IDE"
+        "level": "Awareness",
+        "name": "Event Emitter",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
+      }
+    },
+    {
+      "id": "14",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "npm",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Package Management"
+      }
+    },
+    {
+      "id": "15",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "npx",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Package Management"
+      }
+    },
+    {
+      "id": "16",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Workspaces",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Package Management"
+      }
+    },
+    {
+      "id": "17",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "CLI Development",
+        "source": "nodejs-roadmap.pdf",
+        "category": "CLI"
+      }
+    },
+    {
+      "id": "18",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "process.argv",
+        "source": "nodejs-roadmap.pdf",
+        "category": "CLI"
+      }
+    },
+    {
+      "id": "19",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "stdin/stdout",
+        "source": "nodejs-roadmap.pdf",
+        "category": "CLI"
+      }
+    },
+    {
+      "id": "20",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "chalk",
+        "source": "nodejs-roadmap.pdf",
+        "category": "CLI"
+      }
+    },
+    {
+      "id": "21",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "commander",
+        "source": "nodejs-roadmap.pdf",
+        "category": "CLI"
+      }
+    },
+    {
+      "id": "22",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "dotenv",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Config"
+      }
+    },
+    {
+      "id": "23",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "Environment Variables",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Config"
+      }
+    },
+    {
+      "id": "24",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "HTTP module",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "25",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Express.js",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "26",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Fastify",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "27",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "NestJS",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "28",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Hono",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "29",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "axios",
+        "source": "nodejs-roadmap.pdf",
+        "category": "HTTP Clients"
+      }
+    },
+    {
+      "id": "30",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "fetch",
+        "source": "nodejs-roadmap.pdf",
+        "category": "HTTP Clients"
+      }
+    },
+    {
+      "id": "31",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "ky",
+        "source": "nodejs-roadmap.pdf",
+        "category": "HTTP Clients"
+      }
+    },
+    {
+      "id": "32",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "got",
+        "source": "nodejs-roadmap.pdf",
+        "category": "HTTP Clients"
+      }
+    },
+    {
+      "id": "33",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "jsonwebtoken",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Auth"
+      }
+    },
+    {
+      "id": "34",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "passport.js",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Auth"
+      }
+    },
+    {
+      "id": "35",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Authentication",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Security"
+      }
+    },
+    {
+      "id": "36",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "fs",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "37",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "path",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "38",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "chokidar",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "39",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "fs-extra",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "40",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "glob",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "41",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "globby",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "42",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Prisma",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "43",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Sequelize",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "44",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "TypeORM",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "45",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Knex",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "46",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Drizzle",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "47",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Mongoose",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "48",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Vitest",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
+    },
+    {
+      "id": "49",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Jest",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
+    },
+    {
+      "id": "50",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "node:test",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
+    },
+    {
+      "id": "51",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Cypress",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
+    },
+    {
+      "id": "52",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Playwright",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
+    },
+    {
+      "id": "53",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "pm2",
+        "source": "nodejs-roadmap.pdf",
+        "category": "DevOps"
+      }
+    },
+    {
+      "id": "54",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "APM",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Monitoring"
+      }
+    },
+    {
+      "id": "55",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "Worker Threads",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Performance"
+      }
+    },
+    {
+      "id": "56",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "Cluster",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Performance"
+      }
+    },
+    {
+      "id": "57",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "Streams",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Node Core"
+      }
+    },
+    {
+      "id": "58",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Mastery",
+        "name": "Debugging",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Node Core"
+      }
+    },
+    {
+      "id": "59",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Backend Development",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Concept"
+      }
+    },
+    {
+      "id": "60",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "Web Frameworks",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "61",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "ORMs",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Database"
+      }
+    },
+    {
+      "id": "62",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "API Development",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Concept"
+      }
+    },
+    {
+      "id": "63",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "HTTP Clients",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Category"
+      }
+    },
+    {
+      "id": "64",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "NodeJS",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Runtime"
+      }
+    },
+    {
+      "id": "65",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Application",
+        "name": "callback-based fs",
+        "source": "nodejs-roadmap.pdf",
+        "category": "File System"
+      }
+    },
+    {
+      "id": "66",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "Callback Hell",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Async"
+      }
+    },
+    {
+      "id": "67",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Awareness",
+        "name": "Security Policy",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Policy"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "3",
+      "type": "BROADENS",
+      "start": "0",
+      "end": "4",
+      "properties": {
+        "dimension": "language-features"
+      }
+    },
+    {
+      "id": "0",
+      "type": "PREREQUISITE",
+      "start": "0",
+      "end": "8",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Node.js uses JS"
+      }
+    },
+    {
+      "id": "16",
+      "type": "PREREQUISITE",
+      "start": "1",
+      "end": "2",
+      "properties": {
+        "rationale": "Variables require basic syntax",
+        "mandatory": true
+      }
+    },
+    {
+      "id": "17",
+      "type": "PREREQUISITE",
+      "start": "2",
+      "end": "3",
+      "properties": {
+        "mandatory": true
+      }
+    },
+    {
+      "id": "6",
+      "type": "SPECIALIZES",
+      "start": "4",
+      "end": "6",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "5",
+      "type": "SPECIALIZES",
+      "start": "4",
+      "end": "5",
+      "properties": {
+        "inherits_from": "Async Programming",
+        "dimension": "async"
+      }
+    },
+    {
+      "id": "1",
+      "type": "PREREQUISITE",
+      "start": "4",
+      "end": "12",
+      "properties": {
+        "mandatory": true
+      }
+    },
+    {
+      "id": "29",
+      "type": "DERIVES_FROM",
+      "start": "5",
+      "end": "4",
+      "properties": {
+        "citation": "ECMAScript spec",
+        "doi": "10.1234/async.2020"
+      }
+    },
+    {
+      "id": "27",
+      "type": "CONFLICTS_WITH",
+      "start": "7",
+      "end": "6",
+      "properties": {
+        "reason": "Legacy vs modern async patterns"
+      }
+    },
+    {
+      "id": "18",
+      "type": "PREREQUISITE",
+      "start": "7",
+      "end": "5",
+      "properties": {
+        "rationale": "Promises replace callbacks",
+        "mandatory": true
+      }
+    },
+    {
+      "id": "2",
+      "type": "PREREQUISITE",
+      "start": "8",
+      "end": "9",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "31",
+      "type": "BROADENS",
+      "start": "8",
+      "end": "59",
+      "properties": {
+        "dimension": "runtime-environment"
+      }
+    },
+    {
+      "id": "19",
+      "type": "SPECIALIZES",
+      "start": "8",
+      "end": "55",
+      "properties": {
+        "inherits_from": "Node.js",
+        "dimension": "performance"
+      }
+    },
+    {
+      "id": "20",
+      "type": "SPECIALIZES",
+      "start": "8",
+      "end": "56",
+      "properties": {
+        "dimension": "scaling"
+      }
+    },
+    {
+      "id": "24",
+      "type": "COMPLEMENTS",
+      "start": "8",
+      "end": "25",
+      "properties": {
+        "context": "server development",
+        "co_occurrence_score": 0.9
+      }
+    },
+    {
+      "id": "36",
+      "type": "ALIAS_OF",
+      "start": "8",
+      "end": "64",
+      "properties": {
+        "date": {
+          "year": {
+            "low": 2025,
+            "high": 0
+          },
+          "month": {
+            "low": 11,
+            "high": 0
+          },
+          "day": {
+            "low": 25,
+            "high": 0
+          }
+        },
+        "reason": "Common spelling variation"
+      }
+    },
+    {
+      "id": "38",
+      "type": "EQUIVALENT_TO",
+      "start": "8",
+      "end": "64",
+      "properties": {
+        "framework": "JS runtime",
+        "evidence": "roadmap"
+      }
+    },
+    {
+      "id": "7",
+      "type": "SPECIALIZES",
+      "start": "9",
+      "end": "11",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "28",
+      "type": "SUPERSEDED_BY",
+      "start": "10",
+      "end": "11",
+      "properties": {
+        "reason": "Modern JS modules",
+        "effective_from": {
+          "year": {
+            "low": 2019,
+            "high": 0
+          },
+          "month": {
+            "low": 6,
+            "high": 0
+          },
+          "day": {
+            "low": 1,
+            "high": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "26",
+      "type": "CONFLICTS_WITH",
+      "start": "10",
+      "end": "11",
+      "properties": {
+        "reason": "Module system incompatibility"
+      }
+    },
+    {
+      "id": "13",
+      "type": "SUPERSEDED_BY",
+      "start": "10",
+      "end": "11",
+      "properties": {
+        "reason": "modern JS modules"
+      }
+    },
+    {
+      "id": "4",
+      "type": "BROADENS",
+      "start": "14",
+      "end": "16",
+      "properties": {
+        "dimension": "package-management"
+      }
+    },
+    {
+      "id": "8",
+      "type": "PART_OF",
+      "start": "22",
+      "end": "23",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "43",
+      "type": "ALTERNATIVE_TO",
+      "start": "25",
+      "end": "26",
+      "properties": {
+        "tradeoffs": "speed vs ecosystem",
+        "context": "web framework"
+      }
+    },
+    {
+      "id": "41",
+      "type": "CO_OCCURS_WITH",
+      "start": "25",
+      "end": "22",
+      "properties": {
+        "rate": 0.9,
+        "source": "job-postings"
+      }
+    },
+    {
+      "id": "34",
+      "type": "PART_OF",
+      "start": "25",
+      "end": "62",
+      "properties": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "32",
+      "type": "BROADENS",
+      "start": "25",
+      "end": "60",
+      "properties": {
+        "dimension": "backend-framework"
+      }
+    },
+    {
+      "id": "21",
+      "type": "SPECIALIZES",
+      "start": "25",
+      "end": "27",
+      "properties": {
+        "inherits_from": "Express.js",
+        "dimension": "framework"
+      }
+    },
+    {
+      "id": "10",
+      "type": "ALTERNATIVE_TO",
+      "start": "25",
+      "end": "26",
+      "properties": {
+        "tradeoffs": "speed vs ecosystem"
+      }
+    },
+    {
+      "id": "22",
+      "type": "SIMILAR_TO",
+      "start": "26",
+      "end": "25",
+      "properties": {
+        "confidence": 0.9,
+        "source": "roadmap",
+        "similarity_score": 0.7
+      }
+    },
+    {
+      "id": "30",
+      "type": "DERIVES_FROM",
+      "start": "27",
+      "end": "25",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "44",
+      "type": "ALTERNATIVE_TO",
+      "start": "29",
+      "end": "30",
+      "properties": {
+        "context": "HTTP client"
+      }
+    },
+    {
+      "id": "35",
+      "type": "PART_OF",
+      "start": "29",
+      "end": "63",
+      "properties": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "23",
+      "type": "SIMILAR_TO",
+      "start": "29",
+      "end": "30",
+      "properties": {
+        "source": "roadmap",
+        "similarity_score": 0.8
+      }
+    },
+    {
+      "id": "14",
+      "type": "SIMILAR_TO",
+      "start": "29",
+      "end": "30",
+      "properties": {
+        "confidence": 0.9,
+        "similarity_score": 0.8
+      }
+    },
+    {
+      "id": "11",
+      "type": "ALTERNATIVE_TO",
+      "start": "29",
+      "end": "32",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "40",
+      "type": "REQUIRES_POLICY",
+      "start": "35",
+      "end": "67",
+      "properties": {
+        "policy_id": "AUTH001",
+        "level": "critical"
+      }
+    },
+    {
+      "id": "9",
+      "type": "PART_OF",
+      "start": "37",
+      "end": "36",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "42",
+      "type": "CO_OCCURS_WITH",
+      "start": "42",
+      "end": "44",
+      "properties": {
+        "rate": 0.7,
+        "source": "roadmap"
+      }
+    },
+    {
+      "id": "33",
+      "type": "BROADENS",
+      "start": "42",
+      "end": "61",
+      "properties": {
+        "dimension": "database-abstraction"
+      }
+    },
+    {
+      "id": "25",
+      "type": "COMPLEMENTS",
+      "start": "42",
+      "end": "44",
+      "properties": {
+        "context": "database ORM",
+        "co_occurrence_score": 0.6
+      }
+    },
+    {
+      "id": "12",
+      "type": "ALTERNATIVE_TO",
+      "start": "42",
+      "end": "43",
+      "properties": {
+
+      }
+    },
+    {
+      "id": "15",
+      "type": "SIMILAR_TO",
+      "start": "49",
+      "end": "48",
+      "properties": {
+        "similarity_score": 0.85
+      }
+    },
+    {
+      "id": "37",
+      "type": "SUPERSEDED_BY",
+      "start": "65",
+      "end": "39",
+      "properties": {
+        "reason": "Promise-based utilities"
+      }
+    },
+    {
+      "id": "39",
+      "type": "ANTIPATTERN_OF",
+      "start": "66",
+      "end": "6",
+      "properties": {
+        "context": "async management"
       }
     }
   ]

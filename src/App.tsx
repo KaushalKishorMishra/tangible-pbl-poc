@@ -11,16 +11,18 @@ import "@react-sigma/core/lib/style.css";
 
 import { SearchControl } from "./components/Graph/SearchControl";
 import { LayoutControls } from "./components/Graph/LayoutControls";
+import { FilterControl } from "./components/Graph/FilterControl";
+import { NodeHoverInfo } from "./components/Graph/NodeHoverInfo";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
-  const { assign } = useLayoutForceAtlas2();
+  const { assign } = useLayoutForceAtlas2({ iterations: 100, settings: { adjustSizes: true, slowDown: 10 } });
 
   useEffect(() => {
-    const graph = new Graph<NodeAttributes, EdgeAttributes>();
+    const graph = new Graph<NodeAttributes, EdgeAttributes>({ multi: true, type: "directed", allowSelfLoops: true });
 
     nodesData.nodes.forEach((node) => {
-      const { type, ...otherProps } = node.properties;
+      const { category, ...otherProps } = node.properties;
       graph.addNode(node.id, {
         // Start closer to 0,0 to encourage centering
         x: (Math.random() - 0.5) * 10,
@@ -32,29 +34,19 @@ const MyGraph = () => {
       });
     });
 
-    // Add edges between nodes with the same label (similar concepts)
-    const nodesByLabel: { [key: string]: string[] } = {};
 
-    // Group nodes by their label
-    nodesData.nodes.forEach((node) => {
-      const label = node.labels[0];
-      if (!nodesByLabel[label]) {
-        nodesByLabel[label] = [];
-      }
-      nodesByLabel[label].push(node.id);
-    });
 
-    // Create edges between nodes of the same type
-    Object.entries(nodesByLabel).forEach(([label, nodeIds]) => {
-      // Connect each node to the next one in the same group (chain)
-      for (let i = 0; i < nodeIds.length - 1; i++) {
-        graph.addEdge(nodeIds[i], nodeIds[i + 1], {
-          size: 1,
-          label: `Same ${label}`,
+    // Create edges from relationships data
+    if (nodesData.relationships) {
+      nodesData.relationships.forEach((rel) => {
+        graph.addEdge(rel.start, rel.end, {
+          type: "arrow",
+          label: rel.type,
+          size: 2,
           color: "#666"
         });
-      }
-    });
+      });
+    }
 
     loadGraph(graph);
     assign();
@@ -65,11 +57,13 @@ const MyGraph = () => {
 
 function App() {
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-gray-900 /*text-white*/">
+    <div className="w-full h-screen bg-gray-900 /*text-white*/">
       <GraphContainer>
         <MyGraph />
-        <ControlsContainer position={"top-left"}>
+        <NodeHoverInfo />
+        <ControlsContainer position={"top-left"} className="flex flex-row gap-2 !items-start">
           <SearchControl />
+          <FilterControl />
         </ControlsContainer>
         <ControlsContainer position={"bottom-left"}>
           <LayoutControls />
