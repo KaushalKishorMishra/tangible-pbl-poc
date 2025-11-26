@@ -3,6 +3,8 @@ import { SigmaContainer } from "@react-sigma/core";
 import "@react-sigma/core/lib/style.css";
 import { MultiDirectedGraph } from "graphology";
 import { DirectedGraph, UndirectedGraph } from "graphology";
+import EdgeCurveProgram from "@sigma/edge-curve";
+import { EdgeArrowProgram } from "sigma/rendering";
 
 export interface GraphContainerProps {
     children: ReactNode;
@@ -16,6 +18,11 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graph
         renderEdgeLabels: true,
         autoCenter: true,
         animationDuration: 1000,
+        defaultEdgeType: "straight",
+        edgeProgramClasses: {
+            straight: EdgeArrowProgram,
+            curved: EdgeCurveProgram,
+        },
     }
 
     return (

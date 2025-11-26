@@ -71,7 +71,7 @@ export const NodeHoverInfo = () => {
 
     return (
         <div className="absolute top-4 right-4 bg-white p-4 rounded-md shadow-lg border border-gray-300 max-w-sm z-50 pointer-events-none">
-            <h3 className="font-bold text-lg mb-2 border-b pb-1">{hoveredNode.label}</h3>
+            <h3 className="font-bold text-lg mb-2 border-b pb-1 text-blue-600">{hoveredNode.label}</h3>
 
             {hoveredNode.edges.length === 0 ? (
                 <p className="text-gray-500 italic text-sm">No connections</p>
@@ -84,7 +84,7 @@ export const NodeHoverInfo = () => {
                             <ul className="text-sm flex flex-col gap-1">
                                 {hoveredNode.edges.filter(e => e.direction === "out").map(edge => (
                                     <li key={edge.id} className="bg-blue-50 p-2 rounded">
-                                        <div className="font-semibold">→ {sigma.getGraph().getNodeAttribute(edge.target, "label")}</div>
+                                        <div className="font-semibold text-black">→ {sigma.getGraph().getNodeAttribute(edge.target, "label")}</div>
                                         <div className="text-xs text-gray-600">{edge.label}</div>
                                         {Object.keys(edge.properties).length > 0 && (
                                             <div className="text-[10px] text-gray-500 mt-1">
@@ -106,7 +106,7 @@ export const NodeHoverInfo = () => {
                             <ul className="text-sm flex flex-col gap-1">
                                 {hoveredNode.edges.filter(e => e.direction === "in").map(edge => (
                                     <li key={edge.id} className="bg-green-50 p-2 rounded">
-                                        <div className="font-semibold">← {sigma.getGraph().getNodeAttribute(edge.source, "label")}</div>
+                                        <div className="font-semibold text-black">← {sigma.getGraph().getNodeAttribute(edge.source, "label")}</div>
                                         <div className="text-xs text-gray-600">{edge.label}</div>
                                         {Object.keys(edge.properties).length > 0 && (
                                             <div className="text-[10px] text-gray-500 mt-1">

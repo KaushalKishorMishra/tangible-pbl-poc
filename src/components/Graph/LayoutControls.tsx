@@ -19,11 +19,6 @@ export const LayoutControls = () => {
     };
 
     const handleForceAtlas2 = () => {
-        // ForceAtlas2 is iterative, so we can just run it or assign positions if pre-calculated
-        // But typically we want to run it live. For now, let's just re-assign the initial FA2 positions
-        // or we could start the worker.
-        // A simpler approach for "resetting" to FA2 is to just re-run the assign function
-        // assuming it was the default.
         assignFA2();
     };
 
