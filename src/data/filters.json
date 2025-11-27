@@ -31,6 +31,23 @@
     "Category",
     "Policy"
   ],
+  "relationshipType": [
+    "PREREQUISITE",
+    "PART_OF",
+    "BROADENS",
+    "SPECIALIZES",
+    "DERIVES_FROM",
+    "CONFLICTS_WITH",
+    "COMPLEMENTS",
+    "ALIAS_OF",
+    "EQUIVALENT_TO",
+    "SUPERSEDED_BY",
+    "ALTERNATIVE_TO",
+    "CO_OCCURS_WITH",
+    "SIMILAR_TO",
+    "REQUIRES_POLICY",
+    "ANTIPATTERN_OF"
+  ],
   "name": [
     "JavaScript",
     "Syntax",
