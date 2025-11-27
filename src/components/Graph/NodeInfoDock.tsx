@@ -76,17 +76,9 @@ export const NodeInfoDock = () => {
 
     return (
         <>
-            {/* Overlay backdrop */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300"
-                    onClick={handleClose}
-                />
-            )}
-
             {/* Right Dock Panel */}
             <div
-                className={`fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+                className={`fixed top-0 right-0 h-full w-96 bg-white/95 backdrop-blur-md shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
                     isOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
@@ -154,7 +146,7 @@ export const NodeInfoDock = () => {
                                                     {selectedNode.edges.filter(e => e.direction === "out").map(edge => (
                                                         <div key={edge.id} className="bg-blue-50 border border-blue-200 rounded-lg p-3 hover:bg-blue-100 transition-colors">
                                                             <div className="flex items-start gap-2">
-                                                                <svg className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                                 </svg>
                                                                 <div className="flex-1">
@@ -196,7 +188,7 @@ export const NodeInfoDock = () => {
                                                     {selectedNode.edges.filter(e => e.direction === "in").map(edge => (
                                                         <div key={edge.id} className="bg-green-50 border border-green-200 rounded-lg p-3 hover:bg-green-100 transition-colors">
                                                             <div className="flex items-start gap-2">
-                                                                <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                                                 </svg>
                                                                 <div className="flex-1">
