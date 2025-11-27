@@ -12,7 +12,7 @@ import "@react-sigma/core/lib/style.css";
 import { SearchControl } from "./components/Graph/SearchControl";
 import { LayoutControls } from "./components/Graph/LayoutControls";
 import { FilterControl } from "./components/Graph/FilterControl";
-import { NodeHoverInfo } from "./components/Graph/NodeHoverInfo";
+import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
@@ -77,7 +77,7 @@ function App() {
     <div className="w-full h-screen">
       <GraphContainer>
         <MyGraph />
-        <NodeHoverInfo />
+        <NodeInfoDock />
         <ControlsContainer position={"top-left"} className="flex flex-col gap-2">
           <SearchControl />
           <FilterControl />
