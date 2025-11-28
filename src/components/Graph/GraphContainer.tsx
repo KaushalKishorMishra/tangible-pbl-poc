@@ -18,11 +18,16 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graph
             straight: EdgeArrowProgram,
             curved: EdgeCurveProgram,
         },
+        // Dark mode specific settings
+        labelColor: { color: "#e0e0e0" },
+        labelSize: 12,
+        labelFont: "Inter, sans-serif",
+        zIndex: true,
     }
 
     return (
         <SigmaContainer
-            className="w-full h-full"
+            className="w-full h-full bg-[#1e1e1e]" // Explicit background to match global
             style={style}
             graph={graphType === "MultiDirectedGraph" ? MultiDirectedGraph : graphType === "UndirectedGraph" ? UndirectedGraph : DirectedGraph}
             settings={containerSettings}

@@ -1,13 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Figma-like Dark Theme Variables */
+  --bg-color: #1e1e1e; /* Main canvas background */
+  --panel-bg: #2c2c2c; /* Floating panels */
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #444444;
+  --accent-color: #0d99ff; /* Figma blue */
+  --accent-hover: #0a75c2;
+  
+  color-scheme: dark;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,26 +24,58 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fix for React Sigma controls with Tailwind */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-color);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Fix for React Sigma controls with Tailwind in Dark Mode */
 button.react-sigma-control-item {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  width: 30px !important;
-  height: 30px !important;
+  width: 32px !important;
+  height: 32px !important;
   padding: 0 !important;
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border: 1px solid #ddd !important;
-  border-radius: 4px !important;
-  margin-top: 5px !important;
+  background-color: var(--panel-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  margin-top: 8px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
 }
 
 button.react-sigma-control-item:hover {
-  background-color: #f0f0f0 !important;
+  background-color: #3a3a3a !important;
+  border-color: #666 !important;
 }
 
 button.react-sigma-control-item svg {
-  width: 16px !important;
-  height: 16px !important;
+  width: 18px !important;
+  height: 18px !important;
+  fill: currentColor !important;
 }

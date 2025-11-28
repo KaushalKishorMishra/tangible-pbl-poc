@@ -57,7 +57,7 @@ export const FilterControl = () => {
 
         // Filter edges by relationship type and collect connected nodes
         const connectedNodes = new Set<string>();
-        
+
         graph.forEachEdge((edge, attributes) => {
             let isVisible = true;
 
@@ -101,28 +101,33 @@ export const FilterControl = () => {
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
     return (
-        <div className="bg-white rounded-md shadow-md border border-gray-300 overflow-hidden max-h-[80vh] flex flex-col">
+        <div className="bg-[#2c2c2c] rounded-lg shadow-xl border border-[#444] overflow-hidden max-h-[70vh] flex flex-col w-64 transition-all duration-300">
             <div
-                className="p-3 bg-gray-100 font-bold cursor-pointer flex justify-between items-center select-none"
+                className="p-3 bg-[#333] font-semibold cursor-pointer flex justify-between items-center select-none text-[#e0e0e0] hover:bg-[#3a3a3a] transition-colors"
                 onClick={toggleExpand}
             >
-                <span>Filters</span>
-                <span>{isExpanded ? "▼" : "▶"}</span>
+                <span className="text-sm tracking-wide">FILTERS</span>
+                <span className="text-xs text-gray-400">{isExpanded ? "▼" : "▶"}</span>
             </div>
 
             {isExpanded && (
-                <div className="p-3 overflow-y-auto">
+                <div className="p-4 overflow-y-auto custom-scrollbar">
                     {/* Level Filter */}
-                    <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-700">Level</h4>
-                        <div className="flex flex-col gap-1">
+                    <div className="mb-5">
+                        <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Level</h4>
+                        <div className="flex flex-col gap-2">
                             {filtersData.level.map((item) => (
-                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.level.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                        {selectedFilters.level.includes(item) && (
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        )}
+                                    </div>
                                     <input
                                         type="checkbox"
                                         checked={selectedFilters.level.includes(item)}
                                         onChange={() => handleCheckboxChange("level", item)}
-                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                        className="hidden"
                                     />
                                     {item}
                                 </label>
@@ -131,16 +136,21 @@ export const FilterControl = () => {
                     </div>
 
                     {/* Category Filter */}
-                    <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-700">Category</h4>
-                        <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+                    <div className="mb-5">
+                        <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Category</h4>
+                        <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.category.map((item) => (
-                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.category.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                        {selectedFilters.category.includes(item) && (
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        )}
+                                    </div>
                                     <input
                                         type="checkbox"
                                         checked={selectedFilters.category.includes(item)}
                                         onChange={() => handleCheckboxChange("category", item)}
-                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                        className="hidden"
                                     />
                                     {item}
                                 </label>
@@ -149,16 +159,21 @@ export const FilterControl = () => {
                     </div>
 
                     {/* Source Filter */}
-                    <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-700">Source</h4>
-                        <div className="flex flex-col gap-1">
+                    <div className="mb-5">
+                        <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Source</h4>
+                        <div className="flex flex-col gap-2">
                             {filtersData.source.map((item) => (
-                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.source.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                        {selectedFilters.source.includes(item) && (
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        )}
+                                    </div>
                                     <input
                                         type="checkbox"
                                         checked={selectedFilters.source.includes(item)}
                                         onChange={() => handleCheckboxChange("source", item)}
-                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                        className="hidden"
                                     />
                                     {item}
                                 </label>
@@ -167,48 +182,37 @@ export const FilterControl = () => {
                     </div>
 
                     {/* Relationship Type Filter */}
-                    <div className="mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <h4 className="font-semibold text-sm text-gray-700">Relationship Type</h4>
+                    <div className="mb-5">
+                        <div className="flex justify-between items-center mb-3">
+                            <h4 className="font-medium text-xs uppercase tracking-wider text-gray-500">Relationships</h4>
                             {selectedFilters.relationshipType.length > 0 && (
                                 <button
                                     onClick={() => setShowAllNodes(!showAllNodes)}
-                                    className={`text-xs px-2 py-1 rounded transition-colors ${
-                                        showAllNodes 
-                                            ? "bg-blue-100 text-blue-700 hover:bg-blue-200" 
-                                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                    }`}
+                                    className={`text-[10px] px-2 py-0.5 rounded transition-colors uppercase font-bold tracking-wide ${showAllNodes
+                                            ? "bg-[#0d99ff]/20 text-[#0d99ff] hover:bg-[#0d99ff]/30"
+                                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                        }`}
                                     title={showAllNodes ? "Hide unrelated nodes" : "Show all nodes"}
                                 >
-                                    {showAllNodes ? (
-                                        <span className="flex items-center gap-1">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            All
-                                        </span>
-                                    ) : (
-                                        <span className="flex items-center gap-1">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                            </svg>
-                                            Clean
-                                        </span>
-                                    )}
+                                    {showAllNodes ? "Show All" : "Clean View"}
                                 </button>
                             )}
                         </div>
-                        <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+                        <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.relationshipType.map((item) => (
-                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.relationshipType.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                        {selectedFilters.relationshipType.includes(item) && (
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        )}
+                                    </div>
                                     <input
                                         type="checkbox"
                                         checked={selectedFilters.relationshipType.includes(item)}
                                         onChange={() => handleCheckboxChange("relationshipType", item)}
-                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                        className="hidden"
                                     />
-                                    <span className="text-xs font-mono">{item}</span>
+                                    <span className="font-mono text-xs opacity-80">{item}</span>
                                 </label>
                             ))}
                         </div>
@@ -216,15 +220,20 @@ export const FilterControl = () => {
 
                     {/* Name Filter */}
                     <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-700">Name</h4>
-                        <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+                        <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Name</h4>
+                        <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.name.map((item) => (
-                                <label key={item} className="flex items-center gap-2 text-sm cursor-pointer text-gray-600 hover:text-black">
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.name.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                        {selectedFilters.name.includes(item) && (
+                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        )}
+                                    </div>
                                     <input
                                         type="checkbox"
                                         checked={selectedFilters.name.includes(item)}
                                         onChange={() => handleCheckboxChange("name", item)}
-                                        className="rounded text-blue-600 focus:ring-blue-500"
+                                        className="hidden"
                                     />
                                     {item}
                                 </label>
@@ -233,10 +242,10 @@ export const FilterControl = () => {
                     </div>
 
                     <button
-                        className="text-xs text-blue-600 hover:underline mt-2"
+                        className="w-full py-2 text-xs font-medium text-[#0d99ff] hover:bg-[#0d99ff]/10 rounded transition-colors mt-2"
                         onClick={() => setSelectedFilters({ level: [], category: [], source: [], name: [], relationshipType: [] })}
                     >
-                        Clear All Filters
+                        Reset All Filters
                     </button>
                 </div>
             )}

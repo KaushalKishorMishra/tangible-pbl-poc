@@ -23,24 +23,27 @@ export const LayoutControls = () => {
     };
 
     return (
-        <div className="flex flex-col gap-2 p-2 bg-white rounded shadow-md border border-gray-200">
-            <span className="text-xs font-bold text-gray-500 uppercase px-1">Layouts</span>
+        <div className="flex flex-col gap-2 p-3 bg-[#2c2c2c] rounded-lg shadow-xl border border-[#444] min-w-[140px]">
+            <span className="text-[10px] font-bold text-gray-500 uppercase px-1 tracking-widest mb-1">Layouts</span>
             <button
                 onClick={handleForceAtlas2}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors text-left"
+                className="px-3 py-2 text-sm bg-[#333] text-[#e0e0e0] rounded hover:bg-[#0d99ff]/20 hover:text-[#0d99ff] transition-all text-left flex items-center gap-2 group border border-transparent hover:border-[#0d99ff]/30"
             >
+                <div className="w-2 h-2 rounded-full bg-[#0d99ff] group-hover:scale-125 transition-transform"></div>
                 Force Atlas 2
             </button>
             <button
                 onClick={handleCircular}
-                className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors text-left"
+                className="px-3 py-2 text-sm bg-[#333] text-[#e0e0e0] rounded hover:bg-emerald-500/20 hover:text-emerald-500 transition-all text-left flex items-center gap-2 group border border-transparent hover:border-emerald-500/30"
             >
+                <div className="w-2 h-2 rounded-full bg-emerald-500 group-hover:scale-125 transition-transform"></div>
                 Circular
             </button>
             <button
                 onClick={handleRandom}
-                className="px-3 py-1 text-sm bg-purple-100 text-purple-800 rounded hover:bg-purple-200 transition-colors text-left"
+                className="px-3 py-2 text-sm bg-[#333] text-[#e0e0e0] rounded hover:bg-purple-500/20 hover:text-purple-500 transition-all text-left flex items-center gap-2 group border border-transparent hover:border-purple-500/30"
             >
+                <div className="w-2 h-2 rounded-full bg-purple-500 group-hover:scale-125 transition-transform"></div>
                 Random
             </button>
         </div>
