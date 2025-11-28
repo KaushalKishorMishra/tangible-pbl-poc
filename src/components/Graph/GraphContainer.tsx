@@ -1,16 +1,11 @@
-import { type FC, type CSSProperties, type ReactNode } from "react";
+import { type FC } from "react";
 import { SigmaContainer } from "@react-sigma/core";
 import "@react-sigma/core/lib/style.css";
 import { MultiDirectedGraph } from "graphology";
 import { DirectedGraph, UndirectedGraph } from "graphology";
 import EdgeCurveProgram from "@sigma/edge-curve";
 import { EdgeArrowProgram } from "sigma/rendering";
-
-export interface GraphContainerProps {
-    children: ReactNode;
-    style?: CSSProperties;
-    graphType?: "MultiDirectedGraph" | "DirectedGraph" | "UndirectedGraph";
-}
+import type { GraphContainerProps } from "../../types/components";
 
 export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graphType = "MultiDirectedGraph" }) => {
 

@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSigma } from "@react-sigma/core";
 import filtersData from "../../data/filters.json";
-
-type FilterState = {
-    [key: string]: string[];
-};
+import type { FilterState } from "../../types/filter";
 
 export const FilterControl = () => {
     const sigma = useSigma();

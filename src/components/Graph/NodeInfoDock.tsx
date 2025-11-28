@@ -1,27 +1,11 @@
 import { useState, useEffect } from "react";
 import { useRegisterEvents, useSigma } from "@react-sigma/core";
-import type { Attributes } from "graphology-types";
-
-type EdgeInfo = {
-    id: string;
-    target: string;
-    source: string;
-    label: string;
-    properties: Attributes;
-    direction: "in" | "out";
-};
-
-type SelectedNodeState = {
-    id: string;
-    label: string;
-    edges: EdgeInfo[];
-    attributes: Attributes;
-} | null;
+import type { EdgeInfo, SelectedNodeState } from "../../types/node";
 
 export const NodeInfoDock = () => {
     const sigma = useSigma();
     const registerEvents = useRegisterEvents();
-    const [selectedNode, setSelectedNode] = useState<SelectedNodeState>(null);
+    const [selectedNode, setSelectedNode] = useState<SelectedNodeState | null>(null);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
