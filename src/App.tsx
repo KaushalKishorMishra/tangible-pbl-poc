@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLoadGraph, ControlsContainer, ZoomControl, FullScreenControl } from "@react-sigma/core";
+import { useLoadGraph } from "@react-sigma/core";
 import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
 import Graph from "graphology";
 import { GraphContainer } from "./components/Graph/GraphContainer";
@@ -13,6 +13,7 @@ import { SearchControl } from "./components/Graph/SearchControl";
 import { LayoutControls } from "./components/Graph/LayoutControls";
 import { FilterControl } from "./components/Graph/FilterControl";
 import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
+import { GraphControls } from "./components/Graph/GraphControls";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
@@ -74,21 +75,29 @@ const MyGraph = () => {
 
 function App() {
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen relative bg-gray-900 overflow-hidden">
       <GraphContainer>
         <MyGraph />
         <NodeInfoDock />
-        <ControlsContainer position={"top-left"} className="flex flex-col gap-2">
-          <SearchControl />
-          <FilterControl />
-        </ControlsContainer>
-        <ControlsContainer position={"bottom-left"}>
-          <LayoutControls />
-        </ControlsContainer>
-        <ControlsContainer position={"bottom-right"} className="flex flex-row items-center justify-center">
-          <ZoomControl className="bg-red-300" />
-          <FullScreenControl />
-        </ControlsContainer>
+
+        {/* Custom UI Overlay - Must be inside GraphContainer to access Sigma context */}
+        <div className="absolute inset-0 pointer-events-none z-10">
+          {/* Top Left: Search & Filter */}
+          <div className="absolute top-4 left-4 flex flex-col gap-4 pointer-events-auto">
+            <SearchControl />
+            <FilterControl />
+          </div>
+
+          {/* Bottom Left: Layouts */}
+          <div className="absolute bottom-4 left-4 pointer-events-auto">
+            <LayoutControls />
+          </div>
+
+          {/* Bottom Right: Navigation */}
+          <div className="absolute bottom-4 right-4 pointer-events-auto">
+            <GraphControls />
+          </div>
+        </div>
       </GraphContainer>
     </div>
   );

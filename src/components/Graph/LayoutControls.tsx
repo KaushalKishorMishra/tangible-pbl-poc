@@ -23,7 +23,7 @@ export const LayoutControls = () => {
     };
 
     return (
-        <div className="flex flex-col gap-2 p-3 bg-[#2c2c2c] rounded-lg shadow-xl border border-[#444] min-w-[140px]">
+        <div className="flex flex-col gap-2 p-3 bg-[#2c2c2c] shadow-xl min-w-[140px]">
             <span className="text-[10px] font-bold text-gray-500 uppercase px-1 tracking-widest mb-1">Layouts</span>
             <button
                 onClick={handleForceAtlas2}

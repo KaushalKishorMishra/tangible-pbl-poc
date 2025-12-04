@@ -64,7 +64,7 @@ button.react-sigma-control-item {
   color: var(--text-primary) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 6px !important;
-  margin-top: 8px !important;
+  /* margin-top: 8px !important; Removed to fix alignment */
   transition: all 0.2s ease !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
 }

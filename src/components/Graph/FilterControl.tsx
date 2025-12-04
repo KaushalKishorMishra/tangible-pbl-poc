@@ -101,13 +101,13 @@ export const FilterControl = () => {
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
     return (
-        <div className="bg-[#2c2c2c] rounded-lg shadow-xl border border-[#444] overflow-hidden max-h-[70vh] flex flex-col w-64 transition-all duration-300">
+        <div className="bg-white rounded-lg shadow-xl overflow-hidden max-h-[70vh] flex flex-col w-64 transition-all duration-300">
             <div
-                className="p-3 bg-[#333] font-semibold cursor-pointer flex justify-between items-center select-none text-[#e0e0e0] hover:bg-[#3a3a3a] transition-colors"
+                className="p-3 bg-white font-semibold cursor-pointer flex justify-between items-center select-none transition-colors"
                 onClick={toggleExpand}
             >
-                <span className="text-sm tracking-wide">FILTERS</span>
-                <span className="text-xs text-gray-400">{isExpanded ? "▼" : "▶"}</span>
+                <span className="text-sm tracking-wide text-black">FILTERS</span>
+                <span className="text-xs text-black">{isExpanded ? "▼" : "▶"}</span>
             </div>
 
             {isExpanded && (
@@ -189,8 +189,8 @@ export const FilterControl = () => {
                                 <button
                                     onClick={() => setShowAllNodes(!showAllNodes)}
                                     className={`text-[10px] px-2 py-0.5 rounded transition-colors uppercase font-bold tracking-wide ${showAllNodes
-                                            ? "bg-[#0d99ff]/20 text-[#0d99ff] hover:bg-[#0d99ff]/30"
-                                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                        ? "bg-[#0d99ff]/20 text-[#0d99ff] hover:bg-[#0d99ff]/30"
+                                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                         }`}
                                     title={showAllNodes ? "Hide unrelated nodes" : "Show all nodes"}
                                 >
