@@ -13,7 +13,7 @@ const positionClasses: Record<Position, string> = {
     "right-center": "right-4 top-1/2 -translate-y-1/2",
 };
 
-const ControlPosition: FC<{ children: ReactNode, position: Position }> = ({ children, position }) => {
+const ControlPosition: FC<{ children?: ReactNode, position: Position }> = ({ children, position }) => {
     return (
         <div className={`absolute ${positionClasses[position]} flex flex-col gap-4 pointer-events-auto`}>
             {children}
