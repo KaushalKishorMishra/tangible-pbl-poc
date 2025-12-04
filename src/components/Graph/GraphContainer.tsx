@@ -7,19 +7,20 @@ import EdgeCurveProgram from "@sigma/edge-curve";
 import { EdgeArrowProgram } from "sigma/rendering";
 import type { GraphContainerProps } from "../../types/components";
 
-export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graphType = "MultiDirectedGraph" }) => {
+export const GraphContainer: FC<GraphContainerProps & { focusedNode?: string | null }> = ({ children, style, graphType = "MultiDirectedGraph", focusedNode }) => {
 
     const containerSettings = {
-        renderEdgeLabels: true,
+        renderEdgeLabels: true, // Enable edge labels
         autoCenter: true,
         animationDuration: 1000,
-        defaultEdgeType: "straight",
+        defaultEdgeType: "arrow",
         edgeProgramClasses: {
             straight: EdgeArrowProgram,
+            arrow: EdgeArrowProgram,
             curved: EdgeCurveProgram,
         },
-        // Dark mode specific settings
-        labelColor: { color: "#3c3c3c" },
+        // Light mode specific settings
+        labelColor: { color: "#1f2937" }, // gray-800
         labelSize: 12,
         labelFont: "Inter, sans-serif",
         zIndex: true,
@@ -27,7 +28,7 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graph
 
     return (
         <SigmaContainer
-            className="w-full h-full bg-[#1e1e1e]" // Explicit background to match global
+            className="w-full h-full bg-gray-50" // Light mode background
             style={style}
             graph={graphType === "MultiDirectedGraph" ? MultiDirectedGraph : graphType === "UndirectedGraph" ? UndirectedGraph : DirectedGraph}
             settings={containerSettings}

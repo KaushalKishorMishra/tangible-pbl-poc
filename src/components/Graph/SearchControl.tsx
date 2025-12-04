@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { useSigma } from "@react-sigma/core";
 import { useCamera } from "@react-sigma/core";
 
-export const SearchControl = () => {
+interface SearchControlProps {
+    onNodeSelect?: (nodeId: string) => void;
+}
+
+export const SearchControl = ({ onNodeSelect }: SearchControlProps) => {
     const sigma = useSigma();
     const { goto } = useCamera();
     const [search, setSearch] = useState("");
@@ -34,9 +38,13 @@ export const SearchControl = () => {
     const handleSelect = (nodeId: string) => {
         const nodePosition = sigma.getNodeDisplayData(nodeId);
         if (nodePosition) {
-            goto({ x: nodePosition.x, y: nodePosition.y, ratio: 0.1 }, { duration: 1000 });
+            goto({ x: nodePosition.x, y: nodePosition.y, ratio: 0.5 }, { duration: 1000 }); // Less zoom (0.5 instead of 0.1)
             setSearch("");
             setSuggestions([]);
+            // Trigger the same highlighting as selecting a node
+            if (onNodeSelect) {
+                onNodeSelect(nodeId);
+            }
         }
     };
 

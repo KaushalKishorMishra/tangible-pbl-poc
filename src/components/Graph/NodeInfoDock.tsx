@@ -2,59 +2,64 @@ import { useState, useEffect } from "react";
 import { useRegisterEvents, useSigma } from "@react-sigma/core";
 import type { EdgeInfo, SelectedNodeState } from "../../types/node";
 
-export const NodeInfoDock = () => {
+interface NodeInfoDockProps {
+    isOpen: boolean;
+    selectedNodeId: string | null;
+    onClose: () => void;
+}
+
+export const NodeInfoDock = ({ isOpen, selectedNodeId, onClose }: NodeInfoDockProps) => {
     const sigma = useSigma();
-    const registerEvents = useRegisterEvents();
     const [selectedNode, setSelectedNode] = useState<SelectedNodeState | null>(null);
-    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        registerEvents({
-            clickNode: (event) => {
-                const nodeId = event.node;
-                const graph = sigma.getGraph();
-                const nodeAttributes = graph.getNodeAttributes(nodeId);
-                const nodeLabel = graph.getNodeAttribute(nodeId, "label");
+        if (isOpen && selectedNodeId) {
+            const graph = sigma.getGraph();
+            if (!graph.hasNode(selectedNodeId)) return;
 
-                const edges: EdgeInfo[] = [];
+            const nodeAttributes = graph.getNodeAttributes(selectedNodeId);
+            const nodeLabel = graph.getNodeAttribute(selectedNodeId, "label");
 
-                // Outgoing edges
-                graph.forEachOutEdge(nodeId, (edge, attributes, source, target) => {
-                    edges.push({
-                        id: edge,
-                        source: source,
-                        target: target,
-                        label: attributes.label as string,
-                        properties: attributes,
-                        direction: "out",
-                    });
+            const edges: EdgeInfo[] = [];
+
+            // Outgoing edges
+            graph.forEachOutEdge(selectedNodeId, (edge, attributes, source, target) => {
+                edges.push({
+                    id: edge,
+                    source: source,
+                    target: target,
+                    label: attributes.label as string,
+                    properties: attributes,
+                    direction: "out",
                 });
+            });
 
-                // Incoming edges
-                graph.forEachInEdge(nodeId, (edge, attributes, source, target) => {
-                    edges.push({
-                        id: edge,
-                        source: source,
-                        target: target,
-                        label: attributes.label as string,
-                        properties: attributes,
-                        direction: "in",
-                    });
+            // Incoming edges
+            graph.forEachInEdge(selectedNodeId, (edge, attributes, source, target) => {
+                edges.push({
+                    id: edge,
+                    source: source,
+                    target: target,
+                    label: attributes.label as string,
+                    properties: attributes,
+                    direction: "in",
                 });
+            });
 
-                setSelectedNode({
-                    id: nodeId,
-                    label: nodeLabel as string,
-                    edges: edges,
-                    attributes: nodeAttributes,
-                });
-                setIsOpen(true);
-            },
-        });
-    }, [registerEvents, sigma]);
+            setSelectedNode({
+                id: selectedNodeId,
+                label: nodeLabel as string,
+                edges: edges,
+                attributes: nodeAttributes,
+            });
+        } else if (!isOpen) {
+            // Clear selection after animation
+            // setTimeout(() => setSelectedNode(null), 300);
+        }
+    }, [isOpen, selectedNodeId, sigma]);
 
     const handleClose = () => {
-        setIsOpen(false);
+        onClose();
         setTimeout(() => setSelectedNode(null), 300); // Delay to allow animation
     };
 
