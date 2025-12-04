@@ -17,7 +17,15 @@ import ControlPosition from "./components/custom/ControlPosition";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
-  const { assign } = useLayoutForceAtlas2({ iterations: 100, settings: { adjustSizes: true, slowDown: 10 } });
+  const { assign } = useLayoutForceAtlas2({ 
+    iterations: 100, 
+    settings: { 
+      adjustSizes: true, 
+      slowDown: 10,
+      scalingRatio: 1, // Controls repulsion (lower = more compact)
+      strongGravityMode: true // Helps with disconnected components
+    } 
+  });
 
   useEffect(() => {
     // Register custom node program
