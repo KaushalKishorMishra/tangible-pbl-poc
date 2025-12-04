@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLoadGraph, useSigma, useRegisterEvents } from "@react-sigma/core";
 import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
 import Graph from "graphology";
@@ -14,14 +14,14 @@ import { FilterControl } from "./components/Graph/FilterControl";
 import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
 import { GraphControls } from "./components/Graph/GraphControls";
 import { ArcMenu } from "./components/Graph/ArcMenu";
-import { EdgeLabelManager } from "./components/Graph/EdgeLabelManager";
 import ControlPosition from "./components/custom/ControlPosition";
+import { useGraphStore } from "./store/graphStore";
 
-const MyGraph = ({ focusedNode, onNodeClick }: { focusedNode: string | null; onNodeClick: (nodeId: string, position: { x: number; y: number }) => void }) => {
+const MyGraph = () => {
   const sigma = useSigma();
   const loadGraph = useLoadGraph();
   const registerEvents = useRegisterEvents();
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const { focusedNode, setHoveredNode, handleNodeClick } = useGraphStore();
   const { assign } = useLayoutForceAtlas2({ 
     iterations: 100, 
     settings: { 
@@ -82,7 +82,7 @@ const MyGraph = ({ focusedNode, onNodeClick }: { focusedNode: string | null; onN
           y: event.event.y
         };
         
-        onNodeClick(event.node, screenPos);
+        handleNodeClick(event.node, screenPos);
       },
       enterNode: (event) => {
         setHoveredNode(event.node);
@@ -91,7 +91,7 @@ const MyGraph = ({ focusedNode, onNodeClick }: { focusedNode: string | null; onN
         setHoveredNode(null);
       },
     });
-  }, [registerEvents, onNodeClick]);
+  }, [registerEvents, handleNodeClick, setHoveredNode]);
 
   useEffect(() => {
     // Register custom node program
@@ -154,7 +154,7 @@ const MyGraph = ({ focusedNode, onNodeClick }: { focusedNode: string | null; onN
 
         graph.addEdge(rel.start, rel.end, {
           type: "curved", // Use arrow edges for direction
-          label: combinedLabel,
+          label: combinedLabel, // Store as custom attribute, EdgeLabelManager will handle visibility
           size: 2, // Thinner edges
           color: sourceColor // Match source node color
         });
@@ -165,44 +165,25 @@ const MyGraph = ({ focusedNode, onNodeClick }: { focusedNode: string | null; onN
     assign();
   }, [loadGraph, assign]);
 
-  return <EdgeLabelManager focusedNode={focusedNode} hoveredNode={hoveredNode} />;
+  return null;
 };
 
 function App() {
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [focusedNode, setFocusedNode] = useState<string | null>(null);
-  const [arcMenuNode, setArcMenuNode] = useState<{ nodeId: string; position: { x: number; y: number } } | null>(null);
-
-  const handleNodeClick = (nodeId: string, position: { x: number; y: number }) => {
-    setArcMenuNode({ nodeId, position });
-  };
-
-  const handleViewDetails = (nodeId: string) => {
-    setSelectedNodeId(nodeId);
-    setIsDrawerOpen(true);
-    setFocusedNode(nodeId); // Also focus on view
-    setArcMenuNode(null); // Close arc menu
-  };
-
-  const handleSelectNode = (nodeId: string) => {
-    setFocusedNode(nodeId === focusedNode ? null : nodeId);
-    setArcMenuNode(null); // Close arc menu
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-    setSelectedNodeId(null);
-  };
-
-  const handleCloseArcMenu = () => {
-    setArcMenuNode(null);
-  };
+  const {
+    focusedNode,
+    selectedNodeId,
+    isDrawerOpen,
+    arcMenuNode,
+    handleViewDetails,
+    handleSelectNode,
+    handleCloseDrawer,
+    handleCloseArcMenu,
+  } = useGraphStore();
 
   return (
     <div className="w-full h-screen relative bg-gray-50 overflow-hidden">
       <GraphContainer focusedNode={focusedNode}>
-        <MyGraph focusedNode={focusedNode} onNodeClick={handleNodeClick} />
+        <MyGraph />
         
         {/* Arc Menu */}
         {arcMenuNode && (
