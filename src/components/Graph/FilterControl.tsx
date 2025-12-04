@@ -117,8 +117,8 @@ export const FilterControl = () => {
                         <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Level</h4>
                         <div className="flex flex-col gap-2">
                             {filtersData.level.map((item) => (
-                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
-                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.level.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.level.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                         {selectedFilters.level.includes(item) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                         )}
@@ -140,8 +140,8 @@ export const FilterControl = () => {
                         <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Category</h4>
                         <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.category.map((item) => (
-                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
-                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.category.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.category.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                         {selectedFilters.category.includes(item) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                         )}
@@ -163,8 +163,8 @@ export const FilterControl = () => {
                         <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Source</h4>
                         <div className="flex flex-col gap-2">
                             {filtersData.source.map((item) => (
-                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
-                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.source.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.source.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                         {selectedFilters.source.includes(item) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                         )}
@@ -200,8 +200,8 @@ export const FilterControl = () => {
                         </div>
                         <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.relationshipType.map((item) => (
-                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
-                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.relationshipType.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.relationshipType.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                         {selectedFilters.relationshipType.includes(item) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                         )}
@@ -223,8 +223,8 @@ export const FilterControl = () => {
                         <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Name</h4>
                         <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2">
                             {filtersData.name.map((item) => (
-                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-[#e0e0e0] hover:text-white group">
-                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.name.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-600 group-hover:border-gray-500"}`}>
+                                <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
+                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedFilters.name.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                         {selectedFilters.name.includes(item) && (
                                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                         )}

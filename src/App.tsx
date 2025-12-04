@@ -104,7 +104,7 @@ const MyGraph = () => {
 
 function App() {
   return (
-    <div className="w-full h-screen relative bg-gray-900 overflow-hidden">
+    <div className="w-full h-screen relative bg-gray-50 overflow-hidden">
       <GraphContainer>
         <MyGraph />
         <NodeInfoDock />
@@ -115,7 +115,7 @@ function App() {
           <ControlPosition position="top-left">
             <FilterControl />
           </ControlPosition>
-          <ControlPosition position="bottom-center">
+          <ControlPosition position="top-right">
             <SearchControl />
           </ControlPosition>
           {/* Bottom Left: Layouts */}

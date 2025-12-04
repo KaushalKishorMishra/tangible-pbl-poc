@@ -62,20 +62,20 @@ export const NodeInfoDock = () => {
         <>
             {/* Right Dock Panel */}
             <div
-                className={`fixed top-4 right-4 bottom-4 w-96 bg-[#2c2c2c]/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out rounded-2xl border border-[#444] overflow-hidden ${isOpen ? "translate-x-0" : "translate-x-[120%]"
+                className={`fixed top-4 right-4 bottom-4 w-96 bg-white/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out rounded-2xl border border-gray-200 overflow-hidden ${isOpen ? "translate-x-0" : "translate-x-[120%]"
                     }`}
             >
                 {selectedNode && (
                     <div className="h-full flex flex-col">
                         {/* Header */}
-                        <div className="bg-[#333] px-6 py-5 flex justify-between items-start border-b border-[#444]">
+                        <div className="bg-gray-50 px-6 py-5 flex justify-between items-start border-b border-gray-200">
                             <div className="flex-1 pr-4">
-                                <h2 className="text-xl font-bold text-white leading-tight">{selectedNode.label}</h2>
-                                <p className="text-gray-400 text-xs mt-1 font-mono">ID: {selectedNode.id}</p>
+                                <h2 className="text-xl font-bold text-gray-900 leading-tight">{selectedNode.label}</h2>
+                                <p className="text-gray-500 text-xs mt-1 font-mono">ID: {selectedNode.id}</p>
                             </div>
                             <button
                                 onClick={handleClose}
-                                className="text-gray-400 hover:text-white hover:bg-[#444] rounded-lg p-1.5 transition-colors"
+                                className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg p-1.5 transition-colors"
                                 aria-label="Close"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,9 +93,9 @@ export const NodeInfoDock = () => {
                                     {Object.entries(selectedNode.attributes)
                                         .filter(([k]) => !["x", "y", "label", "color", "hidden"].includes(k))
                                         .map(([key, value]) => (
-                                            <div key={key} className="flex flex-col bg-[#333] rounded-lg p-3 border border-[#444]">
-                                                <span className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{key}</span>
-                                                <span className="text-sm text-[#e0e0e0] font-medium break-words">{String(value)}</span>
+                                            <div key={key} className="flex flex-col bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">{key}</span>
+                                                <span className="text-sm text-gray-700 font-medium break-words">{String(value)}</span>
                                             </div>
                                         ))}
                                 </div>
@@ -108,7 +108,7 @@ export const NodeInfoDock = () => {
                                 </h3>
 
                                 {selectedNode.edges.length === 0 ? (
-                                    <div className="bg-[#333] rounded-lg p-8 text-center border border-[#444] border-dashed">
+                                    <div className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200 border-dashed">
                                         <p className="text-gray-500 text-sm">No connections found</p>
                                     </div>
                                 ) : (
@@ -122,7 +122,7 @@ export const NodeInfoDock = () => {
                                                 </h4>
                                                 <div className="space-y-2">
                                                     {selectedNode.edges.filter(e => e.direction === "out").map(edge => (
-                                                        <div key={edge.id} className="bg-[#333] border border-[#444] rounded-lg p-3 hover:border-[#0d99ff]/50 transition-colors group">
+                                                        <div key={edge.id} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-[#0d99ff]/50 transition-colors group">
                                                             <div className="flex items-start gap-3">
                                                                 <div className="mt-1 p-1 bg-[#0d99ff]/10 rounded text-[#0d99ff]">
                                                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,10 +130,10 @@ export const NodeInfoDock = () => {
                                                                     </svg>
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <div className="font-medium text-[#e0e0e0] text-sm truncate">
+                                                                    <div className="font-medium text-gray-700 text-sm truncate">
                                                                         {sigma.getGraph().getNodeAttribute(edge.target, "label")}
                                                                     </div>
-                                                                    <div className="text-xs text-gray-400 mt-0.5">{edge.label}</div>
+                                                                    <div className="text-xs text-gray-500 mt-0.5">{edge.label}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -151,7 +151,7 @@ export const NodeInfoDock = () => {
                                                 </h4>
                                                 <div className="space-y-2">
                                                     {selectedNode.edges.filter(e => e.direction === "in").map(edge => (
-                                                        <div key={edge.id} className="bg-[#333] border border-[#444] rounded-lg p-3 hover:border-emerald-500/50 transition-colors group">
+                                                        <div key={edge.id} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-emerald-500/50 transition-colors group">
                                                             <div className="flex items-start gap-3">
                                                                 <div className="mt-1 p-1 bg-emerald-500/10 rounded text-emerald-500">
                                                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,10 +159,10 @@ export const NodeInfoDock = () => {
                                                                     </svg>
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <div className="font-medium text-[#e0e0e0] text-sm truncate">
+                                                                    <div className="font-medium text-gray-700 text-sm truncate">
                                                                         {sigma.getGraph().getNodeAttribute(edge.source, "label")}
                                                                     </div>
-                                                                    <div className="text-xs text-gray-400 mt-0.5">{edge.label}</div>
+                                                                    <div className="text-xs text-gray-500 mt-0.5">{edge.label}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
