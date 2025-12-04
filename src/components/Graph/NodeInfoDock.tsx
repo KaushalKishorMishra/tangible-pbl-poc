@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRegisterEvents, useSigma } from "@react-sigma/core";
+import { useSigma } from "@react-sigma/core";
 import type { EdgeInfo, SelectedNodeState } from "../../types/node";
 
 interface NodeInfoDockProps {

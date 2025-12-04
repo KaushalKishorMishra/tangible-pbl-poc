@@ -182,7 +182,7 @@ function App() {
 
   return (
     <div className="w-full h-screen relative bg-gray-50 overflow-hidden">
-      <GraphContainer focusedNode={focusedNode}>
+      <GraphContainer>
         <MyGraph />
         
         {/* Arc Menu */}

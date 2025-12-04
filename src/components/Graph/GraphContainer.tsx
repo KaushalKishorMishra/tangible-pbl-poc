@@ -7,7 +7,7 @@ import EdgeCurveProgram from "@sigma/edge-curve";
 import { EdgeArrowProgram } from "sigma/rendering";
 import type { GraphContainerProps } from "../../types/components";
 
-export const GraphContainer: FC<GraphContainerProps & { focusedNode?: string | null }> = ({ children, style, graphType = "MultiDirectedGraph", focusedNode }) => {
+export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graphType = "MultiDirectedGraph" }) => {
 
     const containerSettings = {
         renderEdgeLabels: true, // Enable edge labels
