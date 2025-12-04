@@ -41,7 +41,7 @@ export const SearchControl = () => {
     };
 
     return (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="">
             <div className="flex items-center bg-[#2c2c2c] rounded-full border border-[#444] shadow-lg px-4 py-2 w-96 transition-all focus-within:border-[#0d99ff] focus-within:ring-1 focus-within:ring-[#0d99ff]/30">
                 <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

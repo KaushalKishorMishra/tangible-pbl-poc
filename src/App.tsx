@@ -13,6 +13,7 @@ import { LayoutControls } from "./components/Graph/LayoutControls";
 import { FilterControl } from "./components/Graph/FilterControl";
 import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
 import { GraphControls } from "./components/Graph/GraphControls";
+import ControlPosition from "./components/custom/ControlPosition";
 
 const MyGraph = () => {
   const loadGraph = useLoadGraph();
@@ -103,20 +104,21 @@ function App() {
         {/* Custom UI Overlay - Must be inside GraphContainer to access Sigma context */}
         <div className="absolute inset-0 pointer-events-none z-10">
           {/* Top Left: Search & Filter */}
-          <div className="absolute top-4 left-4 flex flex-col gap-4 pointer-events-auto">
-            <SearchControl />
+          <ControlPosition position="top-left">
             <FilterControl />
-          </div>
-
+          </ControlPosition>
+          <ControlPosition position="bottom-center">
+            <SearchControl />
+          </ControlPosition>
           {/* Bottom Left: Layouts */}
-          <div className="absolute bottom-4 left-4 pointer-events-auto">
+          <ControlPosition position="bottom-left">
             <LayoutControls />
-          </div>
+          </ControlPosition>
 
           {/* Bottom Right: Navigation */}
-          <div className="absolute bottom-4 right-4 pointer-events-auto">
+          <ControlPosition position="bottom-right">
             <GraphControls />
-          </div>
+          </ControlPosition>
         </div>
       </GraphContainer>
     </div>
