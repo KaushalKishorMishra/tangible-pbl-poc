@@ -1,17 +1,39 @@
-import { useCamera } from "@react-sigma/core";
-import { useState, useEffect } from "react";
+import { useCamera, useSigma } from "@react-sigma/core";
+import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
+import { useLayoutCircular } from "@react-sigma/layout-circular";
+import { useLayoutRandom } from "@react-sigma/layout-random";
+import { animateNodes } from "sigma/utils";
+import { useState, useEffect, useRef } from "react";
 
 export const GraphControls = () => {
+    const sigma = useSigma();
     const { zoomIn, zoomOut, reset } = useCamera();
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+    const layoutRef = useRef<HTMLDivElement>(null);
+
+    const { positions: circularPositions } = useLayoutCircular();
+    const { positions: randomPositions } = useLayoutRandom();
+    const { assign: assignFA2 } = useLayoutForceAtlas2();
 
     useEffect(() => {
         const handleFullScreenChange = () => {
             setIsFullscreen(!!document.fullscreenElement);
         };
 
+        const handleClickOutside = (event: MouseEvent) => {
+            if (layoutRef.current && !layoutRef.current.contains(event.target as Node)) {
+                setIsLayoutOpen(false);
+            }
+        };
+
         document.addEventListener("fullscreenchange", handleFullScreenChange);
-        return () => document.removeEventListener("fullscreenchange", handleFullScreenChange);
+        document.addEventListener("mousedown", handleClickOutside);
+        
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullScreenChange);
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     const toggleFullScreen = () => {
@@ -24,8 +46,23 @@ export const GraphControls = () => {
         }
     };
 
+    const handleLayout = (type: 'fa2' | 'circular' | 'random') => {
+        setIsLayoutOpen(false);
+        switch (type) {
+            case 'fa2':
+                assignFA2();
+                break;
+            case 'circular':
+                animateNodes(sigma.getGraph(), circularPositions(), { duration: 1000 });
+                break;
+            case 'random':
+                animateNodes(sigma.getGraph(), randomPositions(), { duration: 1000 });
+                break;
+        }
+    };
+
     return (
-        <div className="flex flex-col gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/20 transition-all hover:shadow-2xl">
+        <div className="flex flex-col gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/20 transition-all hover:shadow-2xl relative">
             <button
                 onClick={() => zoomIn()}
                 className="p-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -53,7 +90,50 @@ export const GraphControls = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
             </button>
+            
             <div className="h-px bg-gray-200 my-1"></div>
+
+            {/* Layout Dropdown */}
+            <div className="relative" ref={layoutRef}>
+                <button
+                    onClick={() => setIsLayoutOpen(!isLayoutOpen)}
+                    className={`p-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors ${isLayoutOpen ? 'bg-indigo-50 text-indigo-600' : ''}`}
+                    title="Layouts"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                </button>
+
+                {isLayoutOpen && (
+                    <div className="absolute right-full bottom-0 mr-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50 animate-fadeIn">
+                        <button
+                            onClick={() => handleLayout('fa2')}
+                            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
+                        >
+                            <div className="w-2 h-2 rounded-full bg-[#0d99ff]"></div>
+                            Force Atlas 2
+                        </button>
+                        <button
+                            onClick={() => handleLayout('circular')}
+                            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
+                        >
+                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            Circular
+                        </button>
+                        <button
+                            onClick={() => handleLayout('random')}
+                            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
+                        >
+                            <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                            Random
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            <div className="h-px bg-gray-200 my-1"></div>
+
             <button
                 onClick={toggleFullScreen}
                 className="p-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"

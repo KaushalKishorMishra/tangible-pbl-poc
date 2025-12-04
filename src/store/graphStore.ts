@@ -13,6 +13,7 @@ interface GraphState {
 
   // UI states
   isDrawerOpen: boolean;
+  isLeftDrawerOpen: boolean;
   arcMenuNode: { nodeId: string; position: { x: number; y: number } } | null;
   
   // Actions
@@ -20,6 +21,7 @@ interface GraphState {
   setHoveredNode: (nodeId: string | null) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
   setIsDrawerOpen: (isOpen: boolean) => void;
+  setIsLeftDrawerOpen: (isOpen: boolean) => void;
   setArcMenuNode: (node: { nodeId: string; position: { x: number; y: number } } | null) => void;
   toggleNodeSelection: (nodeId: string) => void;
   removeNodeSelection: (nodeId: string) => void;
@@ -50,6 +52,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     relationshipType: [],
   },
   isDrawerOpen: false,
+  isLeftDrawerOpen: true,
   arcMenuNode: null,
   
   // Basic setters
@@ -57,6 +60,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setHoveredNode: (nodeId) => set({ hoveredNode: nodeId }),
   setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }), // Keep for now if used elsewhere, but we should migrate
   setIsDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
+  setIsLeftDrawerOpen: (isOpen) => set({ isLeftDrawerOpen: isOpen }),
   setArcMenuNode: (node) => set({ arcMenuNode: node }),
   
   // New actions

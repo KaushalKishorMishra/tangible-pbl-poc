@@ -9,7 +9,6 @@ import { getUniqueColor } from "./utils/colors";
 import "@react-sigma/core/lib/style.css";
 
 import { LeftDrawer } from "./components/Graph/LeftDrawer";
-import { LayoutControls } from "./components/Graph/LayoutControls";
 import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
 import { GraphControls } from "./components/Graph/GraphControls";
 import { ArcMenu } from "./components/Graph/ArcMenu";
@@ -211,11 +210,6 @@ function App() {
 
         {/* Custom UI Overlay - Must be inside GraphContainer to access Sigma context */}
         <div className="absolute inset-0 pointer-events-none z-10">
-          {/* Bottom Left: Layouts */}
-          <ControlPosition position="bottom-left">
-            <LayoutControls />
-          </ControlPosition>
-
           {/* Bottom Right: Navigation */}
           <ControlPosition position="bottom-right">
             <GraphControls />
