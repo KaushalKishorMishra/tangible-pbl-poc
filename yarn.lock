@@ -371,6 +371,11 @@
   resolved "https://registry.npmjs.org/@sigma/edge-curve/-/edge-curve-3.1.0.tgz"
   integrity sha512-OFWkfAXEsm+X8l1K4K49cC0psB0gQ+gqxKA08HG5piNPdzrDZ5gG9Gza6htZ5AirOVwd/4/uq/gPpD5En+H+3Q==
 
+"@sigma/node-image@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/@sigma/node-image/-/node-image-3.0.0.tgz"
+  integrity sha512-i4WLNPugDY4jgQEZtNSiSVj4HHXOraciXLtlgdygeUxMVEhH8PJ/+Q1vQ9f/SlKFnZQ+7vH3HnsSDW6FD9aP+g==
+
 "@tailwindcss/node@4.1.17":
   version "4.1.17"
   resolved "https://registry.npmjs.org/@tailwindcss/node/-/node-4.1.17.tgz"

@@ -6,7 +6,6 @@ import { GraphContainer } from "./components/Graph/GraphContainer";
 import type { NodeAttributes, EdgeAttributes } from "./types/graph";
 import nodesData from "./data/nodes.json";
 import { getUniqueColor } from "./utils/colors";
-import { DEFAULT_EDGE_CURVATURE, indexParallelEdgesIndex } from "@sigma/edge-curve";
 import "@react-sigma/core/lib/style.css";
 
 import { SearchControl } from "./components/Graph/SearchControl";
@@ -20,51 +19,72 @@ const MyGraph = () => {
   const { assign } = useLayoutForceAtlas2({ iterations: 100, settings: { adjustSizes: true, slowDown: 10 } });
 
   useEffect(() => {
+    // Register custom node program
     const graph = new Graph<NodeAttributes, EdgeAttributes>({ multi: true, type: "directed", allowSelfLoops: true });
 
+    // 1. Add Nodes with Custom Renderer
+    const nodeDegrees = new Map<string, number>();
+
+    // Calculate degrees first to find central node
+    if (nodesData.relationships) {
+      nodesData.relationships.forEach(rel => {
+        nodeDegrees.set(rel.start, (nodeDegrees.get(rel.start) || 0) + 1);
+        nodeDegrees.set(rel.end, (nodeDegrees.get(rel.end) || 0) + 1);
+      });
+    }
+
+    // Find node with max degree
+    let maxDegree = 0;
+    let centralNodeId = "";
+    nodeDegrees.forEach((degree, id) => {
+      if (degree > maxDegree) {
+        maxDegree = degree;
+        centralNodeId = id;
+      }
+    });
+
     nodesData.nodes.forEach((node) => {
+      const isCentral = node.id === centralNodeId;
+      const color = getUniqueColor(node.id);
+
       graph.addNode(node.id, {
-        x: (Math.random() - 0.5) * 10,
-        y: (Math.random() - 0.5) * 10,
-        size: 10,
+        x: isCentral ? 0 : (Math.random() - 0.5) * 100,
+        y: isCentral ? 0 : (Math.random() - 0.5) * 100,
+        size: isCentral ? 20 : 10, // Standard sizes
         label: node.properties.name,
-        color: getUniqueColor(node.id),
+        color: color,
+        fixed: isCentral,
         ...node.properties
       });
     });
 
+    // 2. Merge Parallel Edges
+    const edgeGroups = new Map<string, typeof nodesData.relationships>();
 
-
-    // Create edges from relationships data
     if (nodesData.relationships) {
       nodesData.relationships.forEach((rel) => {
+        const key = `${rel.start}-${rel.end}`;
+        if (!edgeGroups.has(key)) {
+          edgeGroups.set(key, []);
+        }
+        edgeGroups.get(key)?.push(rel);
+      });
+
+      edgeGroups.forEach((rels) => {
+        const rel = rels[0]; // Use first relationship for basic data
+        const sourceColor = graph.getNodeAttribute(rel.start, "color");
+
+        // Combine labels if multiple
+        const combinedLabel = rels.map(r => r.type).join(", ");
+
         graph.addEdge(rel.start, rel.end, {
-          type: "arrow",
-          label: rel.type,
-          size: 2,
-          color: "#666"
+          type: "curved", // Use curved edges
+          label: combinedLabel,
+          size: 5, // Thicker edges
+          color: sourceColor // Match source node color
         });
       });
     }
-
-    // Index parallel edges to handle overlapping edges with curves
-    indexParallelEdgesIndex(graph, {
-      edgeIndexAttribute: "parallelIndex",
-      edgeMaxIndexAttribute: "parallelMaxIndex"
-    });
-
-    // Apply curvature to parallel edges for better visualization
-    graph.forEachEdge((edge, attributes) => {
-      const { parallelIndex, parallelMaxIndex } = attributes;
-      if (typeof parallelIndex === "number" && parallelMaxIndex) {
-        graph.mergeEdgeAttributes(edge, {
-          type: "curved",
-          curvature: DEFAULT_EDGE_CURVATURE + (3 * DEFAULT_EDGE_CURVATURE * parallelIndex) / parallelMaxIndex,
-        });
-      } else {
-        graph.setEdgeAttribute(edge, "type", "straight");
-      }
-    });
 
     loadGraph(graph);
     assign();

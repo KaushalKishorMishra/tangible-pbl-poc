@@ -19,7 +19,7 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children, style, graph
             curved: EdgeCurveProgram,
         },
         // Dark mode specific settings
-        labelColor: { color: "#e0e0e0" },
+        labelColor: { color: "#3c3c3c" },
         labelSize: 12,
         labelFont: "Inter, sans-serif",
         zIndex: true,

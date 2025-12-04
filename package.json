@@ -16,6 +16,7 @@
     "@react-sigma/layout-random": "^5.0.4",
     "@react-sigma/minimap": "^5.0.5",
     "@sigma/edge-curve": "^3.1.0",
+    "@sigma/node-image": "^3.0.0",
     "graphology": "^0.26.0",
     "graphology-layout": "^0.6.1",
     "graphology-layout-forceatlas2": "^0.10.1",
