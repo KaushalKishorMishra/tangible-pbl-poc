@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useSigma } from "@react-sigma/core";
 import { useCamera } from "@react-sigma/core";
 
+import { useGraphStore } from "../../store/graphStore";
+
 interface SearchControlProps {
     onNodeSelect?: (nodeId: string) => void;
 }
@@ -12,6 +14,8 @@ export const SearchControl = ({ onNodeSelect }: SearchControlProps) => {
     const [search, setSearch] = useState("");
     const [values, setValues] = useState<Array<{ id: string; label: string }>>([]);
     const [suggestions, setSuggestions] = useState<Array<{ id: string; label: string }>>([]);
+    
+    const { selectedNodeIds, removeNodeSelection } = useGraphStore();
 
     // Load all nodes on mount
     useEffect(() => {
@@ -48,44 +52,74 @@ export const SearchControl = ({ onNodeSelect }: SearchControlProps) => {
         }
     };
 
+    const getNodeLabel = (nodeId: string) => {
+        try {
+            return sigma.getGraph().getNodeAttribute(nodeId, "label");
+        } catch (e) {
+            return nodeId;
+        }
+    };
+
     return (
-        <div className="">
-            <div className="flex items-center bg-white rounded-full border border-gray-300 shadow-lg px-4 py-2 w-96 transition-all focus-within:border-[#0d99ff] focus-within:ring-1 focus-within:ring-[#0d99ff]/30">
-                <svg className="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                    type="text"
-                    placeholder="Search nodes..."
-                    className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-500 text-sm"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                {search && (
-                    <button
-                        className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
-                        onClick={() => setSearch("")}
+        <div className="flex items-center gap-4">
+            {/* Selected Node Pills */}
+            <div className="flex flex-wrap gap-2 max-w-md">
+                {selectedNodeIds.map((nodeId) => (
+                    <div 
+                        key={nodeId}
+                        className="flex items-center gap-1 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-[#0d99ff]/30 shadow-sm text-sm text-gray-700 animate-fadeIn"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                )}
+                        <span className="font-medium">{getNodeLabel(nodeId)}</span>
+                        <button
+                            onClick={() => removeNodeSelection(nodeId)}
+                            className="ml-1 p-0.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                ))}
             </div>
 
-            {suggestions.length > 0 && (
-                <ul className="absolute bottom-full left-0 w-full bg-white border border-gray-200 rounded-lg mb-2 max-h-60 overflow-y-auto shadow-xl">
-                    {suggestions.map((item) => (
-                        <li
-                            key={item.id}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm border-b border-gray-100 last:border-0 transition-colors"
-                            onClick={() => handleSelect(item.id)}
+            <div className="relative">
+                <div className="flex items-center bg-white rounded-full border border-gray-300 shadow-lg px-4 py-2 w-96 transition-all focus-within:border-[#0d99ff] focus-within:ring-1 focus-within:ring-[#0d99ff]/30">
+                    <svg className="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder="Search nodes..."
+                        className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-500 text-sm"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    {search && (
+                        <button
+                            className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+                            onClick={() => setSearch("")}
                         >
-                            {item.label}
-                        </li>
-                    ))}
-                </ul>
-            )}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    )}
+                </div>
+
+                {suggestions.length > 0 && (
+                    <ul className="absolute bottom-full left-0 w-full bg-white border border-gray-200 rounded-lg mt-2 max-h-60 overflow-y-auto shadow-xl z-50">
+                        {suggestions.map((item) => (
+                            <li
+                                key={item.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm border-b border-gray-100 last:border-0 transition-colors"
+                                onClick={() => handleSelect(item.id)}
+                            >
+                                {item.label}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 };

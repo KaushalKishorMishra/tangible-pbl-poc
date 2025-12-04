@@ -5,6 +5,7 @@ interface GraphState {
   focusedNode: string | null;
   hoveredNode: string | null;
   selectedNodeId: string | null;
+  selectedNodeIds: string[];
   
   // UI states
   isDrawerOpen: boolean;
@@ -16,6 +17,8 @@ interface GraphState {
   setSelectedNodeId: (nodeId: string | null) => void;
   setIsDrawerOpen: (isOpen: boolean) => void;
   setArcMenuNode: (node: { nodeId: string; position: { x: number; y: number } } | null) => void;
+  toggleNodeSelection: (nodeId: string) => void;
+  removeNodeSelection: (nodeId: string) => void;
   
   // Combined actions
   handleNodeClick: (nodeId: string, position: { x: number; y: number }) => void;
@@ -27,19 +30,38 @@ interface GraphState {
 
 export const useGraphStore = create<GraphState>((set, get) => ({
   // Initial state
-  focusedNode: null,
+  focusedNode: null, // Deprecated in favor of selectedNodeIds for highlighting, but kept for compatibility if needed or single focus
   hoveredNode: null,
-  selectedNodeId: null,
+  selectedNodeId: null, // Deprecated, use selectedNodeIds
+  selectedNodeIds: [],
   isDrawerOpen: false,
   arcMenuNode: null,
   
   // Basic setters
   setFocusedNode: (nodeId) => set({ focusedNode: nodeId }),
   setHoveredNode: (nodeId) => set({ hoveredNode: nodeId }),
-  setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }),
+  setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }), // Keep for now if used elsewhere, but we should migrate
   setIsDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
   setArcMenuNode: (node) => set({ arcMenuNode: node }),
   
+  // New actions
+  toggleNodeSelection: (nodeId) => {
+    const currentSelected = get().selectedNodeIds;
+    const isSelected = currentSelected.includes(nodeId);
+    set({
+      selectedNodeIds: isSelected 
+        ? currentSelected.filter(id => id !== nodeId)
+        : [...currentSelected, nodeId],
+      arcMenuNode: null, // Close menu on selection change
+    });
+  },
+
+  removeNodeSelection: (nodeId) => {
+     set(state => ({
+        selectedNodeIds: state.selectedNodeIds.filter(id => id !== nodeId)
+     }));
+  },
+
   // Combined actions
   handleNodeClick: (nodeId, position) => {
     set({ arcMenuNode: { nodeId, position } });
@@ -55,11 +77,8 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   },
   
   handleSelectNode: (nodeId) => {
-    const currentFocused = get().focusedNode;
-    set({
-      focusedNode: nodeId === currentFocused ? null : nodeId,
-      arcMenuNode: null,
-    });
+    // Toggle selection
+    get().toggleNodeSelection(nodeId);
   },
   
   handleCloseDrawer: () => {

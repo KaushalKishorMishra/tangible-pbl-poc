@@ -21,7 +21,7 @@ const MyGraph = () => {
   const sigma = useSigma();
   const loadGraph = useLoadGraph();
   const registerEvents = useRegisterEvents();
-  const { focusedNode, setHoveredNode, handleNodeClick } = useGraphStore();
+  const { selectedNodeIds, setHoveredNode, handleNodeClick } = useGraphStore();
   const { assign } = useLayoutForceAtlas2({ 
     iterations: 100, 
     settings: { 
@@ -36,7 +36,7 @@ const MyGraph = () => {
   useEffect(() => {
     const graph = sigma.getGraph();
     
-    if (!focusedNode) {
+    if (selectedNodeIds.length === 0) {
       // Reset all nodes and edges
       graph.forEachNode((node: string) => {
         graph.setNodeAttribute(node, "hidden", false);
@@ -48,9 +48,14 @@ const MyGraph = () => {
       return;
     }
 
-    const neighbors = graph.neighbors(focusedNode);
-    const relevantNodes = new Set(neighbors);
-    relevantNodes.add(focusedNode);
+    const relevantNodes = new Set<string>();
+    
+    selectedNodeIds.forEach(nodeId => {
+      if (graph.hasNode(nodeId)) {
+        relevantNodes.add(nodeId);
+        graph.neighbors(nodeId).forEach(neighbor => relevantNodes.add(neighbor));
+      }
+    });
 
     graph.forEachNode((node: string) => {
       if (relevantNodes.has(node)) {
@@ -70,7 +75,7 @@ const MyGraph = () => {
       }
     });
 
-  }, [focusedNode, sigma]);
+  }, [selectedNodeIds, sigma]);
 
   // Handle node interactions (click and hover)
   useEffect(() => {
@@ -170,7 +175,7 @@ const MyGraph = () => {
 
 function App() {
   const {
-    focusedNode,
+    selectedNodeIds,
     selectedNodeId,
     isDrawerOpen,
     arcMenuNode,
@@ -189,7 +194,7 @@ function App() {
         {arcMenuNode && (
           <ArcMenu
             position={arcMenuNode.position}
-            isSelected={focusedNode === arcMenuNode.nodeId}
+            isSelected={selectedNodeIds.includes(arcMenuNode.nodeId)}
             onView={() => handleViewDetails(arcMenuNode.nodeId)}
             onSelect={() => handleSelectNode(arcMenuNode.nodeId)}
             onClose={handleCloseArcMenu}
