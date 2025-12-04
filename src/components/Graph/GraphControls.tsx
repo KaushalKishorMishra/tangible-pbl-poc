@@ -62,7 +62,7 @@ export const GraphControls = () => {
     };
 
     return (
-        <div className="flex flex-col gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/20 transition-all hover:shadow-2xl relative">
+        <div className="flex flex-row gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/30 transition-all hover:shadow-2xl relative">
             <button
                 onClick={() => zoomIn()}
                 className="p-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -91,7 +91,7 @@ export const GraphControls = () => {
                 </svg>
             </button>
             
-            <div className="h-px bg-gray-200 my-1"></div>
+            <div className="h-full w-[1px] bg-gray-200 my-1"></div>
 
             {/* Layout Dropdown */}
             <div className="relative" ref={layoutRef}>
@@ -106,7 +106,7 @@ export const GraphControls = () => {
                 </button>
 
                 {isLayoutOpen && (
-                    <div className="absolute right-full bottom-0 mr-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50 animate-fadeIn">
+                    <div className="absolute bottom-full right-0 mr-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50 animate-fadeIn">
                         <button
                             onClick={() => handleLayout('fa2')}
                             className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
@@ -132,7 +132,6 @@ export const GraphControls = () => {
                 )}
             </div>
 
-            <div className="h-px bg-gray-200 my-1"></div>
 
             <button
                 onClick={toggleFullScreen}
