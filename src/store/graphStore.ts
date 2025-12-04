@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { FilterState } from '../types/filter';
 
 interface GraphState {
   // Node states
@@ -7,6 +8,9 @@ interface GraphState {
   selectedNodeId: string | null;
   selectedNodeIds: string[];
   
+  // Filter states
+  filters: FilterState;
+
   // UI states
   isDrawerOpen: boolean;
   arcMenuNode: { nodeId: string; position: { x: number; y: number } } | null;
@@ -20,6 +24,10 @@ interface GraphState {
   toggleNodeSelection: (nodeId: string) => void;
   removeNodeSelection: (nodeId: string) => void;
   
+  // Filter actions
+  setFilter: (category: string, value: string) => void;
+  resetFilters: () => void;
+
   // Combined actions
   handleNodeClick: (nodeId: string, position: { x: number; y: number }) => void;
   handleViewDetails: (nodeId: string) => void;
@@ -34,6 +42,13 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   hoveredNode: null,
   selectedNodeId: null, // Deprecated, use selectedNodeIds
   selectedNodeIds: [],
+  filters: {
+    level: [],
+    category: [],
+    source: [],
+    name: [],
+    relationshipType: [],
+  },
   isDrawerOpen: false,
   arcMenuNode: null,
   
@@ -60,6 +75,36 @@ export const useGraphStore = create<GraphState>((set, get) => ({
      set(state => ({
         selectedNodeIds: state.selectedNodeIds.filter(id => id !== nodeId)
      }));
+  },
+
+  // Filter actions
+  setFilter: (category, value) => {
+    set((state) => {
+      const currentValues = state.filters[category] || [];
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter((v) => v !== value)
+        : [...currentValues, value];
+      
+      return {
+        filters: {
+          ...state.filters,
+          [category]: newValues,
+        },
+      };
+    });
+  },
+
+  resetFilters: () => {
+    set({
+      filters: {
+        level: [],
+        category: [],
+        source: [],
+        name: [],
+        relationshipType: [],
+      },
+      selectedNodeIds: [],
+    });
   },
 
   // Combined actions

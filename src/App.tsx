@@ -8,9 +8,8 @@ import nodesData from "./data/nodes.json";
 import { getUniqueColor } from "./utils/colors";
 import "@react-sigma/core/lib/style.css";
 
-import { SearchControl } from "./components/Graph/SearchControl";
+import { LeftDrawer } from "./components/Graph/LeftDrawer";
 import { LayoutControls } from "./components/Graph/LayoutControls";
-import { FilterControl } from "./components/Graph/FilterControl";
 import { NodeInfoDock } from "./components/Graph/NodeInfoDock";
 import { GraphControls } from "./components/Graph/GraphControls";
 import { ArcMenu } from "./components/Graph/ArcMenu";
@@ -188,6 +187,9 @@ function App() {
   return (
     <div className="w-full h-screen relative bg-gray-50 overflow-hidden">
       <GraphContainer>
+        {/* Left Drawer - Now inside GraphContainer for context access */}
+        <LeftDrawer />
+
         <MyGraph />
         
         {/* Arc Menu */}
@@ -209,13 +211,6 @@ function App() {
 
         {/* Custom UI Overlay - Must be inside GraphContainer to access Sigma context */}
         <div className="absolute inset-0 pointer-events-none z-10">
-          {/* Top Left: Search & Filter */}
-          <ControlPosition position="top-left">
-            <FilterControl />
-          </ControlPosition>
-          <ControlPosition position="bottom-center">
-            <SearchControl onNodeSelect={handleSelectNode} />
-          </ControlPosition>
           {/* Bottom Left: Layouts */}
           <ControlPosition position="bottom-left">
             <LayoutControls />
