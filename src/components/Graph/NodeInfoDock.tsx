@@ -3,185 +3,283 @@ import { useSigma } from "@react-sigma/core";
 import type { EdgeInfo, SelectedNodeState } from "../../types/node";
 
 interface NodeInfoDockProps {
-    isOpen: boolean;
-    selectedNodeId: string | null;
-    onClose: () => void;
+	isOpen: boolean;
+	selectedNodeId: string | null;
+	onClose: () => void;
 }
 
-export const NodeInfoDock = ({ isOpen, selectedNodeId, onClose }: NodeInfoDockProps) => {
-    const sigma = useSigma();
-    const [selectedNode, setSelectedNode] = useState<SelectedNodeState | null>(null);
+export const NodeInfoDock = ({
+	isOpen,
+	selectedNodeId,
+	onClose,
+}: NodeInfoDockProps) => {
+	const sigma = useSigma();
+	const [selectedNode, setSelectedNode] = useState<SelectedNodeState | null>(
+		null,
+	);
 
-    useEffect(() => {
-        if (isOpen && selectedNodeId) {
-            const graph = sigma.getGraph();
-            if (!graph.hasNode(selectedNodeId)) return;
+	useEffect(() => {
+		if (isOpen && selectedNodeId) {
+			const graph = sigma.getGraph();
+			if (!graph.hasNode(selectedNodeId)) return;
 
-            const nodeAttributes = graph.getNodeAttributes(selectedNodeId);
-            const nodeLabel = graph.getNodeAttribute(selectedNodeId, "label");
+			const nodeAttributes = graph.getNodeAttributes(selectedNodeId);
+			const nodeLabel = graph.getNodeAttribute(selectedNodeId, "label");
 
-            const edges: EdgeInfo[] = [];
+			const edges: EdgeInfo[] = [];
 
-            // Outgoing edges
-            graph.forEachOutEdge(selectedNodeId, (edge, attributes, source, target) => {
-                edges.push({
-                    id: edge,
-                    source: source,
-                    target: target,
-                    label: attributes.label as string,
-                    properties: attributes,
-                    direction: "out",
-                });
-            });
+			// Outgoing edges
+			graph.forEachOutEdge(
+				selectedNodeId,
+				(edge, attributes, source, target) => {
+					edges.push({
+						id: edge,
+						source: source,
+						target: target,
+						label: attributes.label as string,
+						properties: attributes,
+						direction: "out",
+					});
+				},
+			);
 
-            // Incoming edges
-            graph.forEachInEdge(selectedNodeId, (edge, attributes, source, target) => {
-                edges.push({
-                    id: edge,
-                    source: source,
-                    target: target,
-                    label: attributes.label as string,
-                    properties: attributes,
-                    direction: "in",
-                });
-            });
+			// Incoming edges
+			graph.forEachInEdge(
+				selectedNodeId,
+				(edge, attributes, source, target) => {
+					edges.push({
+						id: edge,
+						source: source,
+						target: target,
+						label: attributes.label as string,
+						properties: attributes,
+						direction: "in",
+					});
+				},
+			);
 
-            setSelectedNode({
-                id: selectedNodeId,
-                label: nodeLabel as string,
-                edges: edges,
-                attributes: nodeAttributes,
-            });
-        } else if (!isOpen) {
-            // Clear selection after animation
-            // setTimeout(() => setSelectedNode(null), 300);
-        }
-    }, [isOpen, selectedNodeId, sigma]);
+			// Use setTimeout to avoid synchronous setState in effect
+			const timer = setTimeout(() => {
+				setSelectedNode({
+					id: selectedNodeId,
+					label: nodeLabel as string,
+					edges: edges,
+					attributes: nodeAttributes,
+				});
+			}, 0);
 
-    const handleClose = () => {
-        onClose();
-        setTimeout(() => setSelectedNode(null), 300); // Delay to allow animation
-    };
+			return () => clearTimeout(timer);
+		} else if (!isOpen) {
+			// Clear selection after animation
+			// setTimeout(() => setSelectedNode(null), 300);
+		}
+	}, [isOpen, selectedNodeId, sigma]);
 
-    return (
-        <>
-            {/* Right Dock Panel */}
-            <div
-                className={`fixed top-4 right-4 bottom-4 w-96 bg-white/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out rounded-2xl border border-gray-200 overflow-hidden ${isOpen ? "translate-x-0" : "translate-x-[120%]"
-                    }`}
-            >
-                {selectedNode && (
-                    <div className="h-full flex flex-col">
-                        {/* Header */}
-                        <div className="bg-gray-50 px-6 py-5 flex justify-between items-start border-b border-gray-200">
-                            <div className="flex-1 pr-4">
-                                <h2 className="text-xl font-bold text-gray-900 leading-tight">{selectedNode.label}</h2>
-                                <p className="text-gray-500 text-xs mt-1 font-mono">ID: {selectedNode.id}</p>
-                            </div>
-                            <button
-                                onClick={handleClose}
-                                className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg p-1.5 transition-colors"
-                                aria-label="Close"
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
+	const handleClose = () => {
+		onClose();
+		setTimeout(() => setSelectedNode(null), 300); // Delay to allow animation
+	};
 
-                        {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-                            {/* Node Properties */}
-                            <div>
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Properties</h3>
-                                <div className="grid gap-3">
-                                    {Object.entries(selectedNode.attributes)
-                                        .filter(([k]) => !["x", "y", "label", "color", "hidden"].includes(k))
-                                        .map(([key, value]) => (
-                                            <div key={key} className="flex flex-col bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                                <span className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">{key}</span>
-                                                <span className="text-sm text-gray-700 font-medium break-words">{String(value)}</span>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
+	return (
+		<>
+			{/* Right Dock Panel */}
+			<div
+				className={`fixed top-4 right-4 bottom-4 w-96 bg-white/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out rounded-2xl border border-gray-200 overflow-hidden ${
+					isOpen ? "translate-x-0" : "translate-x-[120%]"
+				}`}
+			>
+				{selectedNode && (
+					<div className="h-full flex flex-col">
+						{/* Header */}
+						<div className="bg-gray-50 px-6 py-5 flex justify-between items-start border-b border-gray-200">
+							<div className="flex-1 pr-4">
+								<h2 className="text-xl font-bold text-gray-900 leading-tight">
+									{selectedNode.label}
+								</h2>
+								<p className="text-gray-500 text-xs mt-1 font-mono">
+									ID: {selectedNode.id}
+								</p>
+							</div>
+							<button
+								onClick={handleClose}
+								className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg p-1.5 transition-colors"
+								aria-label="Close"
+							>
+								<svg
+									className="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M6 18L18 6M6 6l12 12"
+									/>
+								</svg>
+							</button>
+						</div>
 
-                            {/* Connections */}
-                            <div>
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
-                                    Connections ({selectedNode.edges.length})
-                                </h3>
+						{/* Content */}
+						<div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+							{/* Node Properties */}
+							<div>
+								<h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+									Properties
+								</h3>
+								<div className="grid gap-3">
+									{Object.entries(selectedNode.attributes)
+										.filter(
+											([k]) =>
+												!["x", "y", "label", "color", "hidden"].includes(k),
+										)
+										.map(([key, value]) => (
+											<div
+												key={key}
+												className="flex flex-col bg-gray-50 rounded-lg p-3 border border-gray-200"
+											>
+												<span className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
+													{key}
+												</span>
+												<span className="text-sm text-gray-700 font-medium wrap-break-word">
+													{String(value)}
+												</span>
+											</div>
+										))}
+								</div>
+							</div>
 
-                                {selectedNode.edges.length === 0 ? (
-                                    <div className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200 border-dashed">
-                                        <p className="text-gray-500 text-sm">No connections found</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        {/* Outgoing Edges */}
-                                        {selectedNode.edges.filter(e => e.direction === "out").length > 0 && (
-                                            <div>
-                                                <h4 className="text-xs font-bold text-[#0d99ff] uppercase mb-3 flex items-center gap-2">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-[#0d99ff]"></div>
-                                                    Outgoing ({selectedNode.edges.filter(e => e.direction === "out").length})
-                                                </h4>
-                                                <div className="space-y-2">
-                                                    {selectedNode.edges.filter(e => e.direction === "out").map(edge => (
-                                                        <div key={edge.id} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-[#0d99ff]/50 transition-colors group">
-                                                            <div className="flex items-start gap-3">
-                                                                <div className="mt-1 p-1 bg-[#0d99ff]/10 rounded text-[#0d99ff]">
-                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                                    </svg>
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <div className="font-medium text-gray-700 text-sm truncate">
-                                                                        {sigma.getGraph().getNodeAttribute(edge.target, "label")}
-                                                                    </div>
-                                                                    <div className="text-xs text-gray-500 mt-0.5">{edge.label}</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+							{/* Connections */}
+							<div>
+								<h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+									Connections ({selectedNode.edges.length})
+								</h3>
 
-                                        {/* Incoming Edges */}
-                                        {selectedNode.edges.filter(e => e.direction === "in").length > 0 && (
-                                            <div>
-                                                <h4 className="text-xs font-bold text-emerald-500 uppercase mb-3 flex items-center gap-2">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                                    Incoming ({selectedNode.edges.filter(e => e.direction === "in").length})
-                                                </h4>
-                                                <div className="space-y-2">
-                                                    {selectedNode.edges.filter(e => e.direction === "in").map(edge => (
-                                                        <div key={edge.id} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-emerald-500/50 transition-colors group">
-                                                            <div className="flex items-start gap-3">
-                                                                <div className="mt-1 p-1 bg-emerald-500/10 rounded text-emerald-500">
-                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                                                    </svg>
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <div className="font-medium text-gray-700 text-sm truncate">
-                                                                        {sigma.getGraph().getNodeAttribute(edge.source, "label")}
-                                                                    </div>
-                                                                    <div className="text-xs text-gray-500 mt-0.5">{edge.label}</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </>
-    );
+								{selectedNode.edges.length === 0 ? (
+									<div className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200 border-dashed">
+										<p className="text-gray-500 text-sm">
+											No connections found
+										</p>
+									</div>
+								) : (
+									<div className="space-y-6">
+										{/* Outgoing Edges */}
+										{selectedNode.edges.filter((e) => e.direction === "out")
+											.length > 0 && (
+											<div>
+												<h4 className="text-xs font-bold text-[#0d99ff] uppercase mb-3 flex items-center gap-2">
+													<div className="w-1.5 h-1.5 rounded-full bg-[#0d99ff]"></div>
+													Outgoing (
+													{
+														selectedNode.edges.filter(
+															(e) => e.direction === "out",
+														).length
+													}
+													)
+												</h4>
+												<div className="space-y-2">
+													{selectedNode.edges
+														.filter((e) => e.direction === "out")
+														.map((edge) => (
+															<div
+																key={edge.id}
+																className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-[#0d99ff]/50 transition-colors group"
+															>
+																<div className="flex items-start gap-3">
+																	<div className="mt-1 p-1 bg-[#0d99ff]/10 rounded text-[#0d99ff]">
+																		<svg
+																			className="w-3 h-3"
+																			fill="none"
+																			stroke="currentColor"
+																			viewBox="0 0 24 24"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				strokeWidth={2}
+																				d="M14 5l7 7m0 0l-7 7m7-7H3"
+																			/>
+																		</svg>
+																	</div>
+																	<div className="flex-1 min-w-0">
+																		<div className="font-medium text-gray-700 text-sm truncate">
+																			{sigma
+																				.getGraph()
+																				.getNodeAttribute(edge.target, "label")}
+																		</div>
+																		<div className="text-xs text-gray-500 mt-0.5">
+																			{edge.label}
+																		</div>
+																	</div>
+																</div>
+															</div>
+														))}
+												</div>
+											</div>
+										)}
+
+										{/* Incoming Edges */}
+										{selectedNode.edges.filter((e) => e.direction === "in")
+											.length > 0 && (
+											<div>
+												<h4 className="text-xs font-bold text-emerald-500 uppercase mb-3 flex items-center gap-2">
+													<div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+													Incoming (
+													{
+														selectedNode.edges.filter(
+															(e) => e.direction === "in",
+														).length
+													}
+													)
+												</h4>
+												<div className="space-y-2">
+													{selectedNode.edges
+														.filter((e) => e.direction === "in")
+														.map((edge) => (
+															<div
+																key={edge.id}
+																className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:border-emerald-500/50 transition-colors group"
+															>
+																<div className="flex items-start gap-3">
+																	<div className="mt-1 p-1 bg-emerald-500/10 rounded text-emerald-500">
+																		<svg
+																			className="w-3 h-3"
+																			fill="none"
+																			stroke="currentColor"
+																			viewBox="0 0 24 24"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				strokeWidth={2}
+																				d="M10 19l-7-7m0 0l7-7m-7 7h18"
+																			/>
+																		</svg>
+																	</div>
+																	<div className="flex-1 min-w-0">
+																		<div className="font-medium text-gray-700 text-sm truncate">
+																			{sigma
+																				.getGraph()
+																				.getNodeAttribute(edge.source, "label")}
+																		</div>
+																		<div className="text-xs text-gray-500 mt-0.5">
+																			{edge.label}
+																		</div>
+																	</div>
+																</div>
+															</div>
+														))}
+												</div>
+											</div>
+										)}
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+		</>
+	);
 };

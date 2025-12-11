@@ -22,20 +22,20 @@ export const ArcMenu = ({ position, isSelected, onSelect, onView, onClose }: Arc
     };
 
     return (
-        <div
-            className="fixed z-50 pointer-events-none"
-            style={{
-                left: position.x,
-                top: position.y,
-                transform: "translate(-50%, -50%)", // Center the container on the node
-            }}
-        >
+        <>
             {/* Click outside handler (overlay) */}
             <div 
-                className="fixed inset-0 pointer-events-auto" 
+                className="absolute inset-0 pointer-events-auto z-40" 
                 onClick={handleClose}
-                style={{ zIndex: -1 }} 
             />
+            <div
+                className="absolute z-50 pointer-events-none"
+                style={{
+                    left: position.x + "px",
+                    top: position.y + "px",
+                    transform: "translate(-50%, -50%)", // Center the container on the node
+                }}
+            >
 
             {/* Menu Items Container */}
             <div className={`relative transition-all duration-300 ease-out ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-50"}`}>
@@ -48,7 +48,9 @@ export const ArcMenu = ({ position, isSelected, onSelect, onView, onClose }: Arc
                     }}
                     className="absolute pointer-events-auto group flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg hover:bg-blue-50 hover:border-blue-200 hover:scale-110 transition-all"
                     style={{
-                        transform: "translate(20px, -20px)", // Top-Right
+                        left: "50px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
                     }}
                     title="View Details"
                 >
@@ -74,7 +76,9 @@ export const ArcMenu = ({ position, isSelected, onSelect, onView, onClose }: Arc
                             : "border-gray-200 hover:bg-green-50 hover:border-green-200"
                     }`}
                     style={{
-                        transform: "translate(-60px, -20px)", // Top-Left
+                        right: "50px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
                     }}
                     title={isSelected ? "Deselect Node" : "Select Node"}
                 >
@@ -101,5 +105,6 @@ export const ArcMenu = ({ position, isSelected, onSelect, onView, onClose }: Arc
                 </svg> */}
             </div>
         </div>
+        </>
     );
 };
