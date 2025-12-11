@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Sparkles, Loader2 } from "lucide-react";
 import { SkillMapGraph } from "./SkillMapGraph";
 import { AIGraphGenerator } from "../../services/aiGraphGenerator";
+import { useGraphStore } from "../../store/graphStore";
 
 interface NodeData {
 	id: string;
@@ -82,6 +83,7 @@ const questions = [
 ];
 
 export const AICourseCreation: React.FC = () => {
+	const { setAIGeneratedGraphData, setAvailableFilters } = useGraphStore();
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id: "1",
@@ -122,8 +124,12 @@ export const AICourseCreation: React.FC = () => {
 			const generator = new AIGraphGenerator(apiKey);
 			const { graphData, filterData } = await generator.generateGraphFromCourse(courseData as CourseData);
 			
-			// Store generated data
+			// Store generated data in local state
 			setGeneratedGraphData(graphData);
+			
+			// Store in Zustand global store
+			setAIGeneratedGraphData(graphData);
+			setAvailableFilters(filterData);
 			
 			// Extract categories for filtering
 			setSelectedCategories(filterData.category.slice(0, 5)); // Show first 5 categories by default
@@ -150,6 +156,7 @@ export const AICourseCreation: React.FC = () => {
 		} finally {
 			setIsGeneratingGraph(false);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [courseData]);
 
 	const handleCompletion = useCallback(async () => {

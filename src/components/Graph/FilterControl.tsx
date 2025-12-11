@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSigma } from "@react-sigma/core";
 import filtersData from "../../data/filters.json";
 import { useGraphStore } from "../../store/graphStore";
 
 export const FilterControl = () => {
     const sigma = useSigma();
-    const { filters, setFilter } = useGraphStore();
+    const { filters, setFilter, availableFilters } = useGraphStore();
     const [showAllNodes, setShowAllNodes] = useState(false);
+
+    // Use AI-generated filters if available, otherwise fall back to static filters
+    const activeFilters = useMemo(() => {
+        return availableFilters || filtersData;
+    }, [availableFilters]);
 
     // Apply filters whenever selection changes
     useEffect(() => {
@@ -86,7 +91,7 @@ export const FilterControl = () => {
             <div className="mb-5">
                 <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Level</h4>
                 <div className="flex flex-col gap-2">
-                    {filtersData.level.map((item) => (
+                    {activeFilters.level.map((item) => (
                         <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.level.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                 {filters.level.includes(item) && (
@@ -109,7 +114,7 @@ export const FilterControl = () => {
             <div className="mb-5">
                 <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Category</h4>
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                    {filtersData.category.map((item) => (
+                    {activeFilters.category.map((item) => (
                         <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.category.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                 {filters.category.includes(item) && (
@@ -132,7 +137,7 @@ export const FilterControl = () => {
             <div className="mb-5">
                 <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Source</h4>
                 <div className="flex flex-col gap-2">
-                    {filtersData.source.map((item) => (
+                    {activeFilters.source.map((item) => (
                         <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.source.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                 {filters.source.includes(item) && (
@@ -169,7 +174,7 @@ export const FilterControl = () => {
                     )}
                 </div>
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                    {filtersData.relationshipType.map((item) => (
+                    {activeFilters.relationshipType.map((item) => (
                         <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.relationshipType.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                 {filters.relationshipType.includes(item) && (
@@ -192,7 +197,7 @@ export const FilterControl = () => {
             <div className="mb-4">
                 <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">Name</h4>
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                    {filtersData.name.map((item) => (
+                    {activeFilters.name.map((item) => (
                         <label key={item} className="flex items-center gap-3 text-sm cursor-pointer text-gray-700 hover:text-gray-900 group">
                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.name.includes(item) ? "bg-[#0d99ff] border-[#0d99ff]" : "border-gray-300 group-hover:border-gray-400"}`}>
                                 {filters.name.includes(item) && (

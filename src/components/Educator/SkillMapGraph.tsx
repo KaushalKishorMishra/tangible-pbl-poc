@@ -135,12 +135,13 @@ const GraphLoader: React.FC<{ selectedCategories: string[]; graphData?: GraphDat
 	graphData,
 }) => {
 	const loadGraph = useLoadGraph();
+	const { aiGeneratedGraphData } = useGraphStore();
 
 	useEffect(() => {
 		const graph = new Graph();
 
-		// Use provided graphData or fallback to static nodes.json
-		const dataSource = graphData || nodesData;
+		// Priority: prop graphData > store aiGeneratedGraphData > static nodes.json
+		const dataSource = graphData || aiGeneratedGraphData || nodesData;
 		const allNodes = dataSource.nodes as NodeData[];
 
 		// Add nodes to graph
@@ -183,7 +184,7 @@ const GraphLoader: React.FC<{ selectedCategories: string[]; graphData?: GraphDat
 		});
 
 		loadGraph(graph);
-	}, [loadGraph, selectedCategories, graphData]);
+	}, [loadGraph, selectedCategories, graphData, aiGeneratedGraphData]);
 
 	return null;
 };

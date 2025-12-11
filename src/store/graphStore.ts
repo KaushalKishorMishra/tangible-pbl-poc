@@ -10,6 +10,40 @@ interface UserState {
   isOnboardingActive: boolean;
 }
 
+interface NodeData {
+  id: string;
+  labels: string[];
+  properties: {
+    level: string;
+    name: string;
+    source: string;
+    category: string;
+  };
+}
+
+interface RelationshipData {
+  id: string;
+  type: string;
+  start: string;
+  end: string;
+  properties: Record<string, unknown>;
+}
+
+export interface GraphData {
+  nodesCount: number;
+  relationshipsCount: number;
+  nodes: NodeData[];
+  relationships: RelationshipData[];
+}
+
+export interface FilterData {
+  level: string[];
+  source: string[];
+  category: string[];
+  relationshipType: string[];
+  name: string[];
+}
+
 interface GraphState {
   // Node states
   focusedNode: string | null;
@@ -19,6 +53,10 @@ interface GraphState {
 
   // Filter states
   filters: FilterState;
+  availableFilters: FilterData | null;
+
+  // AI-generated graph data
+  aiGeneratedGraphData: GraphData | null;
 
   // UI states
   isDrawerOpen: boolean;
@@ -46,6 +84,11 @@ interface GraphState {
   // Filter actions
   setFilter: (category: string, value: string) => void;
   resetFilters: () => void;
+  setAvailableFilters: (filters: FilterData) => void;
+
+  // AI graph data actions
+  setAIGeneratedGraphData: (data: GraphData) => void;
+  clearAIGeneratedGraphData: () => void;
 
   // User actions
   setUserRole: (role: UserRole) => void;
@@ -75,6 +118,8 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     name: [],
     relationshipType: [],
   },
+  availableFilters: null,
+  aiGeneratedGraphData: null,
   isDrawerOpen: false,
   isLeftDrawerOpen: true,
   arcMenuNode: null,
@@ -144,6 +189,18 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       },
       selectedNodeIds: [],
     });
+  },
+
+  setAvailableFilters: (filters) => {
+    set({ availableFilters: filters });
+  },
+
+  setAIGeneratedGraphData: (data) => {
+    set({ aiGeneratedGraphData: data });
+  },
+
+  clearAIGeneratedGraphData: () => {
+    set({ aiGeneratedGraphData: null, availableFilters: null });
   },
 
   // User actions
