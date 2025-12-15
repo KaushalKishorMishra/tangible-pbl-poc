@@ -16,7 +16,6 @@ export const SearchControl = ({ onNodeSelect }: SearchControlProps) => {
 	const { 
 		searchQuery, 
 		searchSuggestions,
-		searchItems,
 		filters,
 		availableFilters,
 		setSearchQuery,

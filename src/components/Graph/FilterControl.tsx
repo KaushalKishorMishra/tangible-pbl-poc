@@ -108,21 +108,22 @@ export const FilterControl = () => {
     }
   }, [filters, showAllNodes, sigma]);
 
-  const handleToggle = (category: string, value: string) => {
-    setFilter(category, value);
+  const handleToggle = (category: string | number, value: string | number) => {
+    setFilter(String(category), String(value));
   };
 
   const renderFilterSection = (
     title: string,
     category: keyof typeof filters,
-    options: string[]
+    options: (string | number)[]
   ) => (
     <div className="mb-5">
       <h4 className="font-medium text-xs uppercase tracking-wider mb-3 text-gray-500">{title}</h4>
 
       <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
         {options.map((item) => {
-          const isSelected = filters[category].includes(item);
+          const itemStr = String(item);
+          const isSelected = filters[category].includes(itemStr);
           return (
             <button
               key={item}
