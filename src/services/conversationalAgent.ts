@@ -23,6 +23,8 @@ export class ConversationalAgent {
 	private collectedData: Partial<CourseData> = {};
 	private currentQuestionIndex = 0;
 	private conversationHistory: Array<{ role: "user" | "model"; content: string }> = [];
+	private isInRefinementMode = false;
+	private generatedGraphContext: string | null = null;
 
 	constructor(apiKey: string, questions: Question[]) {
 		this.ai = new GoogleGenAI({ apiKey });
@@ -149,7 +151,106 @@ Provide a detailed summary (under 150 words) focusing on:
 Summary:`;
 
 		const response = await this.chat.sendMessage({ message: contextPrompt });
-		return response.text || "";
+		const contextStr = response.text || "";
+		this.generatedGraphContext = contextStr;
+		return contextStr;
+	}
+
+	/**
+	 * Enter refinement mode after graph generation
+	 */
+	async enterRefinementMode(graphData: { nodesCount: number; relationshipsCount: number }): Promise<string> {
+		this.isInRefinementMode = true;
+		const refinementPrompt = `Great! I've successfully generated a skill map for "${this.collectedData.title}" with ${graphData.nodesCount} skills and ${graphData.relationshipsCount} connections.
+
+Would you like to:
+- Refine or adjust any aspects of the skill map?
+- Add more skills or learning paths?
+- Modify the complexity or depth of certain topics?
+- Get explanations about specific skill connections?
+- Export or share the skill map?
+
+How would you like to proceed?`;
+
+		this.conversationHistory.push({ role: "model", content: refinementPrompt });
+		return refinementPrompt;
+	}
+
+	/**
+	 * Handle refinement conversation after graph generation
+	 */
+	async refineGraph(userRequest: string): Promise<{
+		aiResponse: string;
+		refinementAction?: "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "none";
+		refinementDetails?: string;
+	}> {
+		if (!this.chat) {
+			throw new Error("Chat session not initialized");
+		}
+
+		this.conversationHistory.push({ role: "user", content: userRequest });
+
+		const refinementPrompt = `User wants to refine their skill map. Course: "${this.collectedData.title}"
+
+Previous context:
+${this.generatedGraphContext || ""}
+
+User's refinement request: "${userRequest}"
+
+Analyze what the user wants to do and provide helpful guidance. If they want to:
+- Add skills: Ask what topics/skills to add
+- Modify depth: Ask which areas need more/less detail
+- Adjust connections: Ask what relationships to change
+- Explain: Provide clear explanations of skill connections
+- Export/share: Guide them through options
+
+Respond naturally and helpfully as a course design assistant.`;
+
+		const response = await this.chat.sendMessage({ message: refinementPrompt });
+		const aiResponse = response.text || "I'm here to help you refine your skill map. What would you like to change?";
+
+		this.conversationHistory.push({ role: "model", content: aiResponse });
+
+		// Detect refinement action type
+		const actionType = this.detectRefinementAction(userRequest, aiResponse);
+
+		return {
+			aiResponse,
+			refinementAction: actionType,
+			refinementDetails: userRequest,
+		};
+	}
+
+	/**
+	 * Detect what type of refinement the user wants
+	 */
+	private detectRefinementAction(userRequest: string, _aiResponse: string): "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "none" {
+		const lowerRequest = userRequest.toLowerCase();
+
+		if (lowerRequest.includes("add") || lowerRequest.includes("more skills") || lowerRequest.includes("include")) {
+			return "add_skills";
+		}
+		if (lowerRequest.includes("depth") || lowerRequest.includes("detail") || lowerRequest.includes("simplify") || lowerRequest.includes("complex")) {
+			return "modify_depth";
+		}
+		if (lowerRequest.includes("connection") || lowerRequest.includes("relationship") || lowerRequest.includes("link")) {
+			return "adjust_connections";
+		}
+		if (lowerRequest.includes("explain") || lowerRequest.includes("why") || lowerRequest.includes("how") || lowerRequest.includes("what")) {
+			return "explain";
+		}
+		if (lowerRequest.includes("export") || lowerRequest.includes("share") || lowerRequest.includes("download")) {
+			return "export";
+		}
+
+		return "none";
+	}
+
+	/**
+	 * Check if agent is in refinement mode
+	 */
+	getIsInRefinementMode(): boolean {
+		return this.isInRefinementMode;
 	}
 
 	/**
@@ -199,5 +300,8 @@ Summary:`;
 		this.chat = null;
 		this.collectedData = {};
 		this.currentQuestionIndex = 0;
+		this.conversationHistory = [];
+		this.isInRefinementMode = false;
+		this.generatedGraphContext = null;
 	}
 }

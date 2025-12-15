@@ -176,7 +176,7 @@ export const AICourseCreation: React.FC = () => {
 			// Extract categories for filtering
 			setSelectedCategories(filterData.category.slice(0, 5)); // Show first 5 categories by default
 			
-			// Add success message
+			// Add success message and enter refinement mode
 			const successMessage: Message = {
 				id: `success-${Date.now()}`,
 				content: `✨ Success! I've generated ${graphData.nodesCount} skills and ${graphData.relationshipsCount} relationships for your course. You can now explore the skill map on the right!`,
@@ -184,6 +184,24 @@ export const AICourseCreation: React.FC = () => {
 				timestamp: new Date(),
 			};
 			setMessages((prev) => [...prev, successMessage]);
+
+			// Enter refinement mode for post-generation conversation
+			if (conversationalAgent) {
+				setTimeout(async () => {
+					const refinementPrompt = await conversationalAgent.enterRefinementMode({
+						nodesCount: graphData.nodesCount,
+						relationshipsCount: graphData.relationshipsCount,
+					});
+
+					const refinementMessage: Message = {
+						id: `refinement-${Date.now()}`,
+						content: refinementPrompt,
+						sender: "ai",
+						timestamp: new Date(),
+					};
+					setMessages((prev) => [...prev, refinementMessage]);
+				}, 1500);
+			}
 		} catch (error) {
 			console.error("Error generating graph:", error);
 			
@@ -280,28 +298,52 @@ export const AICourseCreation: React.FC = () => {
 		if (conversationalAgent) {
 			setIsTyping(true);
 			try {
-				const response = await conversationalAgent.sendMessage(userInput);
-				
-				// Update course data
-				setCourseData(response.collectedData);
-				setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
+				// Check if in refinement mode (post-generation)
+				if (conversationalAgent.getIsInRefinementMode()) {
+					const refinementResponse = await conversationalAgent.refineGraph(userInput);
+					
+					setTimeout(() => {
+						const aiMessage: Message = {
+							id: `ai-${Date.now()}-${Math.random()}`,
+							content: refinementResponse.aiResponse,
+							sender:"ai",
+							timestamp: new Date(),
+						};
+						setMessages((prev) => [...prev, aiMessage]);
+						setIsTyping(false);
 
-				// Add AI response
-				setTimeout(() => {
-					const aiMessage: Message = {
-						id: `ai-${Date.now()}-${Math.random()}`,
-						content: response.aiResponse,
-						sender:"ai",
-						timestamp: new Date(),
-					};
-					setMessages((prev) => [...prev, aiMessage]);
-					setIsTyping(false);
+						// Handle specific refinement actions
+						if (refinementResponse.refinementAction === "add_skills") {
+							console.log("User wants to add skills:", refinementResponse.refinementDetails);
+						} else if (refinementResponse.refinementAction === "modify_depth") {
+							console.log("User wants to modify depth:", refinementResponse.refinementDetails);
+						}
+					}, 800);
+				} else {
+					// Normal data collection flow
+					const response = await conversationalAgent.sendMessage(userInput);
+					
+					// Update course data
+					setCourseData(response.collectedData);
+					setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
-					// Check if complete
-					if (response.isComplete) {
-						handleCompletion();
-					}
-				}, 800);
+					// Add AI response
+					setTimeout(() => {
+						const aiMessage: Message = {
+							id: `ai-${Date.now()}-${Math.random()}`,
+							content: response.aiResponse,
+							sender:"ai",
+							timestamp: new Date(),
+						};
+						setMessages((prev) => [...prev, aiMessage]);
+						setIsTyping(false);
+
+						// Check if complete
+						if (response.isComplete) {
+							handleCompletion();
+						}
+					}, 800);
+				}
 			} catch (error) {
 				console.error("Error in conversation:", error);
 				setIsTyping(false);
@@ -347,28 +389,52 @@ export const AICourseCreation: React.FC = () => {
 			if (conversationalAgent) {
 				setIsTyping(true);
 				try {
-					const response = await conversationalAgent.sendMessage(option);
-					
-					// Update course data
-					setCourseData(response.collectedData);
-					setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
+					// Check if in refinement mode (post-generation)
+					if (conversationalAgent.getIsInRefinementMode()) {
+						const refinementResponse = await conversationalAgent.refineGraph(option);
+						
+						setTimeout(() => {
+							const aiMessage: Message = {
+								id: `ai-${Date.now()}-${Math.random()}`,
+								content: refinementResponse.aiResponse,
+								sender:"ai",
+								timestamp: new Date(),
+							};
+							setMessages((prev) => [...prev, aiMessage]);
+							setIsTyping(false);
 
-					// Add AI response
-					setTimeout(() => {
-						const aiMessage: Message = {
-							id: `ai-${Date.now()}-${Math.random()}`,
-							content: response.aiResponse,
-							sender:"ai",
-							timestamp: new Date(),
-						};
-						setMessages((prev) => [...prev, aiMessage]);
-						setIsTyping(false);
+							// Handle specific refinement actions
+							if (refinementResponse.refinementAction === "add_skills") {
+								console.log("User wants to add skills:", refinementResponse.refinementDetails);
+							} else if (refinementResponse.refinementAction === "modify_depth") {
+								console.log("User wants to modify depth:", refinementResponse.refinementDetails);
+							}
+						}, 800);
+					} else {
+						// Normal data collection flow
+						const response = await conversationalAgent.sendMessage(option);
+						
+						// Update course data
+						setCourseData(response.collectedData);
+						setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
-						// Check if complete
-						if (response.isComplete) {
-							handleCompletion();
-						}
-					}, 800);
+						// Add AI response
+						setTimeout(() => {
+							const aiMessage: Message = {
+								id: `ai-${Date.now()}-${Math.random()}`,
+								content: response.aiResponse,
+								sender:"ai",
+								timestamp: new Date(),
+							};
+							setMessages((prev) => [...prev, aiMessage]);
+							setIsTyping(false);
+
+							// Check if complete
+							if (response.isComplete) {
+								handleCompletion();
+							}
+						}, 800);
+					}
 				} catch (error) {
 					console.error("Error in conversation:", error);
 					setIsTyping(false);
@@ -434,20 +500,26 @@ export const AICourseCreation: React.FC = () => {
 					<div ref={messagesEndRef} />
 				</div>
 
-				{/* Input Area */}
-				{!isComplete && !currentQuestion?.options && (
+				{/* Input Area - Show for initial questions OR refinement mode */}
+				{(!isComplete && !currentQuestion?.options) || (conversationalAgent?.getIsInRefinementMode()) ? (
 					<ChatInput
 						value={inputValue}
 						onChange={setInputValue}
 						onSend={handleSendMessage}
 						onKeyPress={handleKeyPress}
-						placeholder={currentQuestion?.placeholder ||"Type your answer..."}
+						placeholder={
+							conversationalAgent?.getIsInRefinementMode() 
+								? "Ask me anything about your skill map..." 
+								: currentQuestion?.placeholder || "Type your answer..."
+						}
 						inputRef={inputRef}
 					/>
-				)}
+				) : null}
 
-				{/* Completion State */}
-				{isComplete && <CompletionState selectedCategories={selectedCategories} />}
+				{/* Completion State - Only show while generating, hide when in refinement mode */}
+				{isComplete && !conversationalAgent?.getIsInRefinementMode() && (
+					<CompletionState selectedCategories={selectedCategories} />
+				)}
 			</div>
 
 			{/* Skill Map - Always 80% width */}
