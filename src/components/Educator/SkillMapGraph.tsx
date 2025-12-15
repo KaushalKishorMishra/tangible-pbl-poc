@@ -42,6 +42,39 @@ interface SkillMapGraphProps {
 	graphData?: GraphData | null;
 }
 
+const GraphThemeUpdater: React.FC = () => {
+	const sigma = useSigma();
+
+	useEffect(() => {
+		sigma.setSetting("defaultNodeColor", "#6b7280");
+		sigma.setSetting("defaultEdgeColor", "#cbd5e1");
+		sigma.setSetting("labelColor", { color: "#1f2937" });
+		sigma.setSetting("edgeLabelColor", { color: "#64748b" });
+
+		// Update existing node colors based on theme
+		const graph = sigma.getGraph();
+		graph.forEachNode((node, attributes) => {
+			const level = attributes.level as string;
+			const colorMap: Record<string, string> = {
+				Awareness: "#10b981", // emerald-500
+				Application: "#3b82f6", // blue-500
+				Mastery: "#8b5cf6", // violet-500
+				Influence: "#f59e0b", // amber-500
+			};
+
+			// Only update if not highlighted (highlighted nodes are handled by GraphEventsHandler)
+			if (!attributes.highlighted) {
+				graph.setNodeAttribute(node, "color", colorMap[level] || "#6b7280");
+			}
+		});
+
+		// Force refresh
+		sigma.refresh();
+	}, [sigma]);
+
+	return null;
+};
+
 const GraphEventsHandler: React.FC = () => {
 	const sigma = useSigma();
 	const registerEvents = useRegisterEvents();
@@ -113,6 +146,7 @@ const GraphEventsHandler: React.FC = () => {
 					Awareness: "#10b981",
 					Application: "#3b82f6",
 					Mastery: "#8b5cf6",
+					Influence: "#f59e0b",
 				};
 				graph.setNodeAttribute(node, "color", colorMap[level as string] || "#6b7280");
 			}
@@ -150,6 +184,7 @@ const GraphLoader: React.FC<{ selectedCategories: string[]; graphData?: GraphDat
 				Awareness: "#10b981",
 				Application: "#3b82f6",
 				Mastery: "#8b5cf6",
+				Influence: "#f59e0b",
 			};
 
 			graph.addNode(node.id, {
@@ -259,7 +294,7 @@ const NodeInfoDockWrapper: React.FC = () => {
 
 export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData }) => {
 	return (
-		<div className="w-full h-full relative">
+		<div className="w-full h-full relative bg-gray-50">
 			<SigmaContainer
 				style={{ height: "100%", width: "100%" }}
 				settings={{
@@ -270,6 +305,7 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 					labelFont: "Inter, sans-serif",
 					labelSize: 12,
 					labelWeight: "500",
+					labelColor: { color: "#1f2937" },
 					edgeLabelSize: 10,
 					edgeLabelColor: { color: "#64748b" },
 					edgeProgramClasses: {
@@ -279,6 +315,7 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 					},
 				}}
 			>
+				<GraphThemeUpdater />
 				<GraphLoader selectedCategories={selectedCategories} graphData={graphData} />
 				<GraphEventsHandler />
 				<LeftDrawer />
