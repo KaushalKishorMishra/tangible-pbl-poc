@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useSigma } from "@react-sigma/core";
-import type { EdgeInfo, SelectedNodeState } from "../../types/node";
+import { useState, useEffect } from"react";
+import { useSigma } from"@react-sigma/core";
+import type { EdgeInfo, SelectedNodeState } from"../../types/node";
 
 interface NodeInfoDockProps {
 	isOpen: boolean;
@@ -24,7 +24,7 @@ export const NodeInfoDock = ({
 			if (!graph.hasNode(selectedNodeId)) return;
 
 			const nodeAttributes = graph.getNodeAttributes(selectedNodeId);
-			const nodeLabel = graph.getNodeAttribute(selectedNodeId, "label");
+			const nodeLabel = graph.getNodeAttribute(selectedNodeId,"label");
 
 			const edges: EdgeInfo[] = [];
 
@@ -38,7 +38,7 @@ export const NodeInfoDock = ({
 						target: target,
 						label: attributes.label as string,
 						properties: attributes,
-						direction: "out",
+						direction:"out",
 					});
 				},
 			);
@@ -53,7 +53,7 @@ export const NodeInfoDock = ({
 						target: target,
 						label: attributes.label as string,
 						properties: attributes,
-						direction: "in",
+						direction:"in",
 					});
 				},
 			);
@@ -85,7 +85,7 @@ export const NodeInfoDock = ({
 			{/* Right Dock Panel */}
 			<div
 				className={`fixed top-4 right-4 bottom-4 w-96 bg-white/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out rounded-2xl border border-gray-200 overflow-hidden ${
-					isOpen ? "translate-x-0" : "translate-x-[120%]"
+					isOpen ?"translate-x-0" :"translate-x-[120%]"
 				}`}
 			>
 				{selectedNode && (
@@ -132,7 +132,7 @@ export const NodeInfoDock = ({
 									{Object.entries(selectedNode.attributes)
 										.filter(
 											([k]) =>
-												!["x", "y", "label", "color", "hidden"].includes(k),
+												!["x","y","label","color","hidden"].includes(k),
 										)
 										.map(([key, value]) => (
 											<div
@@ -165,7 +165,7 @@ export const NodeInfoDock = ({
 								) : (
 									<div className="space-y-6">
 										{/* Outgoing Edges */}
-										{selectedNode.edges.filter((e) => e.direction === "out")
+										{selectedNode.edges.filter((e) => e.direction ==="out")
 											.length > 0 && (
 											<div>
 												<h4 className="text-xs font-bold text-[#0d99ff] uppercase mb-3 flex items-center gap-2">
@@ -173,14 +173,14 @@ export const NodeInfoDock = ({
 													Outgoing (
 													{
 														selectedNode.edges.filter(
-															(e) => e.direction === "out",
+															(e) => e.direction ==="out",
 														).length
 													}
 													)
 												</h4>
 												<div className="space-y-2">
 													{selectedNode.edges
-														.filter((e) => e.direction === "out")
+														.filter((e) => e.direction ==="out")
 														.map((edge) => (
 															<div
 																key={edge.id}
@@ -206,7 +206,7 @@ export const NodeInfoDock = ({
 																		<div className="font-medium text-gray-700 text-sm truncate">
 																			{sigma
 																				.getGraph()
-																				.getNodeAttribute(edge.target, "label")}
+																				.getNodeAttribute(edge.target,"label")}
 																		</div>
 																		<div className="text-xs text-gray-500 mt-0.5">
 																			{edge.label}
@@ -220,7 +220,7 @@ export const NodeInfoDock = ({
 										)}
 
 										{/* Incoming Edges */}
-										{selectedNode.edges.filter((e) => e.direction === "in")
+										{selectedNode.edges.filter((e) => e.direction ==="in")
 											.length > 0 && (
 											<div>
 												<h4 className="text-xs font-bold text-emerald-500 uppercase mb-3 flex items-center gap-2">
@@ -228,14 +228,14 @@ export const NodeInfoDock = ({
 													Incoming (
 													{
 														selectedNode.edges.filter(
-															(e) => e.direction === "in",
+															(e) => e.direction ==="in",
 														).length
 													}
 													)
 												</h4>
 												<div className="space-y-2">
 													{selectedNode.edges
-														.filter((e) => e.direction === "in")
+														.filter((e) => e.direction ==="in")
 														.map((edge) => (
 															<div
 																key={edge.id}
@@ -261,7 +261,7 @@ export const NodeInfoDock = ({
 																		<div className="font-medium text-gray-700 text-sm truncate">
 																			{sigma
 																				.getGraph()
-																				.getNodeAttribute(edge.source, "label")}
+																				.getNodeAttribute(edge.source,"label")}
 																		</div>
 																		<div className="text-xs text-gray-500 mt-0.5">
 																			{edge.label}
