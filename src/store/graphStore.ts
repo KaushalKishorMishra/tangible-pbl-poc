@@ -44,6 +44,15 @@ export interface FilterData {
   name: string[];
 }
 
+export type FilterCategory = "level" | "category" | "source" | "relationshipType" | "name";
+
+export interface SearchItem {
+  id: string;
+  label: string;
+  type: FilterCategory;
+  category: string;
+}
+
 interface GraphState {
   // Node states
   focusedNode: string | null;
@@ -54,6 +63,11 @@ interface GraphState {
   // Filter states
   filters: FilterState;
   availableFilters: FilterData | null;
+
+  // Search states
+  searchQuery: string;
+  searchItems: SearchItem[];
+  searchSuggestions: SearchItem[];
 
   // AI-generated graph data
   aiGeneratedGraphData: GraphData | null;
@@ -85,6 +99,13 @@ interface GraphState {
   setFilter: (category: string, value: string) => void;
   resetFilters: () => void;
   setAvailableFilters: (filters: FilterData) => void;
+
+  // Search actions
+  setSearchQuery: (query: string) => void;
+  setSearchItems: (items: SearchItem[]) => void;
+  updateSearchSuggestions: () => void;
+  clearSearch: () => void;
+  selectSearchItem: (item: SearchItem) => void;
 
   // AI graph data actions
   setAIGeneratedGraphData: (data: GraphData) => void;
@@ -119,6 +140,9 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     relationshipType: [],
   },
   availableFilters: null,
+  searchQuery: '',
+  searchItems: [],
+  searchSuggestions: [],
   aiGeneratedGraphData: null,
   isDrawerOpen: false,
   isLeftDrawerOpen: true,
@@ -193,6 +217,47 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
   setAvailableFilters: (filters) => {
     set({ availableFilters: filters });
+  },
+
+  // Search actions
+  setSearchQuery: (query) => {
+    set({ searchQuery: query });
+    get().updateSearchSuggestions();
+  },
+
+  setSearchItems: (items) => {
+    set({ searchItems: items });
+  },
+
+  updateSearchSuggestions: () => {
+    const { searchQuery, searchItems } = get();
+    
+    if (!searchQuery) {
+      set({ searchSuggestions: [] });
+      return;
+    }
+
+    const searchLower = searchQuery.toLowerCase();
+    const filtered = searchItems
+      .filter((item) => item.label.toLowerCase().includes(searchLower))
+      .slice(0, 20);
+
+    set({ searchSuggestions: filtered });
+  },
+
+  clearSearch: () => {
+    set({ searchQuery: '', searchSuggestions: [] });
+  },
+
+  selectSearchItem: (item) => {
+    if (item.type === 'name') {
+      // For nodes, add to name filter
+      get().setFilter('name', item.label);
+    } else {
+      // For other filter types, toggle the filter
+      get().setFilter(item.type, item.label);
+    }
+    get().clearSearch();
   },
 
   setAIGeneratedGraphData: (data) => {
