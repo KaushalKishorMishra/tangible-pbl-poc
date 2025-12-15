@@ -1,4 +1,4 @@
-import React from "react";
+import React from"react";
 import {
 	BookOpen,
 	Users,
@@ -6,9 +6,9 @@ import {
 	Plus,
 	Target,
 	TrendingUp,
-} from "lucide-react";
-import { useGraphStore } from "../../store/graphStore";
-import { useNavigate } from "react-router-dom";
+} from"lucide-react";
+import { useGraphStore } from"../../store/graphStore";
+import { useNavigate } from"react-router-dom";
 
 interface DashboardCardProps {
 	title: string;
@@ -27,9 +27,9 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 	onClick,
 	stats,
 }) => (
-	<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+	<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
 		<div className="flex items-start justify-between mb-4">
-			<div className="p-2 bg-blue-50 rounded-lg">{icon}</div>
+			<div className="p-2 bg-blue-50 rounded-lg text-blue-600">{icon}</div>
 			{stats && (
 				<span className="text-sm font-medium text-gray-500">{stats}</span>
 			)}
@@ -58,7 +58,7 @@ const QuickStat: React.FC<QuickStatProps> = ({
 	change,
 	icon,
 }) => (
-	<div className="bg-white rounded-lg p-4 border border-gray-200">
+	<div className="bg-white rounded-lg p-4 border border-gray-200 transition-colors duration-300">
 		<div className="flex items-center justify-between">
 			<div>
 				<p className="text-sm font-medium text-gray-600">{label}</p>
@@ -114,14 +114,14 @@ export const EducatorDashboard: React.FC = () => {
 		navigate("/educator/cohorts");
 	};
 
-	if (user.role !== "educator") {
+	if (user.role !=="educator") {
 		return null;
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-gray-50 transition-colors duration-300">
 			{/* Header */}
-			<div className="bg-white shadow-sm border-b border-gray-200">
+			<div className="bg-white shadow-sm border-b border-gray-200 transition-colors duration-300">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="py-6">
 						<div className="flex items-center justify-between">
@@ -210,14 +210,14 @@ export const EducatorDashboard: React.FC = () => {
 					<h2 className="text-xl font-semibold text-gray-900 mb-4">
 						Recent Activity
 					</h2>
-					<div className="bg-white rounded-lg shadow-sm border border-gray-200">
+					<div className="bg-white rounded-lg shadow-sm border border-gray-200 transition-colors duration-300">
 						<div className="p-6">
 							<div className="space-y-4">
 								<div className="flex items-center space-x-4">
 									<div className="w-2 h-2 bg-green-500 rounded-full"></div>
 									<div className="flex-1">
 										<p className="text-sm text-gray-900">
-											<span className="font-medium">Sarah Johnson</span>{" "}
+											<span className="font-medium">Sarah Johnson</span>{""}
 											completed the JavaScript Fundamentals module
 										</p>
 										<p className="text-xs text-gray-500">2 hours ago</p>
@@ -227,7 +227,7 @@ export const EducatorDashboard: React.FC = () => {
 									<div className="w-2 h-2 bg-blue-500 rounded-full"></div>
 									<div className="flex-1">
 										<p className="text-sm text-gray-900">
-											New enrollment in{" "}
+											New enrollment in{""}
 											<span className="font-medium">
 												Full-Stack Development Course
 											</span>
