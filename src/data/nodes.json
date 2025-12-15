@@ -1,6 +1,6 @@
 {
-  "nodesCount": 68,
-  "relationshipsCount": 87,
+  "nodesCount": 76,
+  "relationshipsCount": 103,
   "nodes": [
     {
       "id": "0",
@@ -817,6 +817,102 @@
         "source": "nodejs-roadmap.pdf",
         "category": "Policy"
       }
+    },
+    {
+      "id": "68",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Node.js Architecture Design",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Performance"
+      }
+    },
+    {
+      "id": "69",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Open Source Contribution",
+        "source": "nodejs-roadmap.pdf",
+        "category": "DevOps"
+      }
+    },
+    {
+      "id": "70",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Microservices Architecture",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "71",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Performance Optimization",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Performance"
+      }
+    },
+    {
+      "id": "72",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "API Design Patterns",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Backend"
+      }
+    },
+    {
+      "id": "73",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Security Best Practices",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Security"
+      }
+    },
+    {
+      "id": "74",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Scalability Patterns",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Performance"
+      }
+    },
+    {
+      "id": "75",
+      "labels": [
+        "Skill"
+      ],
+      "properties": {
+        "level": "Influence",
+        "name": "Testing Strategy",
+        "source": "nodejs-roadmap.pdf",
+        "category": "Testing"
+      }
     }
   ],
   "relationships": [
@@ -1566,6 +1662,161 @@
       "start": "62",
       "end": "59",
       "properties": {}
+    },
+    {
+      "id": "87",
+      "type": "PREREQUISITE",
+      "start": "55",
+      "end": "68",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Worker Threads knowledge required for architecture design"
+      }
+    },
+    {
+      "id": "88",
+      "type": "PREREQUISITE",
+      "start": "56",
+      "end": "68",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Cluster understanding needed for architecture"
+      }
+    },
+    {
+      "id": "89",
+      "type": "BROADENS",
+      "start": "68",
+      "end": "74",
+      "properties": {
+        "dimension": "scalability"
+      }
+    },
+    {
+      "id": "90",
+      "type": "PREREQUISITE",
+      "start": "8",
+      "end": "69",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Node.js expertise required for OSS contribution"
+      }
+    },
+    {
+      "id": "91",
+      "type": "PREREQUISITE",
+      "start": "59",
+      "end": "70",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Backend development foundation needed"
+      }
+    },
+    {
+      "id": "92",
+      "type": "BROADENS",
+      "start": "70",
+      "end": "72",
+      "properties": {
+        "dimension": "api-architecture"
+      }
+    },
+    {
+      "id": "93",
+      "type": "PREREQUISITE",
+      "start": "57",
+      "end": "71",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Streams mastery needed for performance optimization"
+      }
+    },
+    {
+      "id": "94",
+      "type": "PREREQUISITE",
+      "start": "55",
+      "end": "71",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Worker Threads needed for performance"
+      }
+    },
+    {
+      "id": "95",
+      "type": "BROADENS",
+      "start": "71",
+      "end": "74",
+      "properties": {
+        "dimension": "performance"
+      }
+    },
+    {
+      "id": "96",
+      "type": "PREREQUISITE",
+      "start": "62",
+      "end": "72",
+      "properties": {
+        "mandatory": true,
+        "rationale": "API development experience required"
+      }
+    },
+    {
+      "id": "97",
+      "type": "PREREQUISITE",
+      "start": "25",
+      "end": "72",
+      "properties": {
+        "rationale": "Framework experience needed for design patterns"
+      }
+    },
+    {
+      "id": "98",
+      "type": "PREREQUISITE",
+      "start": "35",
+      "end": "73",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Authentication knowledge needed for security"
+      }
+    },
+    {
+      "id": "99",
+      "type": "BROADENS",
+      "start": "73",
+      "end": "67",
+      "properties": {
+        "dimension": "security-governance"
+      }
+    },
+    {
+      "id": "100",
+      "type": "PREREQUISITE",
+      "start": "53",
+      "end": "74",
+      "properties": {
+        "mandatory": true,
+        "rationale": "PM2 mastery needed for scaling"
+      }
+    },
+    {
+      "id": "101",
+      "type": "PREREQUISITE",
+      "start": "56",
+      "end": "74",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Cluster understanding needed for scalability"
+      }
+    },
+    {
+      "id": "102",
+      "type": "PREREQUISITE",
+      "start": "49",
+      "end": "75",
+      "properties": {
+        "mandatory": true,
+        "rationale": "Testing framework expertise required"
+      }
     }
   ]
 }

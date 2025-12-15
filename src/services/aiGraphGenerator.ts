@@ -61,7 +61,7 @@ const RELATIONSHIP_TYPES = [
 	"ANTIPATTERN_OF",
 ];
 
-const SKILL_LEVELS = ["Awareness", "Application", "Mastery"];
+const SKILL_LEVELS = ["Awareness", "Application", "Mastery", "Influence"];
 
 export class AIGraphGenerator {
 	private ai: GoogleGenAI;
@@ -143,7 +143,7 @@ IMPORTANT RULES:
 5. Create 30-60 nodes representing skills, concepts, tools, and technologies
 6. Create meaningful relationships between nodes (PREREQUISITE for dependencies, PART_OF for hierarchies, etc.)
 7. Categories should be logical groupings (e.g., "Core Concepts", "Tools", "Frameworks", "Advanced Topics")
-8. Distribute skills across levels: Awareness (40%), Application (40%), Mastery (20%)
+8. Distribute skills across levels: Awareness (30%), Application (35%), Mastery (25%), Influence (10%)
 9. Node IDs should be sequential numbers starting from "0"
 10. Relationship IDs should be sequential numbers
 
