@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from"react";
 import {
 	Globe,
 	Lock,
@@ -6,7 +6,7 @@ import {
 	CheckCircle,
 	AlertTriangle,
 	Eye,
-} from "lucide-react";
+} from"lucide-react";
 
 interface CourseData {
 	title: string;
@@ -36,7 +36,7 @@ interface PublishingWorkflowProps {
 }
 
 interface PublishingSettings {
-	visibility: "public" | "private" | "cohort";
+	visibility:"public" |"private" |"cohort";
 	allowEnrollments: boolean;
 	requireApproval: boolean;
 	tags: string[];
@@ -49,7 +49,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 	onCancel,
 }) => {
 	const [settings, setSettings] = useState<PublishingSettings>({
-		visibility: "private",
+		visibility:"private",
 		allowEnrollments: false,
 		requireApproval: false,
 		tags: [],
@@ -63,23 +63,23 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 	// Validation checks
 	const validationChecks = [
 		{
-			label: "Course title provided",
+			label:"Course title provided",
 			status: courseData.title.trim().length > 0,
 		},
 		{
-			label: "Course description provided",
+			label:"Course description provided",
 			status: courseData.description.trim().length > 0,
 		},
 		{
-			label: "Learning outcomes defined",
+			label:"Learning outcomes defined",
 			status: courseData.learningOutcomes.length > 0,
 		},
 		{
-			label: "Modules created",
+			label:"Modules created",
 			status: courseData.modules.length > 0,
 		},
 		{
-			label: "All modules have skills tagged",
+			label:"All modules have skills tagged",
 			status: courseData.modules.every((module) => module.skills.length > 0),
 		},
 	];
@@ -138,7 +138,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 
 	if (showPreview) {
 		return (
-			<div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full">
+			<div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full transition-colors duration-300">
 				<div className="p-6 border-b border-gray-200 flex items-center justify-between">
 					<h2 className="text-xl font-semibold text-gray-900">
 						Course Preview
@@ -166,10 +166,10 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 								<span className="flex items-center">
 									<Users size={16} className="mr-1" />
 									{courseData.level.charAt(0).toUpperCase() +
-										courseData.level.slice(1)}{" "}
+										courseData.level.slice(1)}{""}
 									Level
 								</span>
-								<span>{courseData.duration || "Duration not specified"}</span>
+								<span>{courseData.duration ||"Duration not specified"}</span>
 								<span>{courseData.modules.length} modules</span>
 								<span>
 									{courseData.learningOutcomes.length} learning outcomes
@@ -272,7 +272,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 										Enrollments:
 									</span>
 									<span className="text-blue-800 ml-2">
-										{settings.allowEnrollments ? "Open" : "Closed"}
+										{settings.allowEnrollments ?"Open" :"Closed"}
 									</span>
 								</div>
 								<div>
@@ -280,13 +280,13 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 										Approval Required:
 									</span>
 									<span className="text-blue-800 ml-2">
-										{settings.requireApproval ? "Yes" : "No"}
+										{settings.requireApproval ?"Yes" :"No"}
 									</span>
 								</div>
 								<div>
 									<span className="font-medium text-blue-900">Tags:</span>
 									<span className="text-blue-800 ml-2">
-										{settings.tags.join(", ") || "None"}
+										{settings.tags.join(",") ||"None"}
 									</span>
 								</div>
 							</div>
@@ -298,7 +298,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 	}
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full overflow-y-auto">
+		<div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full overflow-y-auto transition-colors duration-300">
 			<div className="p-6 border-b border-gray-200">
 				<h2 className="text-xl font-semibold text-gray-900">Publish Course</h2>
 				<p className="text-gray-600 mt-1">
@@ -334,7 +334,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 									<AlertTriangle className="w-5 h-5 text-orange-500" />
 								)}
 								<span
-									className={`text-sm ${check.status ? "text-green-700" : "text-orange-700"}`}
+									className={`text-sm ${check.status ?"text-green-700" :"text-orange-700"}`}
 								>
 									{check.label}
 								</span>
@@ -355,21 +355,21 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 							Course Visibility
 						</label>
 						<div className="space-y-2">
-							<label className="flex items-center">
+							<label className="flex items-center cursor-pointer">
 								<input
 									type="radio"
 									value="private"
-									checked={settings.visibility === "private"}
+									checked={settings.visibility ==="private"}
 									onChange={(e) =>
 										setSettings((prev) => ({
 											...prev,
 											visibility: e.target.value as
-												| "private"
-												| "public"
-												| "cohort",
+												|"private"
+												|"public"
+												|"cohort",
 										}))
 									}
-									className="text-blue-600 focus:ring-blue-500"
+									className="text-blue-600 focus:ring-blue-500 bg-gray-100 border-gray-300"
 								/>
 								<div className="ml-3">
 									<div className="flex items-center">
@@ -384,21 +384,21 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 								</div>
 							</label>
 
-							<label className="flex items-center">
+							<label className="flex items-center cursor-pointer">
 								<input
 									type="radio"
 									value="cohort"
-									checked={settings.visibility === "cohort"}
+									checked={settings.visibility ==="cohort"}
 									onChange={(e) =>
 										setSettings((prev) => ({
 											...prev,
 											visibility: e.target.value as
-												| "private"
-												| "public"
-												| "cohort",
+												|"private"
+												|"public"
+												|"cohort",
 										}))
 									}
-									className="text-blue-600 focus:ring-blue-500"
+									className="text-blue-600 focus:ring-blue-500 bg-gray-100 border-gray-300"
 								/>
 								<div className="ml-3">
 									<div className="flex items-center">
@@ -413,21 +413,21 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 								</div>
 							</label>
 
-							<label className="flex items-center">
+							<label className="flex items-center cursor-pointer">
 								<input
 									type="radio"
 									value="public"
-									checked={settings.visibility === "public"}
+									checked={settings.visibility ==="public"}
 									onChange={(e) =>
 										setSettings((prev) => ({
 											...prev,
 											visibility: e.target.value as
-												| "private"
-												| "public"
-												| "cohort",
+												|"private"
+												|"public"
+												|"cohort",
 										}))
 									}
-									className="text-blue-600 focus:ring-blue-500"
+									className="text-blue-600 focus:ring-blue-500 bg-gray-100 border-gray-300"
 								/>
 								<div className="ml-3">
 									<div className="flex items-center">
@@ -447,7 +447,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 					{/* Enrollment Settings */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<label className="flex items-center">
+							<label className="flex items-center cursor-pointer">
 								<input
 									type="checkbox"
 									checked={settings.allowEnrollments}
@@ -457,7 +457,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 											allowEnrollments: e.target.checked,
 										}))
 									}
-									className="text-blue-600 focus:ring-blue-500 rounded"
+									className="text-blue-600 focus:ring-blue-500 rounded bg-gray-100 border-gray-300"
 								/>
 								<span className="ml-2 text-sm font-medium text-gray-900">
 									Allow Self-Enrollment
@@ -469,7 +469,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 						</div>
 
 						<div>
-							<label className="flex items-center">
+							<label className="flex items-center cursor-pointer">
 								<input
 									type="checkbox"
 									checked={settings.requireApproval}
@@ -479,7 +479,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 											requireApproval: e.target.checked,
 										}))
 									}
-									className="text-blue-600 focus:ring-blue-500 rounded"
+									className="text-blue-600 focus:ring-blue-500 rounded bg-gray-100 border-gray-300"
 								/>
 								<span className="ml-2 text-sm font-medium text-gray-900">
 									Require Approval
@@ -517,9 +517,9 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 								type="text"
 								value={newTag}
 								onChange={(e) => setNewTag(e.target.value)}
-								onKeyPress={(e) => e.key === "Enter" && handleAddTag()}
+								onKeyPress={(e) => e.key ==="Enter" && handleAddTag()}
 								placeholder="Add a tag..."
-								className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
 							/>
 							<button
 								onClick={handleAddTag}
@@ -556,9 +556,9 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 								type="text"
 								value={newPrerequisite}
 								onChange={(e) => setNewPrerequisite(e.target.value)}
-								onKeyPress={(e) => e.key === "Enter" && handleAddPrerequisite()}
+								onKeyPress={(e) => e.key ==="Enter" && handleAddPrerequisite()}
 								placeholder="e.g., Basic JavaScript knowledge..."
-								className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
 							/>
 							<button
 								onClick={handleAddPrerequisite}
