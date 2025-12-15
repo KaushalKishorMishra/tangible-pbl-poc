@@ -489,7 +489,7 @@ export const AICourseCreation: React.FC = () => {
 					)}
 
 					{/* Skills Legend - Always visible */}
-					<div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4">
+					{/* <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4">
 						<h4 className="text-sm font-semibold text-gray-900 mb-2">
 							Skill Map
 						</h4>
@@ -507,7 +507,7 @@ export const AICourseCreation: React.FC = () => {
 								<span className="text-xs text-gray-700">Mastery</span>
 							</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

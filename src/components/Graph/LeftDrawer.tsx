@@ -20,11 +20,10 @@ export const LeftDrawer = () => {
                 </button>
             )}
 
-            <div 
-                className={`absolute top-0 left-0 bottom-0 w-80 h-full bg-white border-r border-gray-200 flex flex-col shadow-xl z-20 transition-transform duration-300 ease-in-out ${
-                    isLeftDrawerOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
-            >
+            {isLeftDrawerOpen && (
+                <div 
+                    className="absolute top-0 left-0 bottom-0 w-80 h-full bg-white border-r border-gray-200 flex flex-col shadow-xl z-20"
+                >
                 {/* Header */}
                 <div className="p-4 border-b border-gray-100 flex justify-between items-start">
                     <div>
@@ -71,6 +70,7 @@ export const LeftDrawer = () => {
                     </button>
                 </div>
             </div>
+            )}
         </>
     );
 };
