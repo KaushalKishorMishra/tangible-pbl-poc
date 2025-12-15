@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from"react";
 import { Loader2 } from"lucide-react";
 import { SkillMapGraph } from"./SkillMapGraph";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
+import { ConversationalAgent } from"../../services/conversationalAgent";
 import { useGraphStore } from"../../store/graphStore";
 import {
 	MessageBubble,
@@ -109,8 +110,27 @@ export const AICourseCreation: React.FC = () => {
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
 	const [generatedGraphData, setGeneratedGraphData] = useState<GraphData | null>(null);
+	const [conversationalAgent, setConversationalAgent] = useState<ConversationalAgent | null>(null);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
+
+	// Initialize conversational agent
+	useEffect(() => {
+		const initAgent = async () => {
+			const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+			if (apiKey) {
+				try {
+					const agent = new ConversationalAgent(apiKey, questions);
+					setConversationalAgent(agent);
+					console.log("Conversational agent initialized");
+				} catch (error) {
+					console.error("Error initializing conversational agent:", error);
+				}
+			}
+		};
+
+		initAgent();
+	}, []);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior:"smooth" });
@@ -129,8 +149,22 @@ export const AICourseCreation: React.FC = () => {
 				throw new Error("Google AI API key not found. Please add VITE_GOOGLE_AI_API_KEY to your .env file");
 			}
 
+			// Generate enriched context from conversational agent
+			let conversationContext = "";
+			if (conversationalAgent) {
+				try {
+					conversationContext = await conversationalAgent.generateGraphContext();
+					console.log("Generated conversation context:", conversationContext);
+				} catch (error) {
+					console.error("Error generating context:", error);
+				}
+			}
+
 			const generator = new AIGraphGenerator(apiKey);
-			const { graphData, filterData } = await generator.generateGraphFromCourse(courseData as CourseData);
+			const { graphData, filterData } = await generator.generateGraphFromCourse(
+				courseData as CourseData,
+				conversationContext
+			);
 			
 			// Store generated data in local state
 			setGeneratedGraphData(graphData);
@@ -165,7 +199,7 @@ export const AICourseCreation: React.FC = () => {
 			setIsGeneratingGraph(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [courseData]);
+	}, [courseData, conversationalAgent]);
 
 	const handleCompletion = useCallback(async () => {
 		setIsTyping(true);
@@ -226,38 +260,79 @@ export const AICourseCreation: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleSendMessage = React.useCallback(() => {
+	const handleSendMessage = React.useCallback(async () => {
 		if (!inputValue.trim()) return;
+
+		const userInput = inputValue;
+		setInputValue("");
 
 		const messageId = `msg-${Date.now()}-${Math.random()}`;
 		const userMessage: Message = {
 			id: messageId,
-			content: inputValue,
+			content: userInput,
 			sender:"user",
 			timestamp: new Date(),
 		};
 
 		setMessages((prev) => [...prev, userMessage]);
 
-		const currentQuestion = questions[currentQuestionIndex];
-		setCourseData((prev) => ({
-			...prev,
-			[currentQuestion.key]: inputValue,
-		}));
+		// Use conversational agent if available
+		if (conversationalAgent) {
+			setIsTyping(true);
+			try {
+				const response = await conversationalAgent.sendMessage(userInput);
+				
+				// Update course data
+				setCourseData(response.collectedData);
+				setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
-		setInputValue("");
-		setCurrentQuestionIndex((prev) => prev + 1);
+				// Add AI response
+				setTimeout(() => {
+					const aiMessage: Message = {
+						id: `ai-${Date.now()}-${Math.random()}`,
+						content: response.aiResponse,
+						sender:"ai",
+						timestamp: new Date(),
+					};
+					setMessages((prev) => [...prev, aiMessage]);
+					setIsTyping(false);
 
-		// Ask next question
-		setTimeout(() => {
-			askQuestion(currentQuestionIndex + 1);
-		}, 500);
-	}, [askQuestion, currentQuestionIndex, inputValue]);
+					// Check if complete
+					if (response.isComplete) {
+						handleCompletion();
+					}
+				}, 800);
+			} catch (error) {
+				console.error("Error in conversation:", error);
+				setIsTyping(false);
+				// Fallback to manual collection
+				const currentQuestion = questions[currentQuestionIndex];
+				if (currentQuestion) {
+					setCourseData((prev) => ({
+						...prev,
+						[currentQuestion.key]: userInput,
+					}));
+					setCurrentQuestionIndex((prev) => prev + 1);
+					askQuestion(currentQuestionIndex + 1);
+				}
+			}
+		} else {
+			// Fallback when agent not available
+			const currentQuestion = questions[currentQuestionIndex];
+			setCourseData((prev) => ({
+				...prev,
+				[currentQuestion.key]: userInput,
+			}));
+			setCurrentQuestionIndex((prev) => prev + 1);
+
+			setTimeout(() => {
+				askQuestion(currentQuestionIndex + 1);
+			}, 500);
+		}
+	}, [inputValue, conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion]);
 
 	const handleOptionSelect = React.useCallback(
-		(option: string) => {
-			const currentQuestion = questions[currentQuestionIndex];
-
+		async (option: string) => {
 			const messageId = `msg-${Date.now()}-${Math.random()}`;
 			const userMessage: Message = {
 				id: messageId,
@@ -268,19 +343,51 @@ export const AICourseCreation: React.FC = () => {
 
 			setMessages((prev) => [...prev, userMessage]);
 
-			setCourseData((prev) => ({
-				...prev,
-				[currentQuestion.key]: option,
-			}));
+			// Use conversational agent if available
+			if (conversationalAgent) {
+				setIsTyping(true);
+				try {
+					const response = await conversationalAgent.sendMessage(option);
+					
+					// Update course data
+					setCourseData(response.collectedData);
+					setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
-			setCurrentQuestionIndex((prev) => prev + 1);
+					// Add AI response
+					setTimeout(() => {
+						const aiMessage: Message = {
+							id: `ai-${Date.now()}-${Math.random()}`,
+							content: response.aiResponse,
+							sender:"ai",
+							timestamp: new Date(),
+						};
+						setMessages((prev) => [...prev, aiMessage]);
+						setIsTyping(false);
 
-			// Ask next question
-			setTimeout(() => {
-				askQuestion(currentQuestionIndex + 1);
-			}, 500);
+						// Check if complete
+						if (response.isComplete) {
+							handleCompletion();
+						}
+					}, 800);
+				} catch (error) {
+					console.error("Error in conversation:", error);
+					setIsTyping(false);
+				}
+			} else {
+				// Fallback when agent not available
+				const currentQuestion = questions[currentQuestionIndex];
+				setCourseData((prev) => ({
+					...prev,
+					[currentQuestion.key]: option,
+				}));
+				setCurrentQuestionIndex((prev) => prev + 1);
+
+				setTimeout(() => {
+					askQuestion(currentQuestionIndex + 1);
+				}, 500);
+			}
 		},
-		[askQuestion, currentQuestionIndex],
+		[conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion],
 	);
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {

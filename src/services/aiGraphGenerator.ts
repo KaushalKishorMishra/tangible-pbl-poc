@@ -61,7 +61,7 @@ const RELATIONSHIP_TYPES = [
 	"ANTIPATTERN_OF",
 ];
 
-const SKILL_LEVELS = ["Awareness", "Application", "Mastery", "Influence"];
+const SKILL_LEVELS = ["Awareness", "Application", "Mastery"];
 
 export class AIGraphGenerator {
 	private ai: GoogleGenAI;
@@ -70,11 +70,14 @@ export class AIGraphGenerator {
 		this.ai = new GoogleGenAI({ apiKey });
 	}
 
-	async generateGraphFromCourse(courseData: CourseData): Promise<{
+	async generateGraphFromCourse(
+		courseData: CourseData,
+		conversationContext?: string
+	): Promise<{
 		graphData: GraphData;
 		filterData: FilterData;
 	}> {
-		const prompt = this.buildPrompt(courseData);
+		const prompt = this.buildPrompt(courseData, conversationContext);
 		
 		try {
 			const response = await this.ai.models.generateContent({
@@ -122,9 +125,13 @@ export class AIGraphGenerator {
 		}
 	}
 
-	private buildPrompt(courseData: CourseData): string {
-		return `You are a curriculum design expert. Based on the following course information, generate a comprehensive skill map with nodes and relationships.
+	private buildPrompt(courseData: CourseData, conversationContext?: string): string {
+		const contextSection = conversationContext
+			? `\n\nCONVERSATION CONTEXT:\n${conversationContext}\n\nUse this additional context from the conversation to create a more personalized and relevant skill map.\n`
+			: "";
 
+		return `You are a curriculum design expert. Based on the following course information, generate a comprehensive skill map with nodes and relationships.
+${contextSection}
 Course Details:
 - Title: ${courseData.title}
 - Description: ${courseData.description}
@@ -143,7 +150,7 @@ IMPORTANT RULES:
 5. Create 30-60 nodes representing skills, concepts, tools, and technologies
 6. Create meaningful relationships between nodes (PREREQUISITE for dependencies, PART_OF for hierarchies, etc.)
 7. Categories should be logical groupings (e.g., "Core Concepts", "Tools", "Frameworks", "Advanced Topics")
-8. Distribute skills across levels: Awareness (30%), Application (35%), Mastery (25%), Influence (10%)
+8. Distribute skills across levels: Awareness (40%), Application (40%), Mastery (20%)
 9. Node IDs should be sequential numbers starting from "0"
 10. Relationship IDs should be sequential numbers
 
