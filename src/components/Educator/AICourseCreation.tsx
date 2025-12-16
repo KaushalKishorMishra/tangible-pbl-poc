@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Settings } from "lucide-react";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { SkillMapGraph } from"./SkillMapGraph";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
@@ -10,7 +10,6 @@ import {
 	TypingIndicator,
 	QuickReplyOptions,
 	ChatInput,
-	ChatHeader,
 	CompletionState,
 } from"./ChatComponents";
 
@@ -115,8 +114,12 @@ export const AICourseCreation: React.FC = () => {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_GOOGLE_AI_API_KEY || "");
-	const [showSetup, setShowSetup] = useState(!import.meta.env.VITE_GOOGLE_AI_API_KEY);
+	const [apiKey, setApiKey] = useState<string>(() => {
+		return localStorage.getItem("api-key") || import.meta.env.VITE_GOOGLE_AI_API_KEY || "";
+	});
+	const [showSetup, setShowSetup] = useState(() => {
+		return !localStorage.getItem("api-key") && !import.meta.env.VITE_GOOGLE_AI_API_KEY;
+	});
 
 	// Initialize conversational agent
 	useEffect(() => {
@@ -494,7 +497,14 @@ export const AICourseCreation: React.FC = () => {
 
 	const handleSetupComplete = (key: string) => {
 		setApiKey(key);
+		localStorage.setItem("api-key", key);
 		setShowSetup(false);
+	};
+
+	const handleResetKey = () => {
+		setApiKey("");
+		localStorage.removeItem("api-key");
+		setShowSetup(true);
 	};
 
 	if (showSetup) {
@@ -514,14 +524,23 @@ export const AICourseCreation: React.FC = () => {
 			>
 
 				{/* Header */}
-				<ChatHeader
-					title="AI Course Designer"
-					subtitle={
-						isComplete
-							? "Mapping Skills"
-							: `Question ${currentQuestionIndex + 1} of ${questions.length}`
-					}
-				/>
+				<div className="flex items-center justify-between p-4 border-b border-gray-200">
+					<div>
+						<h2 className="text-lg font-semibold text-gray-900">AI Course Designer</h2>
+						<p className="text-sm text-gray-500">
+							{isComplete
+								? "Mapping Skills"
+								: `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+						</p>
+					</div>
+					<button
+						onClick={handleResetKey}
+						className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+						title="Reset API Key"
+					>
+						<Settings className="w-5 h-5" />
+					</button>
+				</div>
 
 				{/* Messages */}
 				<div className="flex-1 overflow-y-auto p-4 space-y-4">
