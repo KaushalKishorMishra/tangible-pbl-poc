@@ -36,7 +36,7 @@ export class ConversationalAgent {
 	 */
 	async initialize(): Promise<string> {
 		this.chat = this.ai.chats.create({
-			model: "gemini-2.5-flash",
+			model: "gemini-2.5-flash-lite",
 		});
 
 		// Create initial greeting with first question

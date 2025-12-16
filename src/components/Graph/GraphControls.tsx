@@ -4,6 +4,7 @@ import { useLayoutCircular } from"@react-sigma/layout-circular";
 import { useLayoutRandom } from"@react-sigma/layout-random";
 import { animateNodes } from"sigma/utils";
 import { useState, useEffect, useRef } from"react";
+import { Download } from "lucide-react";
 
 export const GraphControls = () => {
   const sigma = useSigma();
@@ -61,6 +62,19 @@ export const GraphControls = () => {
     }
   };
 
+  const handleDownload = () => {
+    const graph = sigma.getGraph();
+    const data = graph.export();
+    
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "skill-map.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   return (
     <div className="flex flex-row gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/30 transition-all hover:shadow-2xl relative">
       <button
@@ -89,6 +103,14 @@ export const GraphControls = () => {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
+      </button>
+      
+      <button
+        onClick={handleDownload}
+        className="p-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+        title="Download Graph"
+      >
+        <Download className="w-5 h-5" />
       </button>
       
       <div className="h-full w-px bg-gray-200 my-1"></div>

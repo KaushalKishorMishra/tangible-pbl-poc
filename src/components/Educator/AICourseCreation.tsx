@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2, Settings, Download, RefreshCw } from "lucide-react";
+import { Loader2, Settings, RefreshCw } from "lucide-react";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
-import { SkillMapGraph } from"./SkillMapGraph";
+import { SkillMapGraph } from "./SkillMapGraph";
+import { GraphErrorState } from "./GraphErrorState";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
 import { ConversationalAgent } from"../../services/conversationalAgent";
 import { useGraphStore } from"../../store/graphStore";
@@ -110,6 +111,7 @@ export const AICourseCreation: React.FC = () => {
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
 	const [generatedGraphData, setGeneratedGraphData] = useState<GraphData | null>(null);
+	const [graphError, setGraphError] = useState<string | null>(null);
 	const [conversationalAgent, setConversationalAgent] = useState<ConversationalAgent | null>(null);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -179,10 +181,14 @@ export const AICourseCreation: React.FC = () => {
 			timestamp: new Date(),
 		};
 		setMessages((prev) => [...prev, errorMsg]);
+		
+		// Set graph error state to show error UI in the panel
+		setGraphError(errorMessage);
 	};
 
 	const generateGraphWithAI = useCallback(async () => {
 		setIsGeneratingGraph(true);
+		setGraphError(null); // Clear previous errors
 		
 		try {
 			// Get API key from state
@@ -532,23 +538,13 @@ export const AICourseCreation: React.FC = () => {
 		}
 	};
 
-	const handleDownloadGraph = () => {
-		if (!generatedGraphData) return;
-		
-		const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(generatedGraphData, null, 2));
-		const downloadAnchorNode = document.createElement('a');
-		downloadAnchorNode.setAttribute("href", dataStr);
-		downloadAnchorNode.setAttribute("download", "skill-map.json");
-		document.body.appendChild(downloadAnchorNode); // required for firefox
-		downloadAnchorNode.click();
-		downloadAnchorNode.remove();
-	};
+
 
 	if (showSetup) {
 		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} />;
 	}
 
-	const isGraphVisible = !!generatedGraphData || isGeneratingGraph;
+	const isGraphVisible = !!generatedGraphData || isGeneratingGraph || !!graphError;
 
 	return (
 		<div className="h-screen flex bg-gray-50 transition-colors duration-300">
@@ -653,19 +649,20 @@ export const AICourseCreation: React.FC = () => {
 							/>
 						)}
 
-						{/* Download Button */}
-						{generatedGraphData && !isGeneratingGraph && (
-							<button
-								onClick={handleDownloadGraph}
-								className="absolute top-4 left-4 bg-white p-2 rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 text-gray-700 transition-colors z-10"
-								title="Download Graph Data"
-							>
-								<Download className="w-5 h-5" />
-							</button>
+						{/* Error State */}
+						{graphError && !isGeneratingGraph && (
+							<div className="absolute inset-0 bg-white z-20">
+								<GraphErrorState 
+									error={graphError} 
+									onRetry={generateGraphWithAI} 
+								/>
+							</div>
 						)}
 
+
+
 						{/* Overlay Info - Show only if course is complete */}
-						{isComplete && (
+						{/* {isComplete && (
 							<div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-gray-200 transition-colors duration-300">
 								<h3 className="font-semibold text-gray-900 mb-2">
 									Course Overview
@@ -716,7 +713,7 @@ export const AICourseCreation: React.FC = () => {
 									</div>
 								</div>
 							</div>
-						)}
+						)} */}
 					</div>
 				</div>
 			)}

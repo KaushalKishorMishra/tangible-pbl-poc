@@ -81,7 +81,7 @@ export class AIGraphGenerator {
 		
 		try {
 			const response = await this.ai.models.generateContent({
-				model: "gemini-2.5-flash",
+				model: "gemini-2.5-flash-lite",
 				contents: prompt,
 			});
 
@@ -186,17 +186,23 @@ Return ONLY the JSON object, no markdown formatting or explanation.`;
 	}
 
 	private extractJSON(text: string): string {
-		// Remove markdown code blocks if present
-		let cleaned = text.trim();
-		
-		// Remove ```json and ``` markers
-		cleaned = cleaned.replace(/^```json\s*/i, "");
-		cleaned = cleaned.replace(/^```\s*/, "");
-		cleaned = cleaned.replace(/\s*```$/, "");
+		// Find the first '{' and the last '}'
+		const start = text.indexOf('{');
+		const end = text.lastIndexOf('}');
 
-        console.log("Extracted JSON:", cleaned);
+		if (start === -1 || end === -1 || start > end) {
+			// If no valid JSON object structure is found, return the cleaned text
+			// to let JSON.parse fail naturally, or return empty if it's just noise
+			console.warn("Could not find JSON object in response text");
+			return text.trim();
+		}
+
+		// Extract the JSON substring
+		const jsonCandidate = text.substring(start, end + 1);
 		
-		return cleaned.trim();
+		// console.log("Extracted JSON candidate:", jsonCandidate);
+		
+		return jsonCandidate;
 	}
 
 	private formatGraphData(rawData: {

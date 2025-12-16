@@ -292,6 +292,8 @@ const NodeInfoDockWrapper: React.FC = () => {
 	);
 };
 
+
+
 export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData }) => {
 	return (
 		<div className="w-full h-full relative bg-gray-50">
@@ -321,6 +323,7 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 				<LeftDrawer />
 				<GraphControlsWrapper />
 				<NodeInfoDockWrapper />
+
 			</SigmaContainer>
 			<ArcMenuWrapper />
 		</div>
