@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from"react";
-import { Loader2 } from"lucide-react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Loader2 } from "lucide-react";
+import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { SkillMapGraph } from"./SkillMapGraph";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
 import { ConversationalAgent } from"../../services/conversationalAgent";
@@ -114,10 +115,12 @@ export const AICourseCreation: React.FC = () => {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
+	const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_GOOGLE_AI_API_KEY || "");
+	const [showSetup, setShowSetup] = useState(!import.meta.env.VITE_GOOGLE_AI_API_KEY);
+
 	// Initialize conversational agent
 	useEffect(() => {
 		const initAgent = async () => {
-			const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 			if (apiKey) {
 				try {
 					const agent = new ConversationalAgent(apiKey, questions);
@@ -130,7 +133,7 @@ export const AICourseCreation: React.FC = () => {
 		};
 
 		initAgent();
-	}, []);
+	}, [apiKey]);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior:"smooth" });
@@ -140,13 +143,13 @@ export const AICourseCreation: React.FC = () => {
 		setIsGeneratingGraph(true);
 		
 		try {
-			// Get API key from environment variable
-			const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+			// Get API key from state
+			// const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 
 			console.log(apiKey)
 			
 			if (!apiKey) {
-				throw new Error("Google AI API key not found. Please add VITE_GOOGLE_AI_API_KEY to your .env file");
+				throw new Error("Google AI API key not found. Please complete the setup.");
 			}
 
 			// Generate enriched context from conversational agent
@@ -489,17 +492,33 @@ export const AICourseCreation: React.FC = () => {
 
 	const currentQuestion = questions[currentQuestionIndex];
 
+	const handleSetupComplete = (key: string) => {
+		setApiKey(key);
+		setShowSetup(false);
+	};
+
+	if (showSetup) {
+		return <ApiKeySetup onComplete={handleSetupComplete} />;
+	}
+
+	const isGraphVisible = !!generatedGraphData || isGeneratingGraph;
+
 	return (
 		<div className="h-screen flex bg-gray-50 transition-colors duration-300">
-			{/* Chat Interface - Always 20% width */}
-			<div className="w-[20%] flex flex-col bg-white border-r border-gray-200 transition-colors duration-300">
+			{/* Chat Interface */}
+			<div 
+				className={`
+					flex flex-col bg-white border-r border-gray-200 transition-all duration-500 ease-in-out
+					${isGraphVisible ? 'w-[20%]' : 'w-full max-w-3xl mx-auto shadow-xl my-8 rounded-xl border-l border-t border-b'}
+				`}
+			>
 
 				{/* Header */}
 				<ChatHeader
 					title="AI Course Designer"
 					subtitle={
 						isComplete
-							?"Mapping Skills"
+							? "Mapping Skills"
 							: `Question ${currentQuestionIndex + 1} of ${questions.length}`
 					}
 				/>
@@ -546,100 +565,81 @@ export const AICourseCreation: React.FC = () => {
 				)}
 			</div>
 
-			{/* Skill Map - Always 80% width */}
-			<div className="w-[80%] relative bg-gray-100 transition-colors duration-300">
-				<div className="absolute inset-0">
-					{isGeneratingGraph ? (
-						<div className="flex items-center justify-center h-full">
-							<div className="text-center">
-								<Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-								<p className="text-gray-600 font-medium">Generating your skill map...</p>
-								<p className="text-sm text-gray-500 mt-2">This may take 10-30 seconds</p>
+			{/* Skill Map - Only visible when graph is generated or generating */}
+			{isGraphVisible && (
+				<div className="w-[80%] relative bg-gray-100 transition-colors duration-300 animate-in fade-in slide-in-from-right-10 duration-700">
+					<div className="absolute inset-0">
+						{isGeneratingGraph ? (
+							<div className="flex items-center justify-center h-full">
+								<div className="text-center">
+									<Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+									<p className="text-gray-600 font-medium">Generating your skill map...</p>
+									<p className="text-sm text-gray-500 mt-2">This may take 10-30 seconds</p>
+								</div>
 							</div>
-						</div>
-					) : (
-						<SkillMapGraph 
-							selectedCategories={selectedCategories} 
-							graphData={generatedGraphData}
-						/>
-					)}
+						) : (
+							<SkillMapGraph 
+								selectedCategories={selectedCategories} 
+								graphData={generatedGraphData}
+							/>
+						)}
 
-					{/* Overlay Info - Show only if course is complete */}
-					{isComplete && (
-						<div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-gray-200 transition-colors duration-300">
-							<h3 className="font-semibold text-gray-900 mb-2">
-								Course Overview
-							</h3>
-							<div className="space-y-2 text-sm">
-								<div>
-									<span className="text-gray-600">Title:</span>
-									<span className="ml-2 font-medium text-gray-900">
-										{courseData.title}
-									</span>
-								</div>
-								<div>
-									<span className="text-gray-600">Level:</span>
-									<span className="ml-2 font-medium text-gray-900">
-										{courseData.level}
-									</span>
-								</div>
-								<div>
-									<span className="text-gray-600">Duration:</span>
-									<span className="ml-2 font-medium text-gray-900">
-										{courseData.duration}
-									</span>
-								</div>
-								<div>
-									<span className="text-gray-600">Focus:</span>
-									<span className="ml-2 font-medium text-gray-900">
-										{courseData.mainFocus}
-									</span>
-								</div>
-							</div>
-							<div className="mt-3 pt-3 border-t border-gray-200">
-								<p className="text-xs text-gray-600">
-									Skills are color-coded by proficiency level:
-								</p>
-								<div className="flex items-center space-x-3 mt-2">
-									<div className="flex items-center space-x-1">
-										<div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-										<span className="text-xs text-gray-700">Awareness</span>
+						{/* Overlay Info - Show only if course is complete */}
+						{isComplete && (
+							<div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-gray-200 transition-colors duration-300">
+								<h3 className="font-semibold text-gray-900 mb-2">
+									Course Overview
+								</h3>
+								<div className="space-y-2 text-sm">
+									<div>
+										<span className="text-gray-600">Title:</span>
+										<span className="ml-2 font-medium text-gray-900">
+											{courseData.title}
+										</span>
 									</div>
-									<div className="flex items-center space-x-1">
-										<div className="w-3 h-3 rounded-full bg-blue-500"></div>
-										<span className="text-xs text-gray-700">Application</span>
+									<div>
+										<span className="text-gray-600">Level:</span>
+										<span className="ml-2 font-medium text-gray-900">
+											{courseData.level}
+										</span>
 									</div>
-									<div className="flex items-center space-x-1">
-										<div className="w-3 h-3 rounded-full bg-violet-500"></div>
-										<span className="text-xs text-gray-700">Mastery</span>
+									<div>
+										<span className="text-gray-600">Duration:</span>
+										<span className="ml-2 font-medium text-gray-900">
+											{courseData.duration}
+										</span>
+									</div>
+									<div>
+										<span className="text-gray-600">Focus:</span>
+										<span className="ml-2 font-medium text-gray-900">
+											{courseData.mainFocus}
+										</span>
 									</div>
 								</div>
+								<div className="mt-3 pt-3 border-t border-gray-200">
+									<p className="text-xs text-gray-600">
+										Skills are color-coded by proficiency level:
+									</p>
+									<div className="flex items-center space-x-3 mt-2">
+										<div className="flex items-center space-x-1">
+											<div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+											<span className="text-xs text-gray-700">Awareness</span>
+										</div>
+										<div className="flex items-center space-x-1">
+											<div className="w-3 h-3 rounded-full bg-blue-500"></div>
+											<span className="text-xs text-gray-700">Application</span>
+										</div>
+										<div className="flex items-center space-x-1">
+											<div className="w-3 h-3 rounded-full bg-violet-500"></div>
+											<span className="text-xs text-gray-700">Mastery</span>
+										</div>
+									</div>
+								</div>
 							</div>
-						</div>
-					)}
-
-					{/* Skills Legend - Always visible */}
-					{/* <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4">
-						<h4 className="text-sm font-semibold text-gray-900 mb-2">
-							Skill Map
-						</h4>
-						<div className="flex items-center space-x-3">
-							<div className="flex items-center space-x-1">
-								<div className="w-3 h-3 rounded-full bg-green-500"></div>
-								<span className="text-xs text-gray-700">Awareness</span>
-							</div>
-							<div className="flex items-center space-x-1">
-								<div className="w-3 h-3 rounded-full bg-blue-500"></div>
-								<span className="text-xs text-gray-700">Application</span>
-							</div>
-							<div className="flex items-center space-x-1">
-								<div className="w-3 h-3 rounded-full bg-purple-500"></div>
-								<span className="text-xs text-gray-700">Mastery</span>
-							</div>
-						</div>
-					</div> */}
+						)}
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 };
