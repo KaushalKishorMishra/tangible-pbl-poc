@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2, Settings } from "lucide-react";
+import { Loader2, Settings, Download, RefreshCw } from "lucide-react";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { SkillMapGraph } from"./SkillMapGraph";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
@@ -322,18 +322,15 @@ export const AICourseCreation: React.FC = () => {
 						if (refinementResponse.shouldRegenerateGraph) {
 							console.log("User confirmed regeneration:", refinementResponse.refinementDetails);
 							
-							// Add regeneration message
+							// Add regeneration message with explicit action
 							setTimeout(() => {
-								const regenMessage: Message = {
-									id: `regen-${Date.now()}`,
-									content: "🔄 Regenerating your skill map with the requested changes...",
+								const confirmMessage: Message = {
+									id: `confirm-regen-${Date.now()}`,
+									content: "I can update the map based on your feedback. Click the button below to apply changes.",
 									sender: "ai",
 									timestamp: new Date(),
 								};
-								setMessages((prev) => [...prev, regenMessage]);
-								
-								// Regenerate graph with updated context
-								generateGraphWithAI();
+								setMessages((prev) => [...prev, confirmMessage]);
 							}, 1000);
 						}
 					}, 800);
@@ -507,8 +504,26 @@ export const AICourseCreation: React.FC = () => {
 		setShowSetup(true);
 	};
 
+	const handleCancelSetup = () => {
+		if (apiKey) {
+			setShowSetup(false);
+		}
+	};
+
+	const handleDownloadGraph = () => {
+		if (!generatedGraphData) return;
+		
+		const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(generatedGraphData, null, 2));
+		const downloadAnchorNode = document.createElement('a');
+		downloadAnchorNode.setAttribute("href", dataStr);
+		downloadAnchorNode.setAttribute("download", "skill-map.json");
+		document.body.appendChild(downloadAnchorNode); // required for firefox
+		downloadAnchorNode.click();
+		downloadAnchorNode.remove();
+	};
+
 	if (showSetup) {
-		return <ApiKeySetup onComplete={handleSetupComplete} />;
+		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} />;
 	}
 
 	const isGraphVisible = !!generatedGraphData || isGeneratingGraph;
@@ -559,6 +574,19 @@ export const AICourseCreation: React.FC = () => {
 						/>
 					)}
 
+					{/* Explicit Update Button */}
+					{messages.length > 0 && messages[messages.length - 1].content.includes("Click the button below to apply changes") && (
+						<div className="flex justify-center mt-2">
+							<button
+								onClick={generateGraphWithAI}
+								className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+							>
+								<RefreshCw className="w-4 h-4" />
+								<span>Update Graph</span>
+							</button>
+						</div>
+					)}
+
 					<div ref={messagesEndRef} />
 				</div>
 
@@ -601,6 +629,17 @@ export const AICourseCreation: React.FC = () => {
 								selectedCategories={selectedCategories} 
 								graphData={generatedGraphData}
 							/>
+						)}
+
+						{/* Download Button */}
+						{generatedGraphData && !isGeneratingGraph && (
+							<button
+								onClick={handleDownloadGraph}
+								className="absolute top-4 left-4 bg-white p-2 rounded-lg shadow-md border border-gray-200 hover:bg-gray-50 text-gray-700 transition-colors z-10"
+								title="Download Graph Data"
+							>
+								<Download className="w-5 h-5" />
+							</button>
 						)}
 
 						{/* Overlay Info - Show only if course is complete */}

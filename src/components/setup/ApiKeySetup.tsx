@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Check, Key, ExternalLink, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Key, ExternalLink, ShieldCheck, Sparkles, ArrowRight, X } from 'lucide-react';
 
 interface ApiKeySetupProps {
   onComplete: (apiKey: string) => void;
+  onCancel?: () => void;
 }
 
-export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete }) => {
+export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete, onCancel }) => {
   const [step, setStep] = useState(1);
   const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState('');
@@ -67,6 +68,16 @@ export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete }) => {
       </div>
 
       <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl max-w-5xl w-full overflow-hidden flex flex-col md:flex-row min-h-[600px] border border-white/50 relative z-10">
+        {/* Close Button */}
+        {onCancel && (
+            <button 
+                onClick={onCancel}
+                className="absolute top-4 right-4 z-50 p-2 bg-white/50 hover:bg-white rounded-full transition-colors text-gray-500 hover:text-gray-700"
+            >
+                <X className="w-5 h-5" />
+            </button>
+        )}
+        
         {/* Sidebar / Stepper */}
         <div className="bg-slate-900/95 text-white p-10 md:w-1/3 flex flex-col justify-between relative overflow-hidden">
             {/* Abstract shapes in sidebar */}
@@ -211,7 +222,15 @@ export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete }) => {
             )}
           </div>
 
-          <div className="mt-12 flex justify-end">
+          <div className="mt-12 flex justify-end space-x-4">
+            {onCancel && (
+                <button
+                    onClick={onCancel}
+                    className="px-6 py-4 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors font-semibold text-lg"
+                >
+                    Cancel
+                </button>
+            )}
             <button
               onClick={handleNext}
               className="group flex items-center space-x-3 bg-slate-900 text-white px-8 py-4 rounded-xl hover:bg-slate-800 hover:shadow-xl hover:shadow-slate-900/20 transition-all transform active:scale-95 font-semibold text-lg"
