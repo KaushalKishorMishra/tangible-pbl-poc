@@ -302,7 +302,7 @@ export const AICourseCreation: React.FC = () => {
 				if (conversationalAgent.getIsInRefinementMode()) {
 					const refinementResponse = await conversationalAgent.refineGraph(userInput);
 					
-					setTimeout(() => {
+					setTimeout(async () => {
 						const aiMessage: Message = {
 							id: `ai-${Date.now()}-${Math.random()}`,
 							content: refinementResponse.aiResponse,
@@ -312,11 +312,23 @@ export const AICourseCreation: React.FC = () => {
 						setMessages((prev) => [...prev, aiMessage]);
 						setIsTyping(false);
 
-						// Handle specific refinement actions
-						if (refinementResponse.refinementAction === "add_skills") {
-							console.log("User wants to add skills:", refinementResponse.refinementDetails);
-						} else if (refinementResponse.refinementAction === "modify_depth") {
-							console.log("User wants to modify depth:", refinementResponse.refinementDetails);
+						// Handle graph regeneration
+						if (refinementResponse.shouldRegenerateGraph) {
+							console.log("User confirmed regeneration:", refinementResponse.refinementDetails);
+							
+							// Add regeneration message
+							setTimeout(() => {
+								const regenMessage: Message = {
+									id: `regen-${Date.now()}`,
+									content: "🔄 Regenerating your skill map with the requested changes...",
+									sender: "ai",
+									timestamp: new Date(),
+								};
+								setMessages((prev) => [...prev, regenMessage]);
+								
+								// Regenerate graph with updated context
+								generateGraphWithAI();
+							}, 1000);
 						}
 					}, 800);
 				} else {
@@ -371,7 +383,7 @@ export const AICourseCreation: React.FC = () => {
 				askQuestion(currentQuestionIndex + 1);
 			}, 500);
 		}
-	}, [inputValue, conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion]);
+	}, [inputValue, conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion, generateGraphWithAI]);
 
 	const handleOptionSelect = React.useCallback(
 		async (option: string) => {
@@ -393,7 +405,7 @@ export const AICourseCreation: React.FC = () => {
 					if (conversationalAgent.getIsInRefinementMode()) {
 						const refinementResponse = await conversationalAgent.refineGraph(option);
 						
-						setTimeout(() => {
+						setTimeout(async () => {
 							const aiMessage: Message = {
 								id: `ai-${Date.now()}-${Math.random()}`,
 								content: refinementResponse.aiResponse,
@@ -403,11 +415,23 @@ export const AICourseCreation: React.FC = () => {
 							setMessages((prev) => [...prev, aiMessage]);
 							setIsTyping(false);
 
-							// Handle specific refinement actions
-							if (refinementResponse.refinementAction === "add_skills") {
-								console.log("User wants to add skills:", refinementResponse.refinementDetails);
-							} else if (refinementResponse.refinementAction === "modify_depth") {
-								console.log("User wants to modify depth:", refinementResponse.refinementDetails);
+							// Handle graph regeneration
+							if (refinementResponse.shouldRegenerateGraph) {
+								console.log("User confirmed regeneration:", refinementResponse.refinementDetails);
+								
+								// Add regeneration message
+								setTimeout(() => {
+									const regenMessage: Message = {
+										id: `regen-${Date.now()}`,
+										content: "🔄 Regenerating your skill map with the requested changes...",
+										sender: "ai",
+										timestamp: new Date(),
+									};
+									setMessages((prev) => [...prev, regenMessage]);
+									
+									// Regenerate graph with updated context
+									generateGraphWithAI();
+								}, 1000);
 							}
 						}, 800);
 					} else {
@@ -453,7 +477,7 @@ export const AICourseCreation: React.FC = () => {
 				}, 500);
 			}
 		},
-		[conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion],
+		[conversationalAgent, currentQuestionIndex, askQuestion, handleCompletion, generateGraphWithAI],
 	);
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {

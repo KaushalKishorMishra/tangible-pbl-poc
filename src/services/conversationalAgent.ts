@@ -181,8 +181,10 @@ How would you like to proceed?`;
 	 */
 	async refineGraph(userRequest: string): Promise<{
 		aiResponse: string;
-		refinementAction?: "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "none";
+		refinementAction?: "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "confirm_regenerate" | "none";
 		refinementDetails?: string;
+		shouldRegenerateGraph?: boolean;
+		needsConfirmation?: boolean;
 	}> {
 		if (!this.chat) {
 			throw new Error("Chat session not initialized");
@@ -197,12 +199,13 @@ ${this.generatedGraphContext || ""}
 
 User's refinement request: "${userRequest}"
 
-Analyze what the user wants to do and provide helpful guidance. If they want to:
-- Add skills: Ask what topics/skills to add
-- Modify depth: Ask which areas need more/less detail
-- Adjust connections: Ask what relationships to change
-- Explain: Provide clear explanations of skill connections
-- Export/share: Guide them through options
+Analyze what the user wants to do:
+- If they want to ADD skills/topics: Acknowledge what they want to add and ask if they'd like to regenerate the map
+- If they want to MODIFY depth/complexity: Acknowledge the change and ask if they want to update the map
+- If they want to ADJUST connections: Acknowledge and ask if they'd like to regenerate with updated relationships
+- If they just want EXPLANATIONS: Provide clear explanations without asking about regeneration
+- If they want to EXPORT/share: Guide them through options
+- If they explicitly say "yes", "regenerate", "update", "generate": Confirm you'll regenerate the map
 
 Respond naturally and helpfully as a course design assistant.`;
 
@@ -213,21 +216,25 @@ Respond naturally and helpfully as a course design assistant.`;
 
 		// Detect refinement action type
 		const actionType = this.detectRefinementAction(userRequest, aiResponse);
+		const shouldRegenerate = this.shouldRegenerateGraph(userRequest, aiResponse, actionType);
+		const needsConfirmation = this.needsRegenerationConfirmation(userRequest, actionType);
 
 		return {
 			aiResponse,
 			refinementAction: actionType,
 			refinementDetails: userRequest,
+			shouldRegenerateGraph: shouldRegenerate,
+			needsConfirmation,
 		};
 	}
 
 	/**
 	 * Detect what type of refinement the user wants
 	 */
-	private detectRefinementAction(userRequest: string, _aiResponse: string): "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "none" {
+	private detectRefinementAction(userRequest: string, _aiResponse: string): "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "none" {
 		const lowerRequest = userRequest.toLowerCase();
 
-		if (lowerRequest.includes("add") || lowerRequest.includes("more skills") || lowerRequest.includes("include")) {
+		if (lowerRequest.includes("add") || lowerRequest.includes("more skills") || lowerRequest.includes("include") || lowerRequest.includes("expand")) {
 			return "add_skills";
 		}
 		if (lowerRequest.includes("depth") || lowerRequest.includes("detail") || lowerRequest.includes("simplify") || lowerRequest.includes("complex")) {
@@ -236,7 +243,10 @@ Respond naturally and helpfully as a course design assistant.`;
 		if (lowerRequest.includes("connection") || lowerRequest.includes("relationship") || lowerRequest.includes("link")) {
 			return "adjust_connections";
 		}
-		if (lowerRequest.includes("explain") || lowerRequest.includes("why") || lowerRequest.includes("how") || lowerRequest.includes("what")) {
+		if (lowerRequest.includes("regenerate") || lowerRequest.includes("rebuild") || lowerRequest.includes("recreate")) {
+			return "regenerate";
+		}
+		if (lowerRequest.includes("explain") || lowerRequest.includes("why") || lowerRequest.includes("how") || lowerRequest.includes("what") || lowerRequest.includes("tell me")) {
 			return "explain";
 		}
 		if (lowerRequest.includes("export") || lowerRequest.includes("share") || lowerRequest.includes("download")) {
@@ -244,6 +254,40 @@ Respond naturally and helpfully as a course design assistant.`;
 		}
 
 		return "none";
+	}
+
+	/**
+	 * Determine if graph should be regenerated based on user request and AI response
+	 */
+	private shouldRegenerateGraph(userRequest: string, _aiResponse: string, actionType: string): boolean {
+		const lowerRequest = userRequest.toLowerCase();
+
+		// Only regenerate on explicit user confirmation
+		const confirmationKeywords = [
+			"yes", "yeah", "sure", "ok", "okay", "please",
+			"regenerate", "generate", "update it", "do it",
+			"go ahead", "proceed", "confirm"
+		];
+
+		// Check if it's an explicit regeneration command
+		if (actionType === "regenerate" || actionType === "confirm_regenerate") {
+			return true;
+		}
+
+		// Check for confirmation keywords
+		const isConfirmation = confirmationKeywords.some(keyword => lowerRequest.includes(keyword));
+		
+		return isConfirmation;
+	}
+
+	/**
+	 * Check if the request needs regeneration confirmation
+	 */
+	private needsRegenerationConfirmation(_userRequest: string, actionType: string): boolean {
+		// These actions should prompt for confirmation
+		return actionType === "add_skills" || 
+		       actionType === "modify_depth" || 
+		       actionType === "adjust_connections";
 	}
 
 	/**
