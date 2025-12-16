@@ -115,10 +115,10 @@ export const AICourseCreation: React.FC = () => {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [apiKey, setApiKey] = useState<string>(() => {
-		return localStorage.getItem("api-key") || import.meta.env.VITE_GOOGLE_AI_API_KEY || "";
+		return sessionStorage.getItem("api-key") || import.meta.env.VITE_GOOGLE_AI_API_KEY || "";
 	});
 	const [showSetup, setShowSetup] = useState(() => {
-		return !localStorage.getItem("api-key") && !import.meta.env.VITE_GOOGLE_AI_API_KEY;
+		return !sessionStorage.getItem("api-key") && !import.meta.env.VITE_GOOGLE_AI_API_KEY;
 	});
 
 	// Initialize conversational agent
@@ -140,6 +140,45 @@ export const AICourseCreation: React.FC = () => {
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior:"smooth" });
+	};
+
+	const handleError = (error: unknown) => {
+		console.error("Error encountered:", error);
+		setIsTyping(false);
+		setIsGeneratingGraph(false);
+
+		let errorMessage = "I'm sorry, I encountered an unexpected error. Please try again.";
+		
+		if (error instanceof Error) {
+			// Format the error message for non-technical users
+			let cleanMessage = error.message;
+			
+			// Remove technical prefixes like [GoogleGenerativeAI Error]:
+			cleanMessage = cleanMessage.replace(/\[.*?\]:?\s*/g, '');
+			// Remove "Error:" prefix if present
+			cleanMessage = cleanMessage.replace(/^Error:\s*/i, '');
+
+			// Humanize common errors
+			if (cleanMessage.includes("401") || cleanMessage.includes("403") || cleanMessage.toLowerCase().includes("api key")) {
+				errorMessage = "It looks like your API key is invalid or expired. Please check your settings.";
+			} else if (cleanMessage.includes("429") || cleanMessage.toLowerCase().includes("quota")) {
+				errorMessage = "I'm currently overwhelmed (quota exceeded). Please try again in a moment.";
+			} else if (cleanMessage.includes("503") || cleanMessage.toLowerCase().includes("overloaded")) {
+				errorMessage = "The AI service is a bit busy right now. Please try again.";
+			} else if (cleanMessage.toLowerCase().includes("fetch failed") || cleanMessage.toLowerCase().includes("network")) {
+				errorMessage = "I'm having trouble connecting to the internet. Please check your connection.";
+			} else {
+				errorMessage = `I encountered an issue: ${cleanMessage}. Please try again or check your settings.`;
+			}
+		}
+
+		const errorMsg: Message = {
+			id: `error-${Date.now()}`,
+			content: errorMessage,
+			sender: "ai",
+			timestamp: new Date(),
+		};
+		setMessages((prev) => [...prev, errorMsg]);
 	};
 
 	const generateGraphWithAI = useCallback(async () => {
@@ -209,16 +248,7 @@ export const AICourseCreation: React.FC = () => {
 				}, 1500);
 			}
 		} catch (error) {
-			console.error("Error generating graph:", error);
-			
-			// Add error message
-			const errorMessage: Message = {
-				id: `error-${Date.now()}`,
-				content: `I encountered an error generating the skill map: ${error instanceof Error ? error.message :'Unknown error'}. Please make sure you have set up your Google AI API key.`,
-				sender:"ai",
-				timestamp: new Date(),
-			};
-			setMessages((prev) => [...prev, errorMessage]);
+			handleError(error);
 		} finally {
 			setIsGeneratingGraph(false);
 		}
@@ -360,18 +390,11 @@ export const AICourseCreation: React.FC = () => {
 					}, 800);
 				}
 			} catch (error) {
-				console.error("Error in conversation:", error);
-				setIsTyping(false);
-				// Fallback to manual collection
-				const currentQuestion = questions[currentQuestionIndex];
-				if (currentQuestion) {
-					setCourseData((prev) => ({
-						...prev,
-						[currentQuestion.key]: userInput,
-					}));
-					setCurrentQuestionIndex((prev) => prev + 1);
-					askQuestion(currentQuestionIndex + 1);
-				}
+				handleError(error);
+				
+				// Fallback to manual collection if it's not a critical API error? 
+				// For now, let's just show the error and let the user retry or reset.
+				// If we want to fallback, we'd need to check the error type.
 			}
 		} else {
 			// Fallback when agent not available
@@ -463,8 +486,7 @@ export const AICourseCreation: React.FC = () => {
 						}, 800);
 					}
 				} catch (error) {
-					console.error("Error in conversation:", error);
-					setIsTyping(false);
+					handleError(error);
 				}
 			} else {
 				// Fallback when agent not available
@@ -494,13 +516,13 @@ export const AICourseCreation: React.FC = () => {
 
 	const handleSetupComplete = (key: string) => {
 		setApiKey(key);
-		localStorage.setItem("api-key", key);
+		sessionStorage.setItem("api-key", key);
 		setShowSetup(false);
 	};
 
 	const handleResetKey = () => {
 		setApiKey("");
-		localStorage.removeItem("api-key");
+		sessionStorage.removeItem("api-key");
 		setShowSetup(true);
 	};
 
