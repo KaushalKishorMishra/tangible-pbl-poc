@@ -6,6 +6,8 @@ import { ArrowLeft, BookOpen, Clock, FileText, Video, Save } from 'lucide-react'
 import { NodeContentEditor } from './NodeContentEditor';
 
 // Custom Node Component
+import { CustomEdge } from './CustomEdge';
+
 const CourseNodeComponent = ({ data }: { data: any }) => {
     return (
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-[300px] overflow-hidden group hover:border-indigo-300 transition-all">
@@ -48,6 +50,10 @@ const CourseNodeComponent = ({ data }: { data: any }) => {
 
 const nodeTypes = {
     courseNode: CourseNodeComponent,
+};
+
+const edgeTypes = {
+    custom: CustomEdge,
 };
 
 export const StudyFlow: React.FC = () => {
@@ -102,7 +108,7 @@ export const StudyFlow: React.FC = () => {
             id: edge.id,
             source: edge.source,
             target: edge.target,
-            type: 'smoothstep',
+            type: 'custom', // Use custom edge type
             animated: true,
             style: { stroke: '#6366f1', strokeWidth: 2 },
             markerEnd: { type: 'arrowclosed', color: '#6366f1' },
@@ -172,6 +178,7 @@ export const StudyFlow: React.FC = () => {
                     onEdgesDelete={onEdgesDelete}
                     onNodeClick={onNodeClick}
                     nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes} // Register custom edge types
                     fitView
                     attributionPosition="bottom-right"
                     minZoom={0.1}
