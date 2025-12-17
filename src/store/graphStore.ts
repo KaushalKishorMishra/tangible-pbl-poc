@@ -80,6 +80,7 @@ interface GraphState {
   arcMenuState: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } };
   selectedNodeForDock: string | null;
   isFlowViewActive: boolean;
+  isAICourseDesignerCollapsed: boolean;
   
   // Course Authoring states
   courseData: CourseModule | null;
@@ -100,6 +101,7 @@ interface GraphState {
   setArcMenuState: (state: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } }) => void;
   setSelectedNodeForDock: (nodeId: string | null) => void;
   setIsFlowViewActive: (isActive: boolean) => void;
+  setAICourseDesignerCollapsed: (isCollapsed: boolean) => void;
   toggleNodeSelection: (nodeId: string) => void;
   removeNodeSelection: (nodeId: string) => void;
 
@@ -169,6 +171,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   arcMenuState: { isOpen: false, nodeId: null, position: { x: 0, y: 0 } },
   selectedNodeForDock: null,
   isFlowViewActive: false,
+  isAICourseDesignerCollapsed: false,
   courseData: null,
   isNodeEditorOpen: false,
   editingNodeId: null,
@@ -190,6 +193,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setArcMenuState: (state) => set({ arcMenuState: state }),
   setSelectedNodeForDock: (nodeId) => set({ selectedNodeForDock: nodeId, isDrawerOpen: !!nodeId }),
   setIsFlowViewActive: (isActive) => set({ isFlowViewActive: isActive }),
+  setAICourseDesignerCollapsed: (isCollapsed) => set({ isAICourseDesignerCollapsed: isCollapsed }),
   
   // New actions
   toggleNodeSelection: (nodeId) => {

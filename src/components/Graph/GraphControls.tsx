@@ -66,7 +66,8 @@ export const GraphControls = () => {
     selectedNodeIds, 
     setIsFlowViewActive,
     aiGeneratedGraphData,
-    setCourseData
+    setCourseData,
+    isAICourseDesignerCollapsed
   } = useGraphStore();
 
   const { loadCourseFromStorage } = useGraphStore();
@@ -88,6 +89,11 @@ export const GraphControls = () => {
     setCourseData(newCourse);
     setIsFlowViewActive(true);
   };
+
+  // If AI Course Designer is OPEN (not collapsed), hide controls to ensure mutual exclusivity
+  if (!isAICourseDesignerCollapsed) {
+    return null;
+  }
 
   return (
     <div className="flex flex-row gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/30 transition-all hover:shadow-2xl relative">
