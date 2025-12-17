@@ -12,7 +12,7 @@ import { CustomEdge } from './CustomEdge';
 const CourseNodeComponent = ({ data }: { data: any }) => {
     return (
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-[300px] overflow-hidden group hover:border-indigo-300 transition-all">
-            <Handle type="target" position={Position.Top} className="!bg-indigo-500 !w-3 !h-3" />
+            <Handle type="target" position={Position.Left} className="!bg-indigo-500 !w-3 !h-3" />
             
             <div className="p-4 border-b border-gray-100 bg-gray-50 group-hover:bg-indigo-50/50 transition-colors">
                 <div className="flex justify-between items-start mb-2">
@@ -44,7 +44,7 @@ const CourseNodeComponent = ({ data }: { data: any }) => {
                 </div>
             </div>
 
-            <Handle type="source" position={Position.Bottom} className="!bg-indigo-500 !w-3 !h-3" />
+            <Handle type="source" position={Position.Right} className="!bg-indigo-500 !w-3 !h-3" />
         </div>
     );
 };
@@ -95,9 +95,9 @@ export const StudyFlow: React.FC = () => {
         const rfNodes: Node[] = courseData.nodes.map((node, index) => ({
             id: node.id,
             type: 'courseNode',
-            position: { x: 250, y: index * 250 }, // Keep vertical layout for now
+            position: { x: index * 400, y: 250 }, // Horizontal layout
             data: { 
-                label: node.title,
+                label: node.label || node.title, // Handle both label and title properties
                 description: node.description,
                 resources: node.resources,
                 estimatedTime: node.estimatedTime,

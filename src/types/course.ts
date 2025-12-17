@@ -15,6 +15,7 @@ export interface CourseNode {
     description?: string;
     resources: ContentResource[];
     estimatedTime?: string;
+    label?: string;
 }
 
 export interface CourseModule {
