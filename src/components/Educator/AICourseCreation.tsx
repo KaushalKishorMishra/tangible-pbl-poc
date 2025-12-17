@@ -278,6 +278,7 @@ export const AICourseCreation: React.FC = () => {
 	const handleLoadStaticData = useCallback(async () => {
 		setIsGeneratingGraph(true);
 		setGraphError(null);
+        setShowSetup(false); // Close setup screen if open
 
 		try {
 			// Simulate loading delay
@@ -592,7 +593,7 @@ export const AICourseCreation: React.FC = () => {
 
 
 	if (showSetup) {
-		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} />;
+		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} onUseStaticData={handleLoadStaticData} />;
 	}
 
 	const isGraphVisible = !!generatedGraphData || isGeneratingGraph || !!graphError;
