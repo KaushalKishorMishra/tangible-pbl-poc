@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { reorderNodesByFlow } from "../utils/flowUtils";
 import type { FilterState } from '../types/filter';
 import type { CourseModule, CourseNode, ContentResource } from '../types/course';
 
@@ -246,10 +247,16 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     if (!state.courseData) return {};
     const newEdge = { id: `e-${source}-${target}-${Date.now()}`, source, target };
     const currentEdges = state.courseData.edges || [];
+    const newEdges = [...currentEdges, newEdge];
+    
+    // Reorder nodes based on new flow
+    const reorderedNodes = reorderNodesByFlow(state.courseData.nodes, newEdges);
+
     return { 
         courseData: { 
             ...state.courseData, 
-            edges: [...currentEdges, newEdge],
+            nodes: reorderedNodes,
+            edges: newEdges,
             updatedAt: new Date() 
         } 
     };
@@ -258,10 +265,16 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   removeCourseEdge: (edgeId) => set((state) => {
     if (!state.courseData) return {};
     const currentEdges = state.courseData.edges || [];
+    const newEdges = currentEdges.filter(e => e.id !== edgeId);
+
+    // Reorder nodes based on new flow (optional but good for consistency)
+    const reorderedNodes = reorderNodesByFlow(state.courseData.nodes, newEdges);
+
     return { 
         courseData: { 
             ...state.courseData, 
-            edges: currentEdges.filter(e => e.id !== edgeId),
+            nodes: reorderedNodes,
+            edges: newEdges,
             updatedAt: new Date() 
         } 
     };

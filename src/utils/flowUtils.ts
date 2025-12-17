@@ -96,3 +96,76 @@ export const linearizeGraph = (
         };
     });
 };
+
+/**
+ * Reorders existing CourseNodes based on the provided edges using topological sort.
+ */
+export const reorderNodesByFlow = (
+    nodes: CourseNode[],
+    edges: { source: string; target: string }[]
+): CourseNode[] => {
+    if (!nodes || nodes.length === 0) return [];
+    if (!edges || edges.length === 0) return nodes;
+
+    // 1. Build adjacency list and in-degree map
+    const adj: Record<string, string[]> = {};
+    const inDegree: Record<string, number> = {};
+    
+    nodes.forEach(n => {
+        adj[n.id] = [];
+        inDegree[n.id] = 0;
+    });
+
+    edges.forEach(e => {
+        if (adj[e.source]) {
+            adj[e.source].push(e.target);
+            inDegree[e.target] = (inDegree[e.target] || 0) + 1;
+        }
+    });
+
+    // 2. Kahn's Algorithm
+    const queue: string[] = [];
+    const resultIds: string[] = [];
+
+    nodes.forEach(n => {
+        if (inDegree[n.id] === 0) {
+            queue.push(n.id);
+        }
+    });
+
+    // Deterministic sort for queue
+    queue.sort((a, b) => {
+        const nodeA = nodes.find(n => n.id === a);
+        const nodeB = nodes.find(n => n.id === b);
+        return (nodeA?.title || "").localeCompare(nodeB?.title || "");
+    });
+
+    while (queue.length > 0) {
+        const u = queue.shift()!;
+        resultIds.push(u);
+
+        if (adj[u]) {
+            adj[u].forEach(v => {
+                inDegree[v]--;
+                if (inDegree[v] === 0) {
+                    queue.push(v);
+                }
+            });
+            // Re-sort queue
+            queue.sort((a, b) => {
+                const nodeA = nodes.find(n => n.id === a);
+                const nodeB = nodes.find(n => n.id === b);
+                return (nodeA?.title || "").localeCompare(nodeB?.title || "");
+            });
+        }
+    }
+
+    // 3. Handle cycles/disconnected
+    const remainingNodes = nodes.filter(n => !resultIds.includes(n.id));
+    remainingNodes.sort((a, b) => a.title.localeCompare(b.title));
+    
+    const finalOrderIds = [...resultIds, ...remainingNodes.map(n => n.id)];
+
+    // 4. Return reordered nodes
+    return finalOrderIds.map(id => nodes.find(n => n.id === id)!);
+};
