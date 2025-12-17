@@ -22,6 +22,7 @@ export interface CourseModule {
     title: string;
     description: string;
     nodes: CourseNode[]; // Linear sequence of nodes
+    edges?: { id: string; source: string; target: string }[]; // Explicit connections
     createdAt: Date;
     updatedAt: Date;
 }

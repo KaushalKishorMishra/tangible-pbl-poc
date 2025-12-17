@@ -1,6 +1,6 @@
 import { useCamera, useSigma } from"@react-sigma/core";
 import { useState, useEffect, useRef } from"react";
-import { Download, Network, Workflow } from "lucide-react";
+import { Download, Network, Workflow, FolderOpen } from "lucide-react";
 import { useGraphLayouts, type LayoutType } from "./hooks/useGraphLayouts";
 import { useGraphStore } from "../../store/graphStore";
 import { linearizeGraph } from "../../utils/flowUtils";
@@ -66,8 +66,7 @@ export const GraphControls = () => {
     selectedNodeIds, 
     setIsFlowViewActive,
     aiGeneratedGraphData,
-    setCourseData,
-    isAICourseDesignerCollapsed
+    setCourseData
   } = useGraphStore();
 
   const { loadCourseFromStorage } = useGraphStore();
@@ -77,11 +76,19 @@ export const GraphControls = () => {
 
     const linearNodes = linearizeGraph(selectedNodeIds, aiGeneratedGraphData);
     
+    // Generate explicit linear edges
+    const linearEdges = linearNodes.slice(0, -1).map((node, index) => ({
+      id: `e-${node.id}-${linearNodes[index + 1].id}`,
+      source: node.id,
+      target: linearNodes[index + 1].id
+    }));
+
     const newCourse: CourseModule = {
       id: `course-${Date.now()}`,
       title: "New Custom Course",
       description: "Generated from selected skills.",
       nodes: linearNodes,
+      edges: linearEdges,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -90,10 +97,7 @@ export const GraphControls = () => {
     setIsFlowViewActive(true);
   };
 
-  // If AI Course Designer is OPEN (not collapsed), hide controls to ensure mutual exclusivity
-  if (!isAICourseDesignerCollapsed) {
-    return null;
-  }
+
 
   return (
     <div className="flex flex-row gap-2 p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-xl border border-white/30 transition-all hover:shadow-2xl relative">
@@ -114,7 +118,7 @@ export const GraphControls = () => {
         className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
         title="Load Saved Flow"
       >
-        <Download className="w-5 h-5" />
+        <FolderOpen className="w-5 h-5" />
       </button>
 
 			<button

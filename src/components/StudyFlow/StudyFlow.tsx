@@ -56,45 +56,57 @@ export const StudyFlow: React.FC = () => {
         setIsFlowViewActive,
         openNodeEditor,
         isNodeEditorOpen,
-        saveCourseToStorage
+        saveCourseToStorage,
+        addCourseEdge,
+        removeCourseEdge,
+        setCourseData
     } = useGraphStore();
+
+    // Ensure edges exist in courseData (migration for legacy/linear data)
+    React.useEffect(() => {
+        if (courseData && !courseData.edges) {
+            const newEdges: { id: string; source: string; target: string }[] = [];
+            courseData.nodes.forEach((node, index) => {
+                if (index < courseData.nodes.length - 1) {
+                    const nextNode = courseData.nodes[index + 1];
+                    newEdges.push({
+                        id: `e-${node.id}-${nextNode.id}`,
+                        source: node.id,
+                        target: nextNode.id
+                    });
+                }
+            });
+            // Update store with explicit edges
+            setCourseData({ ...courseData, edges: newEdges });
+        }
+    }, [courseData, setCourseData]);
 
     // Transform course data to React Flow format
     const { initialNodes, initialEdges } = useMemo(() => {
         if (!courseData) return { initialNodes: [], initialEdges: [] };
 
-        const rfNodes: Node[] = [];
-        const rfEdges: Edge[] = [];
+        const rfNodes: Node[] = courseData.nodes.map((node, index) => ({
+            id: node.id,
+            type: 'courseNode',
+            position: { x: 250, y: index * 250 }, // Keep vertical layout for now
+            data: { 
+                label: node.title,
+                description: node.description,
+                resources: node.resources,
+                estimatedTime: node.estimatedTime,
+                index: index
+            },
+        }));
 
-        courseData.nodes.forEach((node, index) => {
-            // Vertical layout
-            rfNodes.push({
-                id: node.id,
-                type: 'courseNode',
-                position: { x: 250, y: index * 250 }, // Fixed vertical spacing
-                data: { 
-                    label: node.title,
-                    description: node.description,
-                    resources: node.resources,
-                    estimatedTime: node.estimatedTime,
-                    index: index
-                },
-            });
-
-            // Connect to next node
-            if (index < courseData.nodes.length - 1) {
-                const nextNode = courseData.nodes[index + 1];
-                rfEdges.push({
-                    id: `e-${node.id}-${nextNode.id}`,
-                    source: node.id,
-                    target: nextNode.id,
-                    type: 'smoothstep',
-                    animated: true,
-                    style: { stroke: '#6366f1', strokeWidth: 2 },
-                    markerEnd: { type: 'arrowclosed', color: '#6366f1' },
-                });
-            }
-        });
+        const rfEdges: Edge[] = (courseData.edges || []).map(edge => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            type: 'smoothstep',
+            animated: true,
+            style: { stroke: '#6366f1', strokeWidth: 2 },
+            markerEnd: { type: 'arrowclosed', color: '#6366f1' },
+        }));
 
         return { initialNodes: rfNodes, initialEdges: rfEdges };
     }, [courseData]);
@@ -102,7 +114,7 @@ export const StudyFlow: React.FC = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-    // Update nodes when courseData changes (e.g. after editing)
+    // Sync local state with store data
     React.useEffect(() => {
         setNodes(initialNodes);
         setEdges(initialEdges);
@@ -112,9 +124,20 @@ export const StudyFlow: React.FC = () => {
         openNodeEditor(node.id);
     }, [openNodeEditor]);
 
+    const onConnect = useCallback((params: any) => {
+        if (params.source && params.target) {
+            addCourseEdge(params.source, params.target);
+        }
+    }, [addCourseEdge]);
+
+    const onEdgesDelete = useCallback((deletedEdges: Edge[]) => {
+        deletedEdges.forEach(edge => {
+            removeCourseEdge(edge.id);
+        });
+    }, [removeCourseEdge]);
+
     const handleSave = () => {
         saveCourseToStorage();
-        // Optional: Add toast notification here
         alert("Course saved successfully!");
     };
 
@@ -145,6 +168,8 @@ export const StudyFlow: React.FC = () => {
                     edges={edges}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onEdgesDelete={onEdgesDelete}
                     onNodeClick={onNodeClick}
                     nodeTypes={nodeTypes}
                     fitView

@@ -110,6 +110,8 @@ interface GraphState {
   updateNodeContent: (nodeId: string, updates: Partial<CourseNode>) => void;
   addNodeResource: (nodeId: string, resource: ContentResource) => void;
   removeNodeResource: (nodeId: string, resourceId: string) => void;
+  addCourseEdge: (source: string, target: string) => void;
+  removeCourseEdge: (edgeId: string) => void;
   reorderNodes: (startIndex: number, endIndex: number) => void;
   openNodeEditor: (nodeId: string) => void;
   closeNodeEditor: () => void;
@@ -238,6 +240,31 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         node.id === nodeId ? { ...node, resources: node.resources.filter(r => r.id !== resourceId) } : node
     );
     return { courseData: { ...state.courseData, nodes: newNodes, updatedAt: new Date() } };
+  }),
+
+  addCourseEdge: (source, target) => set((state) => {
+    if (!state.courseData) return {};
+    const newEdge = { id: `e-${source}-${target}-${Date.now()}`, source, target };
+    const currentEdges = state.courseData.edges || [];
+    return { 
+        courseData: { 
+            ...state.courseData, 
+            edges: [...currentEdges, newEdge],
+            updatedAt: new Date() 
+        } 
+    };
+  }),
+
+  removeCourseEdge: (edgeId) => set((state) => {
+    if (!state.courseData) return {};
+    const currentEdges = state.courseData.edges || [];
+    return { 
+        courseData: { 
+            ...state.courseData, 
+            edges: currentEdges.filter(e => e.id !== edgeId),
+            updatedAt: new Date() 
+        } 
+    };
   }),
 
   reorderNodes: (startIndex, endIndex) => set((state) => {
