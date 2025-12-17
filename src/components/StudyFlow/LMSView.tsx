@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCourseStore } from '../../store/courseStore';
+import { useUserStore } from '../../store/userStore';
 import { BookOpen, ChevronLeft, ChevronRight, Play, FileText, File, HelpCircle, Menu, CheckCircle, Clock } from 'lucide-react';
 import type { ResourceType } from '../../types/course';
 
@@ -103,6 +104,7 @@ const QuizRenderer = ({ content, onComplete, isCompleted }: { content: string, o
 
 export const LMSView: React.FC = () => {
     const { courseData, completedResources, markResourceCompleted, nodeProgress, updateTimeSpent } = useCourseStore();
+    const { user } = useUserStore();
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -160,19 +162,24 @@ export const LMSView: React.FC = () => {
 
     // Calculate the furthest unlocked index
     // A node is unlocked if the previous node is completed
+    // Educators have all nodes unlocked
     let maxUnlockedIndex = 0;
-    for (let i = 0; i < courseData.nodes.length; i++) {
-        if (isNodeCompleted(courseData.nodes[i])) {
-            maxUnlockedIndex = i + 1;
-        } else {
-            break;
+    if (user.role === 'educator') {
+        maxUnlockedIndex = courseData.nodes.length - 1;
+    } else {
+        for (let i = 0; i < courseData.nodes.length; i++) {
+            if (isNodeCompleted(courseData.nodes[i])) {
+                maxUnlockedIndex = i + 1;
+            } else {
+                break;
+            }
         }
+        // Ensure we don't go out of bounds
+        maxUnlockedIndex = Math.min(maxUnlockedIndex, courseData.nodes.length - 1);
     }
-    // Ensure we don't go out of bounds
-    maxUnlockedIndex = Math.min(maxUnlockedIndex, courseData.nodes.length - 1);
 
     const handleNext = () => {
-        if (selectedNodeIndex < courseData.nodes.length - 1 && isNodeCompleted(selectedNode)) {
+        if (selectedNodeIndex < courseData.nodes.length - 1 && (isNodeCompleted(selectedNode) || user.role === 'educator')) {
             setSelectedNodeId(courseData.nodes[selectedNodeIndex + 1].id);
         }
     };
@@ -301,9 +308,9 @@ export const LMSView: React.FC = () => {
                         </button>
                         <button
                             onClick={handleNext}
-                            disabled={selectedNodeIndex >= courseData.nodes.length - 1 || !isNodeCompleted(selectedNode)}
+                            disabled={selectedNodeIndex >= courseData.nodes.length - 1 || (!isNodeCompleted(selectedNode) && user.role !== 'educator')}
                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 shadow-md shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                            title={!isNodeCompleted(selectedNode) ? "Complete all resources to proceed" : "Next Unit"}
+                            title={!isNodeCompleted(selectedNode) && user.role !== 'educator' ? "Complete all resources to proceed" : "Next Unit"}
                         >
                             Next <ChevronRight className="w-4 h-4" />
                         </button>
