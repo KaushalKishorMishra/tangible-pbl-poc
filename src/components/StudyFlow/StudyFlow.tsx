@@ -1,9 +1,10 @@
 import React, { useMemo, useCallback } from 'react';
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, type Node, type Edge, Position, Handle } from '@xyflow/react';
+import { ReactFlow, Background, Panel, useNodesState, useEdgesState, type Node, type Edge, Position, Handle } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCourseStore } from '../../store/courseStore';
 import { ArrowLeft, BookOpen, Clock, FileText, Video, Save } from 'lucide-react';
 import { NodeContentEditor } from './NodeContentEditor';
+import { StudyFlowControls } from './StudyFlowControls';
 
 // Custom Node Component
 import { CustomEdge } from './CustomEdge';
@@ -180,12 +181,13 @@ export const StudyFlow: React.FC = () => {
                     nodeTypes={nodeTypes}
                     edgeTypes={edgeTypes} // Register custom edge types
                     fitView
-                    attributionPosition="bottom-right"
+                    proOptions={{ hideAttribution: true }}
                     minZoom={0.1}
                 >
                     <Background color="#e2e8f0" gap={20} />
-                    <Controls />
-                    <MiniMap />
+                    <Panel position="bottom-right">
+                        <StudyFlowControls />
+                    </Panel>
                 </ReactFlow>
             </div>
 
