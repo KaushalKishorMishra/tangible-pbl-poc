@@ -61,7 +61,7 @@ const RELATIONSHIP_TYPES = [
 	"ANTIPATTERN_OF",
 ];
 
-const SKILL_LEVELS = ["Awareness", "Application", "Mastery"];
+const SKILL_LEVELS = ["Awareness", "Application", "Mastery", "Influence"];
 
 export class AIGraphGenerator {
 	private ai: GoogleGenAI;
@@ -217,7 +217,7 @@ Return ONLY the JSON object, no markdown formatting or explanation.`;
 		};
 	}
 
-	private generateFilters(graphData: GraphData): FilterData {
+	public generateFilters(graphData: GraphData): FilterData {
 		const levels = new Set<string>();
 		const sources = new Set<string>();
 		const categories = new Set<string>();

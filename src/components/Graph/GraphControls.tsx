@@ -1,10 +1,7 @@
 import { useCamera, useSigma } from"@react-sigma/core";
-import { useLayoutForceAtlas2 } from"@react-sigma/layout-forceatlas2";
-import { useLayoutCircular } from"@react-sigma/layout-circular";
-import { useLayoutRandom } from"@react-sigma/layout-random";
-import { animateNodes } from"sigma/utils";
 import { useState, useEffect, useRef } from"react";
-import { Download } from "lucide-react";
+import { Download, Network } from "lucide-react";
+import { useGraphLayouts, type LayoutType } from "./hooks/useGraphLayouts";
 
 export const GraphControls = () => {
   const sigma = useSigma();
@@ -12,10 +9,7 @@ export const GraphControls = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const layoutRef = useRef<HTMLDivElement>(null);
-
-  const { positions: circularPositions } = useLayoutCircular();
-  const { positions: randomPositions } = useLayoutRandom();
-  const { assign: assignFA2 } = useLayoutForceAtlas2();
+  const { handleLayout } = useGraphLayouts();
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -47,19 +41,9 @@ export const GraphControls = () => {
     }
   };
 
-  const handleLayout = (type:'fa2' |'circular' |'random') => {
+  const onLayoutClick = (type: LayoutType) => {
     setIsLayoutOpen(false);
-    switch (type) {
-      case'fa2':
-        assignFA2();
-        break;
-      case'circular':
-        animateNodes(sigma.getGraph(), circularPositions(), { duration: 1000 });
-        break;
-      case'random':
-        animateNodes(sigma.getGraph(), randomPositions(), { duration: 1000 });
-        break;
-    }
+    handleLayout(type);
   };
 
   const handleDownload = () => {
@@ -130,25 +114,39 @@ export const GraphControls = () => {
         {isLayoutOpen && (
           <div className="absolute bottom-full right-0 mr-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50 animate-fadeIn">
             <button
-              onClick={() => handleLayout('fa2')}
+              onClick={() => onLayoutClick('fa2')}
               className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
             >
               <div className="w-2 h-2 rounded-full bg-[#0d99ff]"></div>
               Force Atlas 2
             </button>
             <button
-              onClick={() => handleLayout('circular')}
+              onClick={() => onLayoutClick('circular')}
               className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
             >
               <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
               Circular
             </button>
             <button
-              onClick={() => handleLayout('random')}
+              onClick={() => onLayoutClick('random')}
               className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
             >
               <div className="w-2 h-2 rounded-full bg-purple-500"></div>
               Random
+            </button>
+            <button
+              onClick={() => onLayoutClick('linear')}
+              className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
+            >
+              <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+              Linear
+            </button>
+            <button
+              onClick={() => onLayoutClick('tree')}
+              className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
+            >
+              <Network className="w-3 h-3 text-gray-500" />
+              Tree
             </button>
           </div>
         )}

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2, Settings, RefreshCw } from "lucide-react";
+import { Loader2, Settings, RefreshCw, Database } from "lucide-react";
+import nodesData from "../../data/nodes.json";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { SkillMapGraph } from "./SkillMapGraph";
 import { GraphErrorState } from "./GraphErrorState";
@@ -260,6 +261,43 @@ export const AICourseCreation: React.FC = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [courseData, conversationalAgent]);
+
+	const handleLoadStaticData = useCallback(async () => {
+		setIsGeneratingGraph(true);
+		setGraphError(null);
+
+		try {
+			// Simulate loading delay
+			await new Promise(resolve => setTimeout(resolve, 1000));
+
+			// Use AIGraphGenerator just to generate filters (hacky but works)
+			// We need an instance, apiKey doesn't matter for this method
+			const generator = new AIGraphGenerator("dummy-key");
+			const filterData = generator.generateFilters(nodesData as unknown as GraphData);
+
+			const graphData = nodesData as unknown as GraphData;
+
+			setGeneratedGraphData(graphData);
+			setAIGeneratedGraphData(graphData);
+			setAvailableFilters(filterData);
+			setSelectedCategories(filterData.category.slice(0, 5));
+
+			const successMessage: Message = {
+				id: `static-load-${Date.now()}`,
+				content: `📂 Loaded static dataset with ${graphData.nodesCount} nodes and ${graphData.relationshipsCount} relationships.`,
+				sender: "ai",
+				timestamp: new Date(),
+			};
+			setMessages((prev) => [...prev, successMessage]);
+			setIsComplete(true);
+
+		} catch (error) {
+			console.error("Error loading static data:", error);
+			handleError(error);
+		} finally {
+			setIsGeneratingGraph(false);
+		}
+	}, [setAIGeneratedGraphData, setAvailableFilters]);
 
 	const handleCompletion = useCallback(async () => {
 		setIsTyping(true);
@@ -566,13 +604,22 @@ export const AICourseCreation: React.FC = () => {
 								: `Question ${currentQuestionIndex + 1} of ${questions.length}`}
 						</p>
 					</div>
-					<button
-						onClick={handleResetKey}
-						className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-						title="Reset API Key"
-					>
-						<Settings className="w-5 h-5" />
-					</button>
+					<div className="flex gap-2">
+						<button
+							onClick={handleLoadStaticData}
+							className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+							title="Load Static Data (Dev)"
+						>
+							<Database className="w-5 h-5" />
+						</button>
+						<button
+							onClick={handleResetKey}
+							className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+							title="Reset API Key"
+						>
+							<Settings className="w-5 h-5" />
+						</button>
+					</div>
 				</div>
 
 				{/* Messages */}
