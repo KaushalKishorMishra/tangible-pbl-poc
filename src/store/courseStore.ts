@@ -8,8 +8,14 @@ interface CourseState {
   isNodeEditorOpen: boolean;
   editingNodeId: string | null;
   isFlowViewActive: boolean; // Moved here as it relates to course view
+  viewMode: 'graph' | 'lms';
+  completedResources: string[];
+  nodeProgress: Record<string, { timeSpent: number }>;
 
   // Actions
+  setViewMode: (mode: 'graph' | 'lms') => void;
+  markResourceCompleted: (resourceId: string) => void;
+  updateTimeSpent: (nodeId: string, secondsToAdd: number) => void;
   setCourseData: (data: CourseModule | null) => void;
   updateNodeContent: (nodeId: string, updates: Partial<CourseNode>) => void;
   addNodeResource: (nodeId: string, resource: ContentResource) => void;
@@ -29,7 +35,23 @@ export const useCourseStore = create<CourseState>((set, get) => ({
   isNodeEditorOpen: false,
   editingNodeId: null,
   isFlowViewActive: false,
+  viewMode: 'graph',
+  completedResources: [],
+  nodeProgress: {}, // { [nodeId]: { timeSpent: number } }
 
+  setViewMode: (mode) => set({ viewMode: mode }),
+  markResourceCompleted: (resourceId) => set((state) => ({ 
+    completedResources: [...state.completedResources, resourceId] 
+  })),
+  updateTimeSpent: (nodeId, secondsToAdd) => set((state) => {
+    const currentProgress = state.nodeProgress[nodeId] || { timeSpent: 0 };
+    return {
+      nodeProgress: {
+        ...state.nodeProgress,
+        [nodeId]: { timeSpent: currentProgress.timeSpent + secondsToAdd }
+      }
+    };
+  }),
   setCourseData: (data) => set({ courseData: data }),
   
   setIsFlowViewActive: (isActive) => set({ isFlowViewActive: isActive }),

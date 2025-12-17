@@ -1,4 +1,5 @@
-import { X, Plus, FileText, Video, File, HelpCircle, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, File, FileText, HelpCircle, Plus, Trash2, Video, X } from 'lucide-react';
+import { TimePicker } from '../ui/TimePicker';
 import { useCourseStore } from '../../store/courseStore';
 import type { ResourceType, ContentResource } from '../../types/course';
 import { useState } from 'react';
@@ -137,21 +138,11 @@ export const NodeContentEditor: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Estimated Time</label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                className="w-full p-3 pl-10 text-sm bg-gray-50 border border-gray-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-500"
-                                placeholder="e.g. 15 min"
-                                value={node.estimatedTime || ''}
-                                onChange={(e) => updateNodeContent(editingNodeId, { estimatedTime: e.target.value })}
-                            />
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                        </div>
+                        <TimePicker
+                            label="Estimated Time (HH:MM:SS)"
+                            value={node.estimatedTime || '00:00:00'}
+                            onChange={(val) => updateNodeContent(editingNodeId, { estimatedTime: val })}
+                        />
                     </div>
                 </section>
 

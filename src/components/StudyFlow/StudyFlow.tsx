@@ -2,9 +2,10 @@ import React, { useMemo, useCallback } from 'react';
 import { ReactFlow, Background, Panel, useNodesState, useEdgesState, type Node, type Edge, Position, Handle } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCourseStore } from '../../store/courseStore';
-import { ArrowLeft, BookOpen, Clock, FileText, Video, Save } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, FileText, Video, Save, Layout, List } from 'lucide-react';
 import { NodeContentEditor } from './NodeContentEditor';
 import { StudyFlowControls } from './StudyFlowControls';
+import { LMSView } from './LMSView';
 
 // Custom Node Component
 import { CustomEdge } from './CustomEdge';
@@ -66,7 +67,9 @@ export const StudyFlow: React.FC = () => {
         saveCourseToStorage,
         addCourseEdge,
         removeCourseEdge,
-        setCourseData
+        setCourseData,
+        viewMode,
+        setViewMode
     } = useCourseStore();
 
     // Ensure edges exist in courseData (migration for legacy/linear data)
@@ -150,7 +153,7 @@ export const StudyFlow: React.FC = () => {
 
     return (
         <div className="w-full h-full bg-slate-50 relative flex">
-            <div className={`flex-1 relative transition-all duration-300 ${isNodeEditorOpen ? 'mr-96' : ''}`}>
+            <div className={`flex-1 relative transition-all duration-300 ${isNodeEditorOpen && viewMode === 'graph' ? 'mr-96' : ''}`}>
                 {/* Header / Back Button */}
                 <div className="absolute top-4 left-4 z-10 flex gap-2">
                     <button
@@ -168,31 +171,67 @@ export const StudyFlow: React.FC = () => {
                         <Save className="w-4 h-4" />
                         Save Course
                     </button>
+
+                    <div className="h-full w-px bg-gray-300 mx-2"></div>
+
+                    {/* View Toggle */}
+                    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-1 flex">
+                        <button
+                            onClick={() => setViewMode('graph')}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                viewMode === 'graph' 
+                                ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
+                                : 'text-gray-500 hover:bg-gray-50'
+                            }`}
+                        >
+                            <Layout className="w-4 h-4" />
+                            Graph
+                        </button>
+                        <button
+                            onClick={() => setViewMode('lms')}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                viewMode === 'lms' 
+                                ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
+                                : 'text-gray-500 hover:bg-gray-50'
+                            }`}
+                        >
+                            <List className="w-4 h-4" />
+                            LMS View
+                        </button>
+                    </div>
                 </div>
 
-                <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    onEdgesDelete={onEdgesDelete}
-                    onNodeClick={onNodeClick}
-                    nodeTypes={nodeTypes}
-                    edgeTypes={edgeTypes} // Register custom edge types
-                    fitView
-                    proOptions={{ hideAttribution: true }}
-                    minZoom={0.1}
-                >
-                    <Background color="#e2e8f0" gap={20} />
-                    <Panel position="bottom-right">
-                        <StudyFlowControls />
-                    </Panel>
-                </ReactFlow>
+                {viewMode === 'graph' ? (
+                    <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        onEdgesDelete={onEdgesDelete}
+                        onNodeClick={onNodeClick}
+                        nodeTypes={nodeTypes}
+                        edgeTypes={edgeTypes} // Register custom edge types
+                        fitView
+                        proOptions={{ hideAttribution: true }}
+                        minZoom={0.1}
+                    >
+                        <Background color="#e2e8f0" gap={20} />
+                        <Panel position="bottom-right">
+                            <StudyFlowControls />
+                        </Panel>
+                    </ReactFlow>
+                ) : (
+                    <div className="w-full h-full pt-20 pb-4 px-4">
+                        <div className="w-full h-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                            <LMSView />
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Right Panel Editor */}
-            <NodeContentEditor />
+            {/* Right Panel Editor - Only show in Graph mode */}
+            {viewMode === 'graph' && <NodeContentEditor />}
         </div>
     );
 };
