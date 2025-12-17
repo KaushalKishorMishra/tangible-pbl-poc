@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Loader2, Settings, RefreshCw, Database } from "lucide-react";
 import nodesData from "../../data/nodes.json";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
+import { StudyFlow } from "../StudyFlow/StudyFlow";
 import { SkillMapGraph } from "./SkillMapGraph";
 import { GraphErrorState } from "./GraphErrorState";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
@@ -94,7 +95,10 @@ const questions = [
 ];
 
 export const AICourseCreation: React.FC = () => {
-	const { setAIGeneratedGraphData, setAvailableFilters } = useGraphStore();
+	const { setAIGeneratedGraphData, 		setAvailableFilters, 
+		isFlowViewActive,
+		aiGeneratedGraphData
+	} = useGraphStore();
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id:"1",
@@ -690,10 +694,14 @@ export const AICourseCreation: React.FC = () => {
 								</div>
 							</div>
 						) : (
-							<SkillMapGraph 
-								selectedCategories={selectedCategories} 
-								graphData={generatedGraphData}
-							/>
+							isFlowViewActive ? (
+								<StudyFlow />
+							) : (
+								<SkillMapGraph 
+									selectedCategories={selectedCategories} 
+									graphData={aiGeneratedGraphData} 
+								/>
+							)
 						)}
 
 						{/* Error State */}

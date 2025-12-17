@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { FilterState } from '../types/filter';
+import type { CourseModule, CourseNode, ContentResource } from '../types/course';
 
 export type UserRole = 'educator' | 'learner' | 'admin' | null;
 
@@ -78,6 +79,12 @@ interface GraphState {
   arcMenuNode: { nodeId: string; position: { x: number; y: number } } | null;
   arcMenuState: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } };
   selectedNodeForDock: string | null;
+  isFlowViewActive: boolean;
+  
+  // Course Authoring states
+  courseData: CourseModule | null;
+  isNodeEditorOpen: boolean;
+  editingNodeId: string | null;
 
   // User states
   user: UserState;
@@ -92,8 +99,20 @@ interface GraphState {
   setArcMenuNode: (node: { nodeId: string; position: { x: number; y: number } } | null) => void;
   setArcMenuState: (state: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } }) => void;
   setSelectedNodeForDock: (nodeId: string | null) => void;
+  setIsFlowViewActive: (isActive: boolean) => void;
   toggleNodeSelection: (nodeId: string) => void;
   removeNodeSelection: (nodeId: string) => void;
+
+  // Course Authoring actions
+  setCourseData: (data: CourseModule | null) => void;
+  updateNodeContent: (nodeId: string, updates: Partial<CourseNode>) => void;
+  addNodeResource: (nodeId: string, resource: ContentResource) => void;
+  removeNodeResource: (nodeId: string, resourceId: string) => void;
+  reorderNodes: (startIndex: number, endIndex: number) => void;
+  openNodeEditor: (nodeId: string) => void;
+  closeNodeEditor: () => void;
+  saveCourseToStorage: () => void;
+  loadCourseFromStorage: () => void;
 
   // Filter actions
   setFilter: (category: string, value: string) => void;
@@ -149,6 +168,10 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   arcMenuNode: null,
   arcMenuState: { isOpen: false, nodeId: null, position: { x: 0, y: 0 } },
   selectedNodeForDock: null,
+  isFlowViewActive: false,
+  courseData: null,
+  isNodeEditorOpen: false,
+  editingNodeId: null,
   user: {
     role: null,
     onboardingCompleted: false,
@@ -166,6 +189,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setArcMenuNode: (node) => set({ arcMenuNode: node }),
   setArcMenuState: (state) => set({ arcMenuState: state }),
   setSelectedNodeForDock: (nodeId) => set({ selectedNodeForDock: nodeId, isDrawerOpen: !!nodeId }),
+  setIsFlowViewActive: (isActive) => set({ isFlowViewActive: isActive }),
   
   // New actions
   toggleNodeSelection: (nodeId) => {
@@ -183,6 +207,65 @@ export const useGraphStore = create<GraphState>((set, get) => ({
      set(state => ({
         selectedNodeIds: state.selectedNodeIds.filter(id => id !== nodeId)
      }));
+  },
+
+  // Course Authoring actions
+  setCourseData: (data) => set({ courseData: data }),
+  
+  updateNodeContent: (nodeId, updates) => set((state) => {
+    if (!state.courseData) return {};
+    const newNodes = state.courseData.nodes.map(node => 
+        node.id === nodeId ? { ...node, ...updates } : node
+    );
+    return { courseData: { ...state.courseData, nodes: newNodes, updatedAt: new Date() } };
+  }),
+
+  addNodeResource: (nodeId, resource) => set((state) => {
+    if (!state.courseData) return {};
+    const newNodes = state.courseData.nodes.map(node => 
+        node.id === nodeId ? { ...node, resources: [...node.resources, resource] } : node
+    );
+    return { courseData: { ...state.courseData, nodes: newNodes, updatedAt: new Date() } };
+  }),
+
+  removeNodeResource: (nodeId, resourceId) => set((state) => {
+    if (!state.courseData) return {};
+    const newNodes = state.courseData.nodes.map(node => 
+        node.id === nodeId ? { ...node, resources: node.resources.filter(r => r.id !== resourceId) } : node
+    );
+    return { courseData: { ...state.courseData, nodes: newNodes, updatedAt: new Date() } };
+  }),
+
+  reorderNodes: (startIndex, endIndex) => set((state) => {
+    if (!state.courseData) return {};
+    const newNodes = Array.from(state.courseData.nodes);
+    const [removed] = newNodes.splice(startIndex, 1);
+    newNodes.splice(endIndex, 0, removed);
+    return { courseData: { ...state.courseData, nodes: newNodes, updatedAt: new Date() } };
+  }),
+
+  openNodeEditor: (nodeId) => set({ isNodeEditorOpen: true, editingNodeId: nodeId }),
+  closeNodeEditor: () => set({ isNodeEditorOpen: false, editingNodeId: null }),
+
+  saveCourseToStorage: () => {
+    const { courseData } = get();
+    if (courseData) {
+        localStorage.setItem('tangible_course_data', JSON.stringify(courseData));
+        console.log('Course saved to localStorage');
+    }
+  },
+
+  loadCourseFromStorage: () => {
+    const stored = localStorage.getItem('tangible_course_data');
+    if (stored) {
+        try {
+            const courseData = JSON.parse(stored);
+            set({ courseData, isFlowViewActive: true });
+            console.log('Course loaded from localStorage');
+        } catch (e) {
+            console.error('Failed to parse course data', e);
+        }
+    }
   },
 
   // Filter actions
