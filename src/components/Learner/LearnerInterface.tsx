@@ -1,6 +1,6 @@
 import React, { useState } from'react';
 import { BookOpen, Target, TrendingUp, Users, Play, Award, Settings } from'lucide-react';
-import { useGraphStore } from'../../store/graphStore';
+import { useUserStore } from'../../store/userStore';
 
 interface CourseCardProps {
  title: string;
@@ -96,7 +96,7 @@ const SkillProgress: React.FC<SkillProgressProps> = ({ skill, level, maxLevel, p
 
 export const LearnerInterface: React.FC = () => {
  const [showRoleMenu, setShowRoleMenu] = useState(false);
- const { setUserRole } = useGraphStore();
+ const { setUserRole } = useUserStore();
  const enrolledCourses = [
   {
    id:'1',

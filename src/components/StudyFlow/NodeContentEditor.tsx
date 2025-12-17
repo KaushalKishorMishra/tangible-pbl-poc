@@ -1,5 +1,5 @@
 import { X, Plus, FileText, Video, File, HelpCircle, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
-import { useGraphStore } from '../../store/graphStore';
+import { useCourseStore } from '../../store/courseStore';
 import type { ResourceType, ContentResource } from '../../types/course';
 import { useState } from 'react';
 
@@ -15,7 +15,7 @@ export const NodeContentEditor: React.FC = () => {
         updateNodeContent,
         saveCourseToStorage,
         reorderNodes
-    } = useGraphStore();
+    } = useCourseStore();
 
     const [isAdding, setIsAdding] = useState(false);
     const [newResource, setNewResource] = useState<Partial<ContentResource>>({ type: 'article' });

@@ -7,7 +7,7 @@ import {
 	Target,
 	TrendingUp,
 } from"lucide-react";
-import { useGraphStore } from"../../store/graphStore";
+import { useUserStore } from"../../store/userStore";
 import { useNavigate } from"react-router-dom";
 
 interface DashboardCardProps {
@@ -90,7 +90,7 @@ const QuickStat: React.FC<QuickStatProps> = ({
 // }
 
 export const EducatorDashboard: React.FC = () => {
-	const { user } = useGraphStore();
+	const { user } = useUserStore();
 	const navigate = useNavigate();
 
 	// Mock data - in a real app, this would come from an API

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from"react";
 import { Download, Network, Workflow, FolderOpen } from "lucide-react";
 import { useGraphLayouts, type LayoutType } from "./hooks/useGraphLayouts";
 import { useGraphStore } from "../../store/graphStore";
+import { useCourseStore } from "../../store/courseStore";
 import { linearizeGraph } from "../../utils/flowUtils";
 import type { CourseModule } from "../../types/course";
 
@@ -64,12 +65,14 @@ export const GraphControls = () => {
 
   const { 
     selectedNodeIds, 
-    setIsFlowViewActive,
     aiGeneratedGraphData,
-    setCourseData
   } = useGraphStore();
 
-  const { loadCourseFromStorage } = useGraphStore();
+  const {
+    setIsFlowViewActive,
+    setCourseData,
+    loadCourseFromStorage
+  } = useCourseStore();
 
   const handleGenerateFlow = () => {
     if (!aiGeneratedGraphData) return;

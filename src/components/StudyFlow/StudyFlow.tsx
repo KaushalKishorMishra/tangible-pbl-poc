@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, type Node, type Edge, Position, Handle } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useGraphStore } from '../../store/graphStore';
+import { useCourseStore } from '../../store/courseStore';
 import { ArrowLeft, BookOpen, Clock, FileText, Video, Save } from 'lucide-react';
 import { NodeContentEditor } from './NodeContentEditor';
 
@@ -66,7 +66,7 @@ export const StudyFlow: React.FC = () => {
         addCourseEdge,
         removeCourseEdge,
         setCourseData
-    } = useGraphStore();
+    } = useCourseStore();
 
     // Ensure edges exist in courseData (migration for legacy/linear data)
     React.useEffect(() => {

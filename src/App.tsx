@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from"react-router-dom";
-import { useGraphStore } from"./store/graphStore";
+import { useUserStore } from"./store/userStore";
 import { useEffect } from"react";
 
 // Role components
@@ -10,7 +10,7 @@ import { LearnerInterface } from"./components/Learner/LearnerInterface";
 import { AdminInterface } from"./components/Admin/AdminInterface";
 
 function App() {
- const { user } = useGraphStore();
+ const { user } = useUserStore();
 
  useEffect(() => {
   // Force light mode only

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2, Settings, RefreshCw, Database, ChevronLeft, ChevronRight, Bot } from "lucide-react";
+import { Loader2, Settings, RefreshCw, Database, ChevronLeft, Bot } from "lucide-react";
 import nodesData from "../../data/nodes.json";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { StudyFlow } from "../StudyFlow/StudyFlow";
@@ -15,6 +15,7 @@ import {
 	ChatInput,
 	CompletionState,
 } from"./ChatComponents";
+import { useCourseStore } from "../../store/courseStore";
 
 interface NodeData {
 	id: string;
@@ -95,12 +96,18 @@ const questions = [
 ];
 
 export const AICourseCreation: React.FC = () => {
-	const { setAIGeneratedGraphData, 		setAvailableFilters, 
-		isFlowViewActive,
-		aiGeneratedGraphData,
-        isAICourseDesignerCollapsed,
-        setAICourseDesignerCollapsed
-	} = useGraphStore();
+	const { 
+    setAIGeneratedGraphData, 
+    setAICourseDesignerCollapsed, 
+    isAICourseDesignerCollapsed,
+    setAvailableFilters,
+    aiGeneratedGraphData
+  } = useGraphStore();
+
+  const {
+    isFlowViewActive
+  } = useCourseStore();
+
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id:"1",
@@ -113,7 +120,7 @@ export const AICourseCreation: React.FC = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [isTyping, setIsTyping] = useState(false);
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-	const [courseData, setCourseData] = useState<Partial<CourseData>>({});
+	const [formCourseData, setFormCourseData] = useState<Partial<CourseData>>({});
 	const [isComplete, setIsComplete] = useState(false);
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
@@ -220,7 +227,7 @@ export const AICourseCreation: React.FC = () => {
 
 			const generator = new AIGraphGenerator(apiKey);
 			const { graphData, filterData } = await generator.generateGraphFromCourse(
-				courseData as CourseData,
+				formCourseData as CourseData,
 				conversationContext
 			);
 			
@@ -266,7 +273,7 @@ export const AICourseCreation: React.FC = () => {
 			setIsGeneratingGraph(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [courseData, conversationalAgent]);
+	}, [formCourseData, conversationalAgent]);
 
 	const handleLoadStaticData = useCallback(async () => {
 		setIsGeneratingGraph(true);
@@ -311,7 +318,7 @@ export const AICourseCreation: React.FC = () => {
 			const messageId = `completion-${Date.now()}-${Math.random()}`;
 			const completionMessage: Message = {
 				id: messageId,
-				content: `Perfect! I've gathered all the information I need. Based on your course"${courseData.title}" focused on ${courseData.mainFocus}, I'm now generating a custom skill map for your curriculum. This will take a moment...`,
+				content: `Perfect! I've gathered all the information I need. Based on your course"${formCourseData.title}" focused on ${formCourseData.mainFocus}, I'm now generating a custom skill map for your curriculum. This will take a moment...`,
 				sender:"ai",
 				timestamp: new Date(),
 			};
@@ -322,7 +329,7 @@ export const AICourseCreation: React.FC = () => {
 			// Generate graph using AI
 			await generateGraphWithAI();
 		}, 1000);
-	}, [courseData, generateGraphWithAI]);
+	}, [formCourseData, generateGraphWithAI]);
 
 	const askQuestion = React.useCallback(
 		(index: number) => {
@@ -419,7 +426,7 @@ export const AICourseCreation: React.FC = () => {
 					const response = await conversationalAgent.sendMessage(userInput);
 					
 					// Update course data
-					setCourseData(response.collectedData);
+					setFormCourseData(response.collectedData);
 					setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
 					// Add AI response
@@ -449,7 +456,7 @@ export const AICourseCreation: React.FC = () => {
 		} else {
 			// Fallback when agent not available
 			const currentQuestion = questions[currentQuestionIndex];
-			setCourseData((prev) => ({
+			setFormCourseData((prev) => ({
 				...prev,
 				[currentQuestion.key]: userInput,
 			}));
@@ -515,7 +522,7 @@ export const AICourseCreation: React.FC = () => {
 						const response = await conversationalAgent.sendMessage(option);
 						
 						// Update course data
-						setCourseData(response.collectedData);
+						setFormCourseData(response.collectedData);
 						setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
 						// Add AI response
@@ -541,7 +548,7 @@ export const AICourseCreation: React.FC = () => {
 			} else {
 				// Fallback when agent not available
 				const currentQuestion = questions[currentQuestionIndex];
-				setCourseData((prev) => ({
+				setFormCourseData((prev) => ({
 					...prev,
 					[currentQuestion.key]: option,
 				}));
@@ -672,7 +679,7 @@ export const AICourseCreation: React.FC = () => {
                                 className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
                             >
                                 <RefreshCw className="w-4 h-4" />
-                                <span>Update Graph</span>
+                                <span >Update Graph</span>
                             </button>
                         </div>
                     )}

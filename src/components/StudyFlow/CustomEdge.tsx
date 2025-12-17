@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps, getSmoothStepPath } from '@xyflow/react';
 import { X } from 'lucide-react';
-import { useGraphStore } from '../../store/graphStore';
+import { useCourseStore } from '../../store/courseStore';
 
 export const CustomEdge: React.FC<EdgeProps> = ({
   id,
@@ -15,7 +15,7 @@ export const CustomEdge: React.FC<EdgeProps> = ({
   markerEnd,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { removeCourseEdge } = useGraphStore();
+  const { removeCourseEdge } = useCourseStore();
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
