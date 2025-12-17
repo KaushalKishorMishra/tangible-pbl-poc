@@ -1,6 +1,6 @@
 import { useCamera, useSigma } from"@react-sigma/core";
 import { useState, useEffect, useRef } from"react";
-import { Download, Network, Workflow, FolderOpen } from "lucide-react";
+import { Download, Network, Workflow, FolderOpen, Share2, Circle, Shuffle, ArrowRight } from "lucide-react";
 import { useGraphLayouts, type LayoutType } from "./hooks/useGraphLayouts";
 import { useGraphStore } from "../../store/graphStore";
 import { useCourseStore } from "../../store/courseStore";
@@ -180,28 +180,28 @@ export const GraphControls = () => {
 							onClick={() => onLayoutClick('fa2')}
 							className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
 						>
-							<div className="w-2 h-2 rounded-full bg-[#0d99ff]"></div>
+							<Share2 className="w-3 h-3 text-gray-500" />
 							Force Atlas 2
 						</button>
 						<button
 							onClick={() => onLayoutClick('circular')}
 							className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
 						>
-							<div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+							<Circle className="w-3 h-3 text-gray-500" />
 							Circular
 						</button>
 						<button
 							onClick={() => onLayoutClick('random')}
 							className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
 						>
-							<div className="w-2 h-2 rounded-full bg-purple-500"></div>
+							<Shuffle className="w-3 h-3 text-gray-500" />
 							Random
 						</button>
 						<button
 							onClick={() => onLayoutClick('linear')}
 							className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 text-left flex items-center gap-2"
 						>
-							<div className="w-2 h-2 rounded-full bg-orange-500"></div>
+							<ArrowRight className="w-3 h-3 text-gray-500" />
 							Linear
 						</button>
 						<button
