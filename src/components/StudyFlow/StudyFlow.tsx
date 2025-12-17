@@ -16,7 +16,7 @@ const CourseNodeComponent = ({ data }: { data: any }) => {
             <div className="p-4 border-b border-gray-100 bg-gray-50 group-hover:bg-indigo-50/50 transition-colors">
                 <div className="flex justify-between items-start mb-2">
                     <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                        Module {data.index + 1}
+                        Content Unit {data.index + 1}
                     </span>
                     {data.resources.length > 0 && (
                         <div className="flex gap-1">
