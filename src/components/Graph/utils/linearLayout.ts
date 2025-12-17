@@ -95,7 +95,7 @@ export const applyLinearLayout = (graph: Graph) => {
 	});
 	sortedNodes.push(...remainingNodes);
 
-	const spacing = 15; // Space between nodes
+	const spacing = 100; // Space between nodes
 	const newPositions: Record<string, { x: number; y: number }> = {};
 
 	sortedNodes.forEach((node, index) => {

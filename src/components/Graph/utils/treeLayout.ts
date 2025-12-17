@@ -158,8 +158,8 @@ export const applyTreeLayout = (graph: Graph) => {
 	});
 
 	// 4. Assign Positions
-	const VERTICAL_SPACING = 100;
-	const HORIZONTAL_SPACING = 120;
+	const VERTICAL_SPACING = 200;
+	const HORIZONTAL_SPACING = 150;
 	const newPositions: Record<string, { x: number; y: number }> = {};
 
 	for (let r = 0; r <= maxRank; r++) {

@@ -12,7 +12,15 @@ export const useGraphLayouts = () => {
 	const sigma = useSigma();
 	const { positions: circularPositions } = useLayoutCircular();
 	const { positions: randomPositions } = useLayoutRandom();
-	const { assign: assignFA2 } = useLayoutForceAtlas2();
+	const { assign: assignFA2 } = useLayoutForceAtlas2({
+		iterations: 100,
+		settings: { 
+			adjustSizes: true, 
+			gravity: 1, 
+			scalingRatio: 2, 
+			slowDown: 10 
+		}
+	});
 
 	const handleLayout = (type: LayoutType) => {
 		switch (type) {
