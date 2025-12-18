@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { EducatorDashboard } from "./EducatorDashboard";
@@ -6,10 +7,10 @@ import { CohortSkillMap } from "./CohortSkillMap";
 import { EvaluationInterface } from "./EvaluationInterface";
 import { RoleAlignmentAnalyzer } from "./RoleAlignmentAnalyzer";
 import { LearnerProgressTracker } from "./LearnerProgressTracker";
-import { useGraphStore } from "../../store/graphStore";
+import { useUserStore } from '../../store/userStore'; // Changed from useGraphStore
 
 export const EducatorInterface: React.FC = () => {
-	const { user } = useGraphStore();
+	const { user } = useUserStore(); // Changed from useGraphStore
 
 	// Show onboarding if not completed (this can be handled in EducatorDashboard)
 	if (user.role !== "educator") {

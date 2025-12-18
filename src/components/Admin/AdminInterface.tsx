@@ -1,6 +1,6 @@
 import React, { useState } from'react';
 import { Users, BookOpen, BarChart3, Settings, Shield, TrendingUp, AlertTriangle, CheckCircle } from'lucide-react';
-import { useGraphStore } from'../../store/graphStore';
+import { useUserStore } from'../../store/userStore';
 
 interface StatCardProps {
  title: string;
@@ -88,7 +88,7 @@ const UserRow: React.FC<UserRowProps> = ({ name, email, role, status, lastActive
 export const AdminInterface: React.FC = () => {
  const [activeTab, setActiveTab] = useState<'overview' |'users' |'courses' |'analytics' |'settings'>('overview');
  const [showRoleMenu, setShowRoleMenu] = useState(false);
- const { setUserRole } = useGraphStore();
+ const { setUserRole } = useUserStore();
 
  const handleEditUser = (userId: string) => {
   console.log('Edit user:', userId);

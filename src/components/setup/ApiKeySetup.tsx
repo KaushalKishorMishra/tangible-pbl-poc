@@ -4,9 +4,10 @@ import { Check, Key, ExternalLink, ShieldCheck, Sparkles, ArrowRight, X } from '
 interface ApiKeySetupProps {
   onComplete: (apiKey: string) => void;
   onCancel?: () => void;
+  onUseStaticData?: () => void;
 }
 
-export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete, onCancel }) => {
+export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete, onCancel, onUseStaticData }) => {
   const [step, setStep] = useState(1);
   const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState('');
@@ -125,6 +126,14 @@ export const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onComplete, onCancel }
                 <div className="pt-4">
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">To get started</p>
                     <p className="text-gray-700 mt-1">We'll need a free API key from Google AI Studio. It's quick, free, and secure.</p>
+                    {onUseStaticData && (
+                        <button 
+                            onClick={onUseStaticData}
+                            className="mt-4 text-sm text-indigo-600 hover:text-indigo-800 font-medium underline decoration-indigo-300 hover:decoration-indigo-800 underline-offset-4 transition-all"
+                        >
+                            Or try with static demo data
+                        </button>
+                    )}
                 </div>
               </div>
             )}

@@ -1,7 +1,6 @@
 import React from"react";
 import { GraduationCap, Users, Shield, ArrowRight, CheckCircle2 } from"lucide-react";
-import { useGraphStore } from"../store/graphStore";
-import type { UserRole } from"../store/graphStore";
+import { useUserStore, type UserRole } from "../store/userStore";
 
 interface RoleCardProps {
 	title: string;
@@ -75,7 +74,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
 );
 
 export const RoleSelection: React.FC = () => {
-	const { setUserRole } = useGraphStore();
+	const { setUserRole } = useUserStore();
 
 	const handleRoleSelect = (role: UserRole) => {
 		if (role) {

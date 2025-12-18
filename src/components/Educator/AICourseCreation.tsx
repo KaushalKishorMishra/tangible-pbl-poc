@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Loader2, Settings, RefreshCw, Database } from "lucide-react";
+import { Loader2, Settings, RefreshCw, Database, ChevronLeft, Bot } from "lucide-react";
 import nodesData from "../../data/nodes.json";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
+import { StudyFlow } from "../StudyFlow/StudyFlow";
 import { SkillMapGraph } from "./SkillMapGraph";
 import { GraphErrorState } from "./GraphErrorState";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
@@ -14,6 +15,7 @@ import {
 	ChatInput,
 	CompletionState,
 } from"./ChatComponents";
+import { useCourseStore } from "../../store/courseStore";
 
 interface NodeData {
 	id: string;
@@ -94,7 +96,18 @@ const questions = [
 ];
 
 export const AICourseCreation: React.FC = () => {
-	const { setAIGeneratedGraphData, setAvailableFilters } = useGraphStore();
+	const { 
+    setAIGeneratedGraphData, 
+    setAICourseDesignerCollapsed, 
+    isAICourseDesignerCollapsed,
+    setAvailableFilters,
+    aiGeneratedGraphData
+  } = useGraphStore();
+
+  const {
+    isFlowViewActive
+  } = useCourseStore();
+
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id:"1",
@@ -107,7 +120,7 @@ export const AICourseCreation: React.FC = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [isTyping, setIsTyping] = useState(false);
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-	const [courseData, setCourseData] = useState<Partial<CourseData>>({});
+	const [formCourseData, setFormCourseData] = useState<Partial<CourseData>>({});
 	const [isComplete, setIsComplete] = useState(false);
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
@@ -214,7 +227,7 @@ export const AICourseCreation: React.FC = () => {
 
 			const generator = new AIGraphGenerator(apiKey);
 			const { graphData, filterData } = await generator.generateGraphFromCourse(
-				courseData as CourseData,
+				formCourseData as CourseData,
 				conversationContext
 			);
 			
@@ -260,11 +273,12 @@ export const AICourseCreation: React.FC = () => {
 			setIsGeneratingGraph(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [courseData, conversationalAgent]);
+	}, [formCourseData, conversationalAgent]);
 
 	const handleLoadStaticData = useCallback(async () => {
 		setIsGeneratingGraph(true);
 		setGraphError(null);
+        setShowSetup(false); // Close setup screen if open
 
 		try {
 			// Simulate loading delay
@@ -305,7 +319,7 @@ export const AICourseCreation: React.FC = () => {
 			const messageId = `completion-${Date.now()}-${Math.random()}`;
 			const completionMessage: Message = {
 				id: messageId,
-				content: `Perfect! I've gathered all the information I need. Based on your course"${courseData.title}" focused on ${courseData.mainFocus}, I'm now generating a custom skill map for your curriculum. This will take a moment...`,
+				content: `Perfect! I've gathered all the information I need. Based on your course"${formCourseData.title}" focused on ${formCourseData.mainFocus}, I'm now generating a custom skill map for your curriculum. This will take a moment...`,
 				sender:"ai",
 				timestamp: new Date(),
 			};
@@ -316,7 +330,7 @@ export const AICourseCreation: React.FC = () => {
 			// Generate graph using AI
 			await generateGraphWithAI();
 		}, 1000);
-	}, [courseData, generateGraphWithAI]);
+	}, [formCourseData, generateGraphWithAI]);
 
 	const askQuestion = React.useCallback(
 		(index: number) => {
@@ -413,7 +427,7 @@ export const AICourseCreation: React.FC = () => {
 					const response = await conversationalAgent.sendMessage(userInput);
 					
 					// Update course data
-					setCourseData(response.collectedData);
+					setFormCourseData(response.collectedData);
 					setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
 					// Add AI response
@@ -443,7 +457,7 @@ export const AICourseCreation: React.FC = () => {
 		} else {
 			// Fallback when agent not available
 			const currentQuestion = questions[currentQuestionIndex];
-			setCourseData((prev) => ({
+			setFormCourseData((prev) => ({
 				...prev,
 				[currentQuestion.key]: userInput,
 			}));
@@ -509,7 +523,7 @@ export const AICourseCreation: React.FC = () => {
 						const response = await conversationalAgent.sendMessage(option);
 						
 						// Update course data
-						setCourseData(response.collectedData);
+						setFormCourseData(response.collectedData);
 						setCurrentQuestionIndex(conversationalAgent.getCurrentQuestionIndex());
 
 						// Add AI response
@@ -535,7 +549,7 @@ export const AICourseCreation: React.FC = () => {
 			} else {
 				// Fallback when agent not available
 				const currentQuestion = questions[currentQuestionIndex];
-				setCourseData((prev) => ({
+				setFormCourseData((prev) => ({
 					...prev,
 					[currentQuestion.key]: option,
 				}));
@@ -579,107 +593,124 @@ export const AICourseCreation: React.FC = () => {
 
 
 	if (showSetup) {
-		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} />;
+		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} onUseStaticData={handleLoadStaticData} />;
 	}
 
 	const isGraphVisible = !!generatedGraphData || isGeneratingGraph || !!graphError;
 
 	return (
-		<div className="h-screen flex bg-gray-50 transition-colors duration-300">
+		<div className="h-screen flex bg-gray-50 transition-colors duration-300 relative">
+            {/* Floating Icon when Collapsed */}
+            {isGraphVisible && isAICourseDesignerCollapsed && (
+                <button
+                    onClick={() => setAICourseDesignerCollapsed(false)}
+                    className="absolute bottom-6 left-6 z-50 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
+                    title="Open AI Course Designer"
+                >
+                    <Bot className="w-6 h-6" />
+                </button>
+            )}
+
 			{/* Chat Interface */}
 			<div 
 				className={`
-					flex flex-col bg-white border-r border-gray-200 transition-all duration-500 ease-in-out
-					${isGraphVisible ? 'w-[20%]' : 'w-full max-w-3xl mx-auto shadow-xl my-8 rounded-xl border-l border-t border-b'}
+					flex flex-col bg-white border-r border-gray-200 transition-all duration-500 ease-in-out relative
+					${isGraphVisible 
+                        ? (isAICourseDesignerCollapsed ? 'w-0 overflow-hidden border-none' : 'w-[25%]') 
+                        : 'w-full max-w-3xl mx-auto shadow-xl my-8 rounded-xl border-l border-t border-b'}
 				`}
 			>
+                {/* Collapse Toggle Button */}
+                {isGraphVisible && !isAICourseDesignerCollapsed && (
+                    <button
+                        onClick={() => setAICourseDesignerCollapsed(true)}
+                        className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1 shadow-md z-50 hover:bg-gray-50 text-gray-500"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+                )}
 
 				{/* Header */}
 				<div className="flex items-center justify-between p-4 border-b border-gray-200">
-					<div>
-						<h2 className="text-lg font-semibold text-gray-900">AI Course Designer</h2>
-						<p className="text-sm text-gray-500">
-							{isComplete
-								? "Mapping Skills"
-								: `Question ${currentQuestionIndex + 1} of ${questions.length}`}
-						</p>
-					</div>
-					<div className="flex gap-2">
-						<button
-							onClick={handleLoadStaticData}
-							className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-							title="Load Static Data (Dev)"
-						>
-							<Database className="w-5 h-5" />
-						</button>
-						<button
-							onClick={handleResetKey}
-							className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-							title="Reset API Key"
-						>
-							<Settings className="w-5 h-5" />
-						</button>
-					</div>
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">AI Course Designer</h2>
+                        <p className="text-sm text-gray-500">
+                            {isComplete
+                                ? "Mapping Skills"
+                                : `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+                        </p>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleLoadStaticData}
+                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                            title="Load Static Data (Dev)"
+                        >
+                            <Database className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={handleResetKey}
+                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                            title="Reset API Key"
+                        >
+                            <Settings className="w-5 h-5" />
+                        </button>
+                    </div>
 				</div>
 
-				{/* Messages */}
-				<div className="flex-1 overflow-y-auto p-4 space-y-4">
-					{messages.map((message) => (
-						<MessageBubble key={message.id} message={message} />
-					))}
+				{/* Messages & Input */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((message) => (
+                        <MessageBubble key={message.id} message={message} />
+                    ))}
 
-					{/* Typing Indicator */}
-					{isTyping && <TypingIndicator />}
+                    {isTyping && <TypingIndicator />}
 
-					{/* Quick Reply Options */}
-					{currentQuestion?.options && !isComplete && (
-						<QuickReplyOptions
-							options={currentQuestion.options}
-							onOptionSelect={handleOptionSelect}
-						/>
-					)}
+                    {currentQuestion?.options && !isComplete && (
+                        <QuickReplyOptions
+                            options={currentQuestion.options}
+                            onOptionSelect={handleOptionSelect}
+                        />
+                    )}
 
-					{/* Explicit Update Button */}
-					{messages.length > 0 && messages[messages.length - 1].content.includes("Click the button below to apply changes") && (
-						<div className="flex justify-center mt-2">
-							<button
-								onClick={generateGraphWithAI}
-								className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-							>
-								<RefreshCw className="w-4 h-4" />
-								<span>Update Graph</span>
-							</button>
-						</div>
-					)}
+                    {messages.length > 0 && messages[messages.length - 1].content.includes("Click the button below to apply changes") && (
+                        <div className="flex justify-center mt-2">
+                            <button
+                                onClick={generateGraphWithAI}
+                                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                            >
+                                <RefreshCw className="w-4 h-4" />
+                                <span >Update Graph</span>
+                            </button>
+                        </div>
+                    )}
 
-					<div ref={messagesEndRef} />
-				</div>
+                    <div ref={messagesEndRef} />
+                </div>
 
-				{/* Input Area - Show for initial questions OR refinement mode */}
-				{(!isComplete && !currentQuestion?.options) || (conversationalAgent?.getIsInRefinementMode()) ? (
-					<ChatInput
-						value={inputValue}
-						onChange={setInputValue}
-						onSend={handleSendMessage}
-						onKeyPress={handleKeyPress}
-						placeholder={
-							conversationalAgent?.getIsInRefinementMode() 
-								? "Ask me anything about your skill map..." 
-								: currentQuestion?.placeholder || "Type your answer..."
-						}
-						inputRef={inputRef}
-					/>
-				) : null}
+                {(!isComplete && !currentQuestion?.options) || (conversationalAgent?.getIsInRefinementMode()) ? (
+                    <ChatInput
+                        value={inputValue}
+                        onChange={setInputValue}
+                        onSend={handleSendMessage}
+                        onKeyPress={handleKeyPress}
+                        placeholder={
+                            conversationalAgent?.getIsInRefinementMode() 
+                                ? "Ask me anything about your skill map..." 
+                                : currentQuestion?.placeholder || "Type your answer..."
+                        }
+                        inputRef={inputRef}
+                    />
+                ) : null}
 
-				{/* Completion State - Only show while generating, hide when in refinement mode */}
-				{isComplete && !conversationalAgent?.getIsInRefinementMode() && (
-					<CompletionState selectedCategories={selectedCategories} />
-				)}
+                {isComplete && !conversationalAgent?.getIsInRefinementMode() && (
+                    <CompletionState selectedCategories={selectedCategories} />
+                )}
 			</div>
 
-			{/* Skill Map - Only visible when graph is generated or generating */}
+			{/* Skill Map */}
 			{isGraphVisible && (
-				<div className="w-[80%] relative bg-gray-100 transition-colors duration-300 animate-in fade-in slide-in-from-right-10 duration-700">
+				<div className={`${isAICourseDesignerCollapsed ? 'w-full' : 'w-[75%]'} relative bg-gray-100 transition-all duration-500 animate-in fade-in slide-in-from-right-10`}>
 					<div className="absolute inset-0">
 						{isGeneratingGraph ? (
 							<div className="flex items-center justify-center h-full">
@@ -690,13 +721,16 @@ export const AICourseCreation: React.FC = () => {
 								</div>
 							</div>
 						) : (
-							<SkillMapGraph 
-								selectedCategories={selectedCategories} 
-								graphData={generatedGraphData}
-							/>
+							isFlowViewActive ? (
+								<StudyFlow />
+							) : (
+								<SkillMapGraph 
+									selectedCategories={selectedCategories} 
+									graphData={aiGeneratedGraphData} 
+								/>
+							)
 						)}
 
-						{/* Error State */}
 						{graphError && !isGeneratingGraph && (
 							<div className="absolute inset-0 bg-white z-20">
 								<GraphErrorState 
@@ -705,62 +739,6 @@ export const AICourseCreation: React.FC = () => {
 								/>
 							</div>
 						)}
-
-
-
-						{/* Overlay Info - Show only if course is complete */}
-						{/* {isComplete && (
-							<div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs border border-gray-200 transition-colors duration-300">
-								<h3 className="font-semibold text-gray-900 mb-2">
-									Course Overview
-								</h3>
-								<div className="space-y-2 text-sm">
-									<div>
-										<span className="text-gray-600">Title:</span>
-										<span className="ml-2 font-medium text-gray-900">
-											{courseData.title}
-										</span>
-									</div>
-									<div>
-										<span className="text-gray-600">Level:</span>
-										<span className="ml-2 font-medium text-gray-900">
-											{courseData.level}
-										</span>
-									</div>
-									<div>
-										<span className="text-gray-600">Duration:</span>
-										<span className="ml-2 font-medium text-gray-900">
-											{courseData.duration}
-										</span>
-									</div>
-									<div>
-										<span className="text-gray-600">Focus:</span>
-										<span className="ml-2 font-medium text-gray-900">
-											{courseData.mainFocus}
-										</span>
-									</div>
-								</div>
-								<div className="mt-3 pt-3 border-t border-gray-200">
-									<p className="text-xs text-gray-600">
-										Skills are color-coded by proficiency level:
-									</p>
-									<div className="flex items-center space-x-3 mt-2">
-										<div className="flex items-center space-x-1">
-											<div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-											<span className="text-xs text-gray-700">Awareness</span>
-										</div>
-										<div className="flex items-center space-x-1">
-											<div className="w-3 h-3 rounded-full bg-blue-500"></div>
-											<span className="text-xs text-gray-700">Application</span>
-										</div>
-										<div className="flex items-center space-x-1">
-											<div className="w-3 h-3 rounded-full bg-violet-500"></div>
-											<span className="text-xs text-gray-700">Mastery</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						)} */}
 					</div>
 				</div>
 			)}

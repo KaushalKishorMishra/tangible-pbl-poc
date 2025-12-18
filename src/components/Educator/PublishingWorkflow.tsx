@@ -213,7 +213,7 @@ export const PublishingWorkflow: React.FC<PublishingWorkflowProps> = ({
 										<div className="flex items-start justify-between mb-4">
 											<div>
 												<h3 className="text-xl font-semibold text-gray-900">
-													Module {index + 1}: {module.title}
+													Content Unit {index + 1}: {module.title}
 												</h3>
 												<p className="text-gray-600 mt-1">
 													{module.description}

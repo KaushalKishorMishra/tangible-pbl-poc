@@ -1,6 +1,6 @@
 import React from'react';
 import { X, ChevronLeft, ChevronRight, Play, CheckCircle } from'lucide-react';
-import { useGraphStore } from'../../store/graphStore';
+import { useUserStore } from '../../store/userStore';
 
 interface OnboardingModalProps {
  isOpen: boolean;
@@ -41,7 +41,7 @@ const onboardingSteps = [
 ];
 
 export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) => {
- const { user, setOnboardingStep, completeOnboarding, skipOnboarding } = useGraphStore();
+ const { user, setOnboardingStep, completeOnboarding, skipOnboarding } = useUserStore();
  const currentStep = user.currentOnboardingStep;
  const isLastStep = currentStep === onboardingSteps.length - 1;
 

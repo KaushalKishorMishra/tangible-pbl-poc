@@ -1,15 +1,6 @@
 import { create } from 'zustand';
 import type { FilterState } from '../types/filter';
 
-export type UserRole = 'educator' | 'learner' | 'admin' | null;
-
-interface UserState {
-  role: UserRole;
-  onboardingCompleted: boolean;
-  currentOnboardingStep: number;
-  isOnboardingActive: boolean;
-}
-
 interface NodeData {
   id: string;
   labels: string[];
@@ -78,9 +69,7 @@ interface GraphState {
   arcMenuNode: { nodeId: string; position: { x: number; y: number } } | null;
   arcMenuState: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } };
   selectedNodeForDock: string | null;
-
-  // User states
-  user: UserState;
+  isAICourseDesignerCollapsed: boolean;
   
   // Actions
   setFocusedNode: (nodeId: string | null) => void;
@@ -92,6 +81,7 @@ interface GraphState {
   setArcMenuNode: (node: { nodeId: string; position: { x: number; y: number } } | null) => void;
   setArcMenuState: (state: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } }) => void;
   setSelectedNodeForDock: (nodeId: string | null) => void;
+  setAICourseDesignerCollapsed: (isCollapsed: boolean) => void;
   toggleNodeSelection: (nodeId: string) => void;
   removeNodeSelection: (nodeId: string) => void;
 
@@ -110,13 +100,6 @@ interface GraphState {
   // AI graph data actions
   setAIGeneratedGraphData: (data: GraphData) => void;
   clearAIGeneratedGraphData: () => void;
-
-  // User actions
-  setUserRole: (role: UserRole) => void;
-  startOnboarding: () => void;
-  completeOnboarding: () => void;
-  setOnboardingStep: (step: number) => void;
-  skipOnboarding: () => void;
 
   // Combined actions
   handleNodeClick: (nodeId: string, position: { x: number; y: number }) => void;
@@ -149,12 +132,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   arcMenuNode: null,
   arcMenuState: { isOpen: false, nodeId: null, position: { x: 0, y: 0 } },
   selectedNodeForDock: null,
-  user: {
-    role: null,
-    onboardingCompleted: false,
-    currentOnboardingStep: 0,
-    isOnboardingActive: false,
-  },
+  isAICourseDesignerCollapsed: false,
   
   // Basic setters
   setFocusedNode: (nodeId) => set({ focusedNode: nodeId }),
@@ -166,6 +144,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setArcMenuNode: (node) => set({ arcMenuNode: node }),
   setArcMenuState: (state) => set({ arcMenuState: state }),
   setSelectedNodeForDock: (nodeId) => set({ selectedNodeForDock: nodeId, isDrawerOpen: !!nodeId }),
+  setAICourseDesignerCollapsed: (isCollapsed) => set({ isAICourseDesignerCollapsed: isCollapsed }),
   
   // New actions
   toggleNodeSelection: (nodeId) => {
@@ -266,58 +245,6 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
   clearAIGeneratedGraphData: () => {
     set({ aiGeneratedGraphData: null, availableFilters: null });
-  },
-
-  // User actions
-  setUserRole: (role) => {
-    set((state) => ({
-      user: {
-        ...state.user,
-        role,
-        isOnboardingActive: role === 'educator' && !state.user.onboardingCompleted,
-      },
-    }));
-  },
-
-  startOnboarding: () => {
-    set((state) => ({
-      user: {
-        ...state.user,
-        isOnboardingActive: true,
-        currentOnboardingStep: 0,
-      },
-    }));
-  },
-
-  completeOnboarding: () => {
-    set((state) => ({
-      user: {
-        ...state.user,
-        onboardingCompleted: true,
-        isOnboardingActive: false,
-        currentOnboardingStep: 0,
-      },
-    }));
-  },
-
-  setOnboardingStep: (step) => {
-    set((state) => ({
-      user: {
-        ...state.user,
-        currentOnboardingStep: step,
-      },
-    }));
-  },
-
-  skipOnboarding: () => {
-    set((state) => ({
-      user: {
-        ...state.user,
-        onboardingCompleted: true,
-        isOnboardingActive: false,
-        currentOnboardingStep: 0,
-      },
-    }));
   },
 
   // Combined actions
