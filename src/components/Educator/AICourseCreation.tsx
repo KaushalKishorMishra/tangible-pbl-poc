@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loader2, RefreshCw, Sparkles, MessageSquare, Target, BookOpen, PanelLeftClose, PanelLeftOpen, Key, CheckCircle } from "lucide-react";
+import { Loader2, RefreshCw, Sparkles, MessageSquare, Target, BookOpen, PanelLeftClose, PanelLeftOpen, Key, CheckCircle, X } from "lucide-react";
 
 import { SkillMapGraph } from "./SkillMapGraph";
 import { GraphErrorState } from "./GraphErrorState";
@@ -13,17 +13,18 @@ import {
 	TypingIndicator,
 	QuickReplyOptions,
 	ChatInput,
+	FloatingChatButton
 } from"./ChatComponents";
 
 import { ProblemSelectionPanel } from "./ProblemSelectionPanel";
 import { CompetencyMatrix } from "./CompetencyMatrix";
-import { Layout, List, Save } from "lucide-react";
+import { Layout, List, Save, Eye } from "lucide-react";
 import { TokenUsageBadge } from "../Common/TokenUsageBadge";
 import { NodeDeepDiveModal } from './NodeDeepDiveModal';
 import { useCourseStore } from "../../store/courseStore";
 import { StudyFlow } from "../StudyFlow/StudyFlow";
 import { linearizeGraph } from "../../utils/flowUtils";
-import { Eye } from "lucide-react";
+
 
 
 
@@ -69,8 +70,7 @@ const questions = [
 	{
 		key:"targetAudience",
 		question:"Who is this course designed for?",
-		placeholder:
-			"e.g., Computer science students, career changers, junior developers",
+		placeholder:"e.g., Computer science students, career changers, junior developers",
 	},
 	{
 		key:"mainFocus",
@@ -111,15 +111,28 @@ export const AICourseCreation: React.FC = () => {
     setCourseData
   } = useCourseStore();
 
-	const [messages, setMessages] = useState<Message[]>([
-		{
-			id:"1",
-			content:
-				"Hello! I'm your AI course design assistant. I'll help you create a skill-mapped course tailored to your needs. Let's start by gathering some information.",
-			sender:"ai",
-			timestamp: new Date(),
-		},
-	]);
+	const [messages, setMessages] = useState<Message[]>(() => {
+        const saved = localStorage.getItem('tangible_chat_history');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                return parsed.map((m: any) => ({
+                    ...m,
+                    timestamp: new Date(m.timestamp)
+                }));
+            } catch (e) {
+                console.error("Failed to parse chat history", e);
+            }
+        }
+        return [
+            {
+                id: "1",
+                content: "Hello! I'm your AI course design assistant. I'll help you create a skill-mapped course tailored to your needs. Let's start by gathering some information.",
+                sender: "ai",
+                timestamp: new Date(),
+            },
+        ];
+    });
 	const [inputValue, setInputValue] = useState("");
 	const [isTyping, setIsTyping] = useState(false);
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -144,6 +157,10 @@ export const AICourseCreation: React.FC = () => {
             return () => clearTimeout(timer);
         }
     }, [notification]);
+
+    useEffect(() => {
+        localStorage.setItem('tangible_chat_history', JSON.stringify(messages));
+    }, [messages]);
     const [activeView, setActiveView] = useState<'graph' | 'competency'>('graph');
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -1053,21 +1070,12 @@ export const AICourseCreation: React.FC = () => {
                             {currentStep === 'INTENT' && "Define Course Intent"}
                             {currentStep === 'PROBLEMS' && "Select Problem"}
                             {currentStep === 'FLOW_DESIGN' && "Learning Flow Design"}
+                            {currentStep === 'CONTENT_ENRICHMENT' && "Content Enrichment"}
+                            {currentStep === 'LMS_VIEW' && "LMS Preview"}
                         </h1>
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        {currentStep !== 'INTENT' && (
-                            <button 
-                                onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)}
-                                className={`p-2 rounded-md transition-colors ${
-                                    isChatSidebarOpen ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100 text-gray-500'
-                                }`}
-                                title="Toggle AI Chat"
-                            >
-                                <MessageSquare size={18} />
-                            </button>
-                        )}
                         {currentStep !== 'FLOW_DESIGN' && currentStep !== 'CONTENT_ENRICHMENT' && <TokenUsageBadge />}
                         <button 
                             onClick={() => setShowApiKeyModal(true)}
@@ -1090,46 +1098,67 @@ export const AICourseCreation: React.FC = () => {
 
             {/* Right Sidebar - AI Chat */}
             {currentStep !== 'INTENT' && (
-                <div className={`bg-white border-l border-gray-200 transition-all duration-300 flex flex-col ${
-                    isChatSidebarOpen ? 'w-96' : 'w-0 opacity-0 overflow-hidden'
+                <div className={`fixed top-20 right-6 bottom-24 z-40 transition-all duration-500 ease-in-out flex flex-col ${
+                    isChatSidebarOpen 
+                        ? 'w-96 opacity-100 translate-x-0' 
+                        : 'w-96 opacity-0 translate-x-12 pointer-events-none'
                 }`}>
-                    <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                        <div className="flex items-center gap-2 text-indigo-600 font-bold">
-                            <MessageSquare className="w-5 h-5" />
-                            <span>AI Design Assistant</span>
+                    <div className="flex-1 bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl overflow-hidden flex flex-col ring-1 ring-black/5">
+                        <div className="p-5 border-b border-gray-100/50 flex items-center justify-between bg-linear-to-br from-indigo-50/50 to-purple-50/50">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-200">
+                                    <Sparkles className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-sm">AI Design Assistant</h3>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Online</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => setIsChatSidebarOpen(false)}
+                                className="p-2 hover:bg-white/80 rounded-xl text-gray-400 hover:text-gray-600 transition-all active:scale-90"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
-                        <button 
-                            onClick={() => setIsChatSidebarOpen(false)}
-                            className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 transition-colors"
-                        >
-                            <PanelLeftClose className="w-4 h-4 rotate-180" />
-                        </button>
-                    </div>
 
-                    <div className="flex-1 flex flex-col overflow-hidden">
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        <div className="flex-1 overflow-y-auto p-5 space-y-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                             {messages.map((message) => (
-                                <ChatMessage 
+                                <MessageBubble 
                                     key={message.id} 
                                     message={message} 
-                                    onOptionSelect={handleOptionSelect}
                                 />
                             ))}
                             {isTyping && <TypingIndicator />}
                             <div ref={messagesEndRef} />
                         </div>
-                        <div className="p-4 border-t border-gray-100 bg-white">
+
+                        <div className="p-5 bg-gray-50/50 border-t border-gray-100/50">
                             <ChatInput 
                                 value={inputValue}
                                 onChange={setInputValue}
                                 onSend={handleSendMessage}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Ask me to add topics, resources..."
+                                placeholder="Ask me anything..."
                                 inputRef={inputRef}
                             />
+                            <p className="text-[10px] text-center text-gray-400 mt-3 font-medium">
+                                AI can make mistakes. Check important info.
+                            </p>
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Floating Toggle Button */}
+            {currentStep !== 'INTENT' && (
+                <FloatingChatButton 
+                    isOpen={isChatSidebarOpen} 
+                    onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)} 
+                />
             )}
 
             {/* API Key Modal */}
