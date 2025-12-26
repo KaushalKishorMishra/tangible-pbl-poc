@@ -40,6 +40,8 @@ interface GraphData {
 interface SkillMapGraphProps {
 	selectedCategories: string[];
 	graphData?: GraphData | null;
+    isEmbedded?: boolean;
+    onNodeClick?: (nodeId: string) => void;
 }
 
 const GraphThemeUpdater: React.FC = () => {
@@ -75,7 +77,7 @@ const GraphThemeUpdater: React.FC = () => {
 	return null;
 };
 
-const GraphEventsHandler: React.FC = () => {
+const GraphEventsHandler: React.FC<{ onNodeClick?: (nodeId: string) => void }> = ({ onNodeClick }) => {
 	const sigma = useSigma();
 	const registerEvents = useRegisterEvents();
 	const { selectedNodeIds, setArcMenuState } = useGraphStore();
@@ -86,13 +88,17 @@ const GraphEventsHandler: React.FC = () => {
 		registerEvents({
 			clickNode: (event) => {
 				const nodeId = event.node;
-				// Use event coordinates which are already relative to the page
-				// We'll calculate position relative to the containing div
-				setArcMenuState({
-					isOpen: true,
-					nodeId,
-					position: { x: event.event.x, y: event.event.y },
-				});
+                
+                if (onNodeClick) {
+                    onNodeClick(nodeId);
+                } else {
+                    // Default behavior (ArcMenu)
+                    setArcMenuState({
+                        isOpen: true,
+                        nodeId,
+                        position: { x: event.event.x, y: event.event.y },
+                    });
+                }
 			},
 			enterNode: (event) => {
 				setHoveredNode(event.node);
@@ -110,11 +116,13 @@ const GraphEventsHandler: React.FC = () => {
 		const connectedNodes = new Set<string>();
 		if (selectedNodeIds.length > 0) {
 			selectedNodeIds.forEach(nodeId => {
-				connectedNodes.add(nodeId);
-				// Add all neighbors
-				graph.forEachNeighbor(nodeId, (neighbor) => {
-					connectedNodes.add(neighbor);
-				});
+                if (graph.hasNode(nodeId)) {
+                    connectedNodes.add(nodeId);
+                    // Add all neighbors
+                    graph.forEachNeighbor(nodeId, (neighbor) => {
+                        connectedNodes.add(neighbor);
+                    });
+                }
 			});
 		}
 
@@ -294,7 +302,7 @@ const NodeInfoDockWrapper: React.FC = () => {
 
 
 
-export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData }) => {
+export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData, isEmbedded = false, onNodeClick }) => {
 	return (
 		<div className="w-full h-full relative bg-gray-50">
 			<SigmaContainer
@@ -319,13 +327,13 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 			>
 				<GraphThemeUpdater />
 				<GraphLoader selectedCategories={selectedCategories} graphData={graphData} />
-				<GraphEventsHandler />
-				<LeftDrawer />
+				<GraphEventsHandler onNodeClick={onNodeClick} />
+				{!isEmbedded && <LeftDrawer />}
 				<GraphControlsWrapper />
-				<NodeInfoDockWrapper />
+				{!isEmbedded && <NodeInfoDockWrapper />}
 
 			</SigmaContainer>
-			<ArcMenuWrapper />
+			{!isEmbedded && <ArcMenuWrapper />}
 		</div>
 	);
 };

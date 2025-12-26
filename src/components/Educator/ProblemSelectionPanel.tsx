@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGraphStore,  type Problem } from '../../store/graphStore';
-import { ArrowRight, Clock, BarChart, CheckCircle } from 'lucide-react';
+import { ArrowRight, Clock, CheckCircle } from 'lucide-react';
 
 interface ProblemSelectionPanelProps {
     onSelectProblem: (problem: Problem) => void;

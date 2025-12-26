@@ -10,6 +10,15 @@ interface NodeData {
     source: string;
     category: string;
   };
+  // Nested Hierarchical Data
+  skills?: GraphData;
+  competencies?: SkillCompetency[];
+  content?: {
+    type: 'video' | 'pdf' | 'text';
+    url: string;
+    title: string;
+    description?: string;
+  }[];
 }
 
 interface RelationshipData {
@@ -50,6 +59,26 @@ export interface Problem {
   description: string;
   difficulty: string;
   estimatedTime: string;
+  goals?: string[];
+  constraints?: string[];
+}
+
+export interface CompetencyLevel {
+    level: "Awareness" | "Application" | "Mastery" | "Influence";
+    description: string;
+    proofOfWork: string;
+    rubric: string;
+}
+
+export interface SkillCompetency {
+    skill: string;
+    levels: CompetencyLevel[];
+}
+
+export interface CachedProblemData {
+    graphData: GraphData;
+    filterData: FilterData;
+    competencyFramework: SkillCompetency[];
 }
 
 interface GraphState {
@@ -74,6 +103,10 @@ interface GraphState {
   // Problem Generation
   generatedProblems: Problem[];
   selectedProblem: Problem | null;
+  problemDataCache: Record<string, CachedProblemData>;
+
+  // Competency Framework
+  competencyFramework: SkillCompetency[];
 
   // UI states
   isDrawerOpen: boolean;
@@ -112,10 +145,16 @@ interface GraphState {
   // AI graph data actions
   setAIGeneratedGraphData: (data: GraphData) => void;
   clearAIGeneratedGraphData: () => void;
+  updateNodeData: (nodeId: string, data: Partial<NodeData>) => void;
 
   // Problem actions
   setGeneratedProblems: (problems: Problem[]) => void;
   setSelectedProblem: (problem: Problem | null) => void;
+  cacheProblemData: (problemId: string, data: CachedProblemData) => void;
+  clearProblemCache: () => void;
+
+  // Competency actions
+  setCompetencyFramework: (framework: SkillCompetency[]) => void;
 
   // Combined actions
   handleNodeClick: (nodeId: string, position: { x: number; y: number }) => void;
@@ -143,8 +182,9 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   searchItems: [],
   searchSuggestions: [],
   aiGeneratedGraphData: null,
-  generatedProblems: [],
-  selectedProblem: null,
+  generatedProblems: [],  selectedProblem: null,
+  problemDataCache: {},
+  competencyFramework: [],
   isDrawerOpen: false,
   isLeftDrawerOpen: true,
   arcMenuNode: null,
@@ -265,8 +305,37 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     set({ aiGeneratedGraphData: null, availableFilters: null });
   },
 
+  updateNodeData: (nodeId, data) => {
+      set((state) => {
+          if (!state.aiGeneratedGraphData) return state;
+          
+          const updatedNodes = state.aiGeneratedGraphData.nodes.map(node => {
+              if (node.id === nodeId) {
+                  return { ...node, ...data };
+              }
+              return node;
+          });
+
+          return {
+              aiGeneratedGraphData: {
+                  ...state.aiGeneratedGraphData,
+                  nodes: updatedNodes
+              }
+          };
+      });
+  },
+
   setGeneratedProblems: (problems) => set({ generatedProblems: problems }),
   setSelectedProblem: (problem) => set({ selectedProblem: problem }),
+  cacheProblemData: (problemId, data) => set((state) => ({
+    problemDataCache: {
+        ...state.problemDataCache,
+        [problemId]: data
+    }
+  })),
+  clearProblemCache: () => set({ problemDataCache: {} }),
+  
+  setCompetencyFramework: (framework) => set({ competencyFramework: framework }),
 
   // Combined actions
   handleNodeClick: (nodeId, position) => {
