@@ -833,72 +833,77 @@ export const AICourseCreation: React.FC = () => {
     };
 
     const ChatMessage = ({ message, onOptionSelect }: { message: Message; onOptionSelect: (option: string) => void }) => (
-        <>
+        <div className="w-full max-w-3xl mx-auto">
             <MessageBubble message={message} />
             {message.sender === "ai" && message.content.includes("Click the button below to apply changes") && (
-                <div className="flex justify-center mt-2">
+                <div className="flex justify-center mt-4 mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <button
                         onClick={generateGraphWithAI}
-                        className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+                        className="flex items-center gap-3 bg-linear-to-br from-indigo-600 to-violet-700 text-white px-6 py-3 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-indigo-200 font-bold active:scale-95"
                     >
-                        <RefreshCw className="w-4 h-4" />
-                        <span>Update Graph</span>
+                        <RefreshCw className="w-5 h-5" />
+                        <span>Apply Structural Changes</span>
                     </button>
                 </div>
             )}
             {message.sender === "ai" && currentQuestion?.options && !isComplete && (
-                <QuickReplyOptions
-                    options={currentQuestion.options}
-                    onOptionSelect={onOptionSelect}
-                />
+                <div className="ml-10">
+                    <QuickReplyOptions
+                        options={currentQuestion.options}
+                        onOptionSelect={onOptionSelect}
+                    />
+                </div>
             )}
-        </>
+        </div>
     );
 
     const renderWizardStep = () => {
         switch (currentStep) {
             case 'INTENT':
                 return (
-                    <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
-                        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                            {messages.map((message) => (
-                                <ChatMessage 
-                                    key={message.id} 
-                                    message={message} 
-                                    onOptionSelect={handleOptionSelect}
-                                />
-                            ))}
-                            {isTyping && <TypingIndicator />}
-                            <div ref={messagesEndRef} />
+                    <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                        <div className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
+                            <div className="max-w-3xl mx-auto pt-10 pb-20">
+                                {messages.map((message) => (
+                                    <ChatMessage 
+                                        key={message.id} 
+                                        message={message} 
+                                        onOptionSelect={handleOptionSelect}
+                                    />
+                                ))}
+                                {isTyping && <div className="max-w-3xl mx-auto"><TypingIndicator /></div>}
+                                <div ref={messagesEndRef} />
+                            </div>
                         </div>
-                        <div className="p-4 border-t border-gray-100 bg-white">
-                            <ChatInput 
-                                value={inputValue}
-                                onChange={setInputValue}
-                                onSend={handleSendMessage}
-                                onKeyPress={handleKeyPress}
-                                placeholder={
-                                    conversationalAgent?.getIsInRefinementMode() 
-                                        ? "Ask me anything about your skill map..." 
-                                        : currentQuestion?.placeholder || "Type your answer..."
-                                }
-                                inputRef={inputRef}
-                            />
+                        
+                        {/* Floating Input Area */}
+                        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 z-20">
+                            <div className="bg-white/70 backdrop-blur-2xl border border-white/40 shadow-2xl rounded-[32px] p-2 ring-1 ring-black/5">
+                                <ChatInput 
+                                    value={inputValue}
+                                    onChange={setInputValue}
+                                    onSend={handleSendMessage}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder={
+                                        conversationalAgent?.getIsInRefinementMode() 
+                                            ? "Ask me anything about your skill map..." 
+                                            : currentQuestion?.placeholder || "Type your answer..."
+                                    }
+                                    inputRef={inputRef}
+                                />
+                            </div>
                         </div>
                     </div>
                 );
             
             case 'PROBLEMS':
                 return (
-                    <div className="flex-1 p-8 bg-gray-50 overflow-y-auto">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">Select a Problem to Solve</h2>
-                            <ProblemSelectionPanel 
-                                onSelectProblem={handleProblemSelect}
-                                onRegenerate={handleRegenerateProblems}
-                                isGenerating={isGeneratingGraph}
-                            />
-                        </div>
+                    <div className="flex-1 h-full overflow-hidden">
+                        <ProblemSelectionPanel 
+                            onSelectProblem={handleProblemSelect}
+                            onRegenerate={handleRegenerateProblems}
+                            isGenerating={isGeneratingGraph}
+                        />
                     </div>
                 );
 
@@ -908,50 +913,50 @@ export const AICourseCreation: React.FC = () => {
                     <div className="flex-1 relative h-full">
                         {/* Premium Header Controls */}
                         <div className="absolute top-6 right-6 z-20 flex items-center gap-4">
-                            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-white/20 ring-1 ring-black/5">
+                            <div className="flex items-center gap-2 bg-white/40 backdrop-blur-2xl p-1.5 rounded-2xl shadow-2xl border border-white/40 ring-1 ring-black/5">
                                 <TokenUsageBadge />
                             </div>
 
-                            <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md p-1 rounded-xl shadow-lg border border-white/20 ring-1 ring-black/5">
+                            <div className="flex items-center gap-1 bg-white/40 backdrop-blur-2xl p-1.5 rounded-2xl shadow-2xl border border-white/40 ring-1 ring-black/5">
                                 <button
                                     onClick={() => setActiveView('graph')}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
                                         activeView === 'graph' 
-                                        ? 'bg-indigo-600 text-white shadow-md' 
-                                        : 'text-gray-600 hover:bg-gray-100'
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+                                        : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
                                     }`}
                                 >
                                     <Layout className="w-4 h-4" />
-                                    Graph
+                                    Architecture
                                 </button>
                                 <button
                                     onClick={() => setActiveView('competency')}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
                                         activeView === 'competency' 
-                                        ? 'bg-indigo-600 text-white shadow-md' 
-                                        : 'text-gray-600 hover:bg-gray-100'
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+                                        : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'
                                     }`}
                                 >
                                     <List className="w-4 h-4" />
-                                    Matrix
+                                    Competency
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1 rounded-xl shadow-lg border border-white/20 ring-1 ring-black/5">
+                            <div className="flex items-center gap-2 bg-white/40 backdrop-blur-2xl p-1.5 rounded-2xl shadow-2xl border border-white/40 ring-1 ring-black/5">
                                 <button
                                     onClick={handleRegenerateFlow}
                                     disabled={isGeneratingGraph}
-                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                    className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-white/50 rounded-xl transition-all duration-300"
                                     title="Regenerate Flow"
                                 >
-                                    <RefreshCw className={`w-4 h-4 ${isGeneratingGraph ? 'animate-spin' : ''}`} />
+                                    <RefreshCw className={`w-5 h-5 ${isGeneratingGraph ? 'animate-spin' : ''}`} />
                                 </button>
                                 
-                                <div className="w-px h-4 bg-gray-200 mx-1" />
+                                <div className="w-px h-6 bg-slate-200/50 mx-1" />
 
                                 <button
                                     onClick={handlePreviewLMS}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-all"
+                                    className="flex items-center gap-3 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 border border-indigo-100 hover:border-indigo-600"
                                 >
                                     <Eye className="w-4 h-4" />
                                     Preview
@@ -959,7 +964,7 @@ export const AICourseCreation: React.FC = () => {
 
                                 <button
                                     onClick={handleSaveAndExit}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all"
+                                    className="flex items-center gap-3 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-white bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-100 transition-all duration-300"
                                 >
                                     <Save className="w-4 h-4" />
                                     Save
@@ -1020,73 +1025,123 @@ export const AICourseCreation: React.FC = () => {
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <div className="flex h-screen bg-linear-to-br from-slate-50 via-white to-indigo-50/50 overflow-hidden font-sans text-slate-900">
             {/* Left Sidebar - Wizard Progress */}
-            <div className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col ${
-                isLeftDrawerOpen ? 'w-64' : 'w-0 opacity-0 overflow-hidden'
+            <div className={`relative z-40 transition-all duration-500 ease-in-out flex flex-col ${
+                isLeftDrawerOpen ? 'w-80' : 'w-0 opacity-0 -translate-x-full'
             }`}>
-                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-indigo-600 font-bold">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Course Wizard</span>
-                    </div>
-                </div>
-                
-                <div className="p-4 space-y-1">
-                    {[
-                        { id: 'INTENT', label: '1. Intent & Context', icon: MessageSquare },
-                        { id: 'PROBLEMS', label: '2. Define Problem', icon: Target },
-                        { id: 'FLOW_DESIGN', label: '3. Design Flow', icon: Layout },
-                        { id: 'CONTENT_ENRICHMENT', label: '4. Enrich Content', icon: BookOpen },
-                        { id: 'LMS_VIEW', label: '5. LMS Preview', icon: Eye },
-                    ].map((step) => (
-                        <div 
-                            key={step.id}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                currentStep === step.id 
-                                    ? 'bg-indigo-50 text-indigo-700' 
-                                    : 'text-gray-500'
-                            }`}
-                        >
-                            <step.icon className="w-4 h-4" />
-                            {step.label}
+                <div className="h-full bg-white/40 backdrop-blur-2xl border-r border-white/20 shadow-[20px_0_50px_-20px_rgba(79,70,229,0.1)] flex flex-col rounded-r-[40px]">
+                    <div className="p-8 pb-4">
+                        <div className="flex items-center gap-3 bg-linear-to-br from-indigo-600 to-violet-700 w-fit p-3 rounded-2xl shadow-lg shadow-indigo-200 mb-6">
+                            <Sparkles className="w-6 h-6 text-white" />
                         </div>
-                    ))}
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">Course Wizard</h2>
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 opacity-60">AI Design Studio</p>
+                    </div>
+                    
+                    <div className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                        {[
+                            { id: 'INTENT', label: 'Define Intent', icon: MessageSquare, desc: 'Gathering context' },
+                            { id: 'PROBLEMS', label: 'Select Challenge', icon: Target, desc: 'Real-world focus' },
+                            { id: 'FLOW_DESIGN', label: 'Design Flow', icon: Layout, desc: 'Architecture' },
+                            { id: 'CONTENT_ENRICHMENT', label: 'Enrich Content', icon: BookOpen, desc: 'Deep dive' },
+                            { id: 'LMS_VIEW', label: 'LMS Preview', icon: Eye, desc: 'Final check' },
+                        ].map((step, idx) => {
+                            const isActive = currentStep === step.id;
+                            const isPast = [
+                                'INTENT', 'PROBLEMS', 'FLOW_DESIGN', 'CONTENT_ENRICHMENT', 'LMS_VIEW'
+                            ].indexOf(currentStep) > idx;
+
+                            return (
+                                <div 
+                                    key={step.id}
+                                    className={`group relative flex items-center gap-4 px-5 py-4 rounded-[24px] transition-all duration-300 ${
+                                        isActive 
+                                            ? 'bg-white shadow-xl shadow-indigo-100/50 ring-1 ring-black/5 translate-x-2' 
+                                            : 'hover:bg-white/50'
+                                    }`}
+                                >
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                                        isActive 
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+                                            : isPast ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'
+                                    }`}>
+                                        <step.icon className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <div className={`text-sm font-bold ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
+                                            {step.label}
+                                        </div>
+                                        <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                                            {step.desc}
+                                        </div>
+                                    </div>
+                                    {isActive && (
+                                        <div className="absolute right-4 w-1.5 h-1.5 bg-indigo-600 rounded-full animate-pulse"></div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <div className="p-6 border-t border-white/20">
+                        <div className="bg-indigo-600/5 rounded-2xl p-4 border border-indigo-600/10">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></div>
+                                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">AI Status</span>
+                            </div>
+                            <p className="text-[11px] text-indigo-900/60 font-medium leading-relaxed">
+                                Assistant is analyzing your inputs to generate the best learning path.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                 {/* Top Bar */}
-                <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-30">
-                    <div className="flex items-center gap-3">
+                <div className="h-20 flex items-center justify-between px-8 shrink-0 z-30">
+                    <div className="flex items-center gap-6">
                         <button 
                             onClick={() => setIsLeftDrawerOpen(!isLeftDrawerOpen)}
-                            className="p-2 hover:bg-gray-100 rounded-md text-gray-500"
+                            className="p-3 bg-white/50 backdrop-blur-md hover:bg-white rounded-2xl text-slate-400 hover:text-indigo-600 transition-all shadow-sm border border-white/40 active:scale-90"
                         >
-                            {isLeftDrawerOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
+                            {isLeftDrawerOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
                         </button>
-                        <h1 className="font-semibold text-gray-800">
-                            {currentStep === 'INTENT' && "Define Course Intent"}
-                            {currentStep === 'PROBLEMS' && "Select Problem"}
-                            {currentStep === 'FLOW_DESIGN' && "Learning Flow Design"}
-                            {currentStep === 'CONTENT_ENRICHMENT' && "Content Enrichment"}
-                            {currentStep === 'LMS_VIEW' && "LMS Preview"}
-                        </h1>
+                        <div>
+                            <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                                {currentStep === 'INTENT' && "Define Course Intent"}
+                                {currentStep === 'PROBLEMS' && "Select Problem"}
+                                {currentStep === 'FLOW_DESIGN' && "Learning Flow Design"}
+                                {currentStep === 'CONTENT_ENRICHMENT' && "Content Enrichment"}
+                                {currentStep === 'LMS_VIEW' && "LMS Preview"}
+                            </h1>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Step {
+                                    ['INTENT', 'PROBLEMS', 'FLOW_DESIGN', 'CONTENT_ENRICHMENT', 'LMS_VIEW'].indexOf(currentStep) + 1
+                                } of 5</span>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                        {currentStep !== 'FLOW_DESIGN' && currentStep !== 'CONTENT_ENRICHMENT' && <TokenUsageBadge />}
+                    <div className="flex items-center gap-4">
+                        {currentStep !== 'FLOW_DESIGN' && currentStep !== 'CONTENT_ENRICHMENT' && (
+                            <div className="bg-white/50 backdrop-blur-md p-1 rounded-2xl border border-white/40 shadow-sm">
+                                <TokenUsageBadge />
+                            </div>
+                        )}
                         <button 
                             onClick={() => setShowApiKeyModal(true)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-sm border ${
                                 apiKey 
-                                    ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                                    : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                    ? 'bg-emerald-50 border-emerald-100 text-emerald-700 hover:bg-emerald-100' 
+                                    : 'bg-rose-50 border-rose-100 text-rose-700 hover:bg-rose-100 animate-pulse'
                             }`}
                         >
-                            <Key className="w-3 h-3" />
-                            {apiKey ? 'API Key Set' : 'Set API Key'}
+                            <Key className="w-4 h-4" />
+                            {apiKey ? 'API SECURE' : 'CONFIGURE API'}
                         </button>
                     </div>
                 </div>
@@ -1163,43 +1218,63 @@ export const AICourseCreation: React.FC = () => {
 
             {/* API Key Modal */}
             {showApiKeyModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
-                        <h3 className="text-lg font-semibold mb-4">Enter OpenAI API Key</h3>
-                        <input
-                            type="password"
-                            value={tempApiKey}
-                            onChange={(e) => setTempApiKey(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md mb-4"
-                            placeholder="sk-..."
-                        />
-                        <div className="flex justify-end gap-2">
-                            <button
-                                onClick={() => setShowApiKeyModal(false)}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSaveApiKey}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                            >
-                                Save Key
-                            </button>
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300">
+                    <div className="bg-white/80 backdrop-blur-2xl rounded-[32px] p-10 w-full max-w-md shadow-2xl border border-white/40 ring-1 ring-black/5 animate-in zoom-in-95 duration-500">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="p-3 bg-indigo-600/10 rounded-2xl">
+                                <Key className="w-6 h-6 text-indigo-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight">OpenAI API Key</h3>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Required for AI Generation</p>
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Your API Key</label>
+                                <input
+                                    type="password"
+                                    value={tempApiKey}
+                                    onChange={(e) => setTempApiKey(e.target.value)}
+                                    className="w-full px-6 py-4 bg-white/50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-hidden transition-all shadow-inner"
+                                    placeholder="sk-..."
+                                />
+                                <p className="text-[10px] text-slate-400 mt-3 font-medium leading-relaxed">
+                                    Your key is stored locally in your browser session and is never sent to our servers.
+                                </p>
+                            </div>
+
+                            <div className="flex gap-4 pt-2">
+                                <button
+                                    onClick={() => setShowApiKeyModal(false)}
+                                    className="flex-1 px-6 py-4 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-100 rounded-2xl transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSaveApiKey}
+                                    className="flex-1 px-6 py-4 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-200"
+                                >
+                                    Save Key
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
             {/* Notification Toast */}
             {notification && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    <div className={`px-6 py-3 rounded-full shadow-2xl border flex items-center gap-3 ${
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-8 duration-500">
+                    <div className={`px-8 py-4 rounded-[24px] shadow-2xl border backdrop-blur-xl flex items-center gap-4 ring-1 ring-black/5 ${
                         notification.type === 'success' 
-                            ? 'bg-emerald-500 border-emerald-400 text-white' 
-                            : 'bg-indigo-500 border-indigo-400 text-white'
+                            ? 'bg-emerald-500/90 border-emerald-400/50 text-white shadow-emerald-200/50' 
+                            : 'bg-indigo-600/90 border-indigo-400/50 text-white shadow-indigo-200/50'
                     }`}>
-                        {notification.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-                        <span className="font-medium">{notification.message}</span>
+                        <div className="p-1.5 bg-white/20 rounded-lg">
+                            {notification.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+                        </div>
+                        <span className="text-sm font-black uppercase tracking-widest">{notification.message}</span>
                     </div>
                 </div>
             )}

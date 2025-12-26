@@ -106,7 +106,7 @@ export class ConversationalAgent {
         ];
 
 		const response = await this.openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: messagesForCall
         });
 
@@ -183,7 +183,7 @@ Provide a detailed summary (under 150 words) focusing on:
 Summary:`;
 
 		const response = await this.openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [{ role: "user", content: contextPrompt }]
         });
 
@@ -262,7 +262,7 @@ Respond naturally and helpfully as a course design assistant.`;
         ];
 
 		const response = await this.openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: messagesForCall
         });
 
@@ -459,7 +459,7 @@ Respond naturally and helpfully as a course design assistant.`;
 
 		try {
 			const response = await this.openai.chat.completions.create({
-                model: "gpt-4o",
+                model: "gpt-4o-mini",
                 messages: [
                     ...this.conversationHistory,
                     { role: "user", content: prompt }

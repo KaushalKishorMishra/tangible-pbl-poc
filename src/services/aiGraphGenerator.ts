@@ -56,7 +56,7 @@ export class AIGraphGenerator {
 		
 		try {
 			const response = await this.openai.chat.completions.create({
-				model: "gpt-4o",
+				model: "gpt-4o-mini",
 				messages: [
                     { role: "system", content: "You are a helpful assistant that generates JSON data." },
                     { role: "user", content: prompt }
@@ -238,7 +238,7 @@ export class AIGraphGenerator {
 
         try {
             const response = await this.openai.chat.completions.create({
-				model: "gpt-4o",
+				model: "gpt-4o-mini",
 				messages: [
                     { role: "system", content: "You are a helpful assistant that generates JSON data." },
                     { role: "user", content: prompt }
@@ -307,7 +307,7 @@ export class AIGraphGenerator {
 
         try {
             const response = await this.openai.chat.completions.create({
-				model: "gpt-4o",
+				model: "gpt-4o-mini",
 				messages: [
                     { role: "system", content: "You are a helpful assistant that generates JSON data." },
                     { role: "user", content: prompt }

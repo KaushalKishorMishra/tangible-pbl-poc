@@ -280,7 +280,7 @@ const NodeInfoDockWrapper: React.FC = () => {
 
 export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData, isEmbedded = false, onNodeClick }) => {
 	return (
-		<div className="w-full h-full relative bg-gray-50">
+		<div className="w-full h-full relative bg-linear-to-br from-slate-50 via-white to-indigo-50/30">
 			<SigmaContainer
 				style={{ height: "100%", width: "100%" }}
 				settings={{

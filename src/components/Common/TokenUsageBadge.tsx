@@ -44,85 +44,90 @@ export const TokenUsageBadge: React.FC = () => {
             onMouseLeave={() => setShowDetails(false)}
         >
             <div 
-                className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm hover:border-blue-300 hover:shadow-md transition-all cursor-help group"
+                className="flex items-center gap-3 px-4 py-2 bg-white/50 backdrop-blur-md rounded-2xl border border-white/40 shadow-sm hover:shadow-indigo-100/50 hover:border-indigo-200 transition-all cursor-help group"
             >
-                <div className="p-1 bg-yellow-50 rounded-full group-hover:bg-yellow-100 transition-colors">
-                    <Coins className="w-3.5 h-3.5 text-yellow-600" />
+                <div className="p-1.5 bg-amber-100 rounded-xl group-hover:bg-amber-200 transition-colors shadow-sm">
+                    <Coins className="w-4 h-4 text-amber-600" />
                 </div>
-                <div className="flex flex-col leading-none">
-                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Usage</span>
-                    <span className="text-xs font-bold text-gray-700">
-                        ${stats.totalCost.toFixed(4)}
-                    </span>
+                <div className="flex flex-col leading-tight">
+                    <span className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-black">AI Credits</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-slate-900">
+                            ${stats.totalCost.toFixed(3)}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400">
+                            {totalTokens > 1000 ? `${(totalTokens / 1000).toFixed(1)}k` : totalTokens}
+                        </span>
+                    </div>
                 </div>
-                <div className="h-4 w-px bg-gray-200 mx-1" />
-                <span className="text-xs font-medium text-gray-500">
-                    {totalTokens.toLocaleString()}
-                </span>
-                <Info className="w-3 h-3 text-gray-300 group-hover:text-blue-400 transition-colors" />
+                <Info className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-500 transition-colors ml-1" />
             </div>
 
             {/* Detailed Popover */}
             {showDetails && (
-                <div className="absolute top-full right-0 pt-2 z-50">
-                    <div className="w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full right-0 pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="w-80 bg-white/80 backdrop-blur-2xl rounded-[32px] shadow-2xl border border-white/40 overflow-hidden ring-1 ring-black/5">
                         {/* Header */}
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 text-white">
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="text-sm font-bold opacity-90 uppercase tracking-widest">Token Economics</h3>
-                                <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+                        <div className="bg-linear-to-br from-indigo-600 to-violet-700 p-6 text-white relative overflow-hidden">
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-[10px] font-black opacity-70 uppercase tracking-[0.3em]">AI Synthesis Cost</h3>
+                                    <Zap className="w-5 h-5 text-amber-300 fill-amber-300 animate-pulse" />
+                                </div>
+                                <div className="text-4xl font-black tracking-tighter mb-1">
+                                    ${stats.totalCost.toFixed(4)}
+                                </div>
+                                <p className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Total Accrued Usage</p>
                             </div>
-                            <div className="text-3xl font-black tracking-tight">
-                                ${stats.totalCost.toFixed(4)}
-                            </div>
-                            <p className="text-[10px] opacity-70 mt-1 font-medium">ESTIMATED ACCRUED COST</p>
+                            {/* Decorative background element */}
+                            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                         </div>
 
                         {/* Breakdown */}
-                        <div className="p-4 space-y-4">
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                    <div className="flex items-center gap-1.5 text-blue-600 mb-1">
-                                        <ArrowDownLeft className="w-3.5 h-3.5" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">Input</span>
+                        <div className="p-6 space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 group/item hover:bg-white transition-colors">
+                                    <div className="flex items-center gap-2 text-indigo-600 mb-2">
+                                        <ArrowDownLeft className="w-4 h-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Input</span>
                                     </div>
-                                    <div className="text-sm font-bold text-gray-800">{stats.inputTokens.toLocaleString()}</div>
-                                    <div className="text-[10px] text-gray-500 font-medium">${stats.inputCost.toFixed(4)}</div>
+                                    <div className="text-lg font-black text-slate-900 leading-none mb-1">{stats.inputTokens.toLocaleString()}</div>
+                                    <div className="text-[10px] text-slate-400 font-bold">${stats.inputCost.toFixed(4)}</div>
                                 </div>
-                                <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                                    <div className="flex items-center gap-1.5 text-indigo-600 mb-1">
-                                        <ArrowUpRight className="w-3.5 h-3.5" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">Output</span>
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 group/item hover:bg-white transition-colors">
+                                    <div className="flex items-center gap-2 text-violet-600 mb-2">
+                                        <ArrowUpRight className="w-4 h-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Output</span>
                                     </div>
-                                    <div className="text-sm font-bold text-gray-800">{stats.outputTokens.toLocaleString()}</div>
-                                    <div className="text-[10px] text-gray-500 font-medium">${stats.outputCost.toFixed(4)}</div>
+                                    <div className="text-lg font-black text-slate-900 leading-none mb-1">{stats.outputTokens.toLocaleString()}</div>
+                                    <div className="text-[10px] text-slate-400 font-bold">${stats.outputCost.toFixed(4)}</div>
                                 </div>
                             </div>
 
                             {/* Recent Activity */}
                             <div>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Clock className="w-3.5 h-3.5 text-gray-400" />
-                                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recent Requests</h4>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Clock className="w-4 h-4 text-slate-400" />
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Recent Requests</h4>
                                 </div>
-                                <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                                <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
                                     {usageHistory.slice(0, 5).map((usage, i) => {
                                         const { totalCost } = calculateCost(usage);
                                         return (
-                                            <div key={i} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
+                                            <div key={i} className="flex items-center justify-between p-3 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-100 hover:shadow-sm group/row">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-bold text-gray-700 truncate max-w-[120px]">
+                                                    <span className="text-[10px] font-black text-slate-700 truncate max-w-[120px] uppercase tracking-wider">
                                                         {usage.model?.split('-').slice(0, 2).join(' ') || 'GPT 4o Mini'}
                                                     </span>
-                                                    <span className="text-[9px] text-gray-400">
+                                                    <span className="text-[9px] text-slate-400 font-bold">
                                                         {new Date(usage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                     </span>
                                                 </div>
                                                 <div className="text-right">
-                                                    <div className="text-[10px] font-bold text-gray-800">
-                                                        {usage.total_tokens.toLocaleString()} tkn
+                                                    <div className="text-[10px] font-black text-slate-900">
+                                                        {usage.total_tokens.toLocaleString()}
                                                     </div>
-                                                    <div className="text-[9px] text-green-600 font-medium">
+                                                    <div className="text-[9px] text-emerald-600 font-black">
                                                         +${totalCost.toFixed(5)}
                                                     </div>
                                                 </div>
@@ -130,8 +135,8 @@ export const TokenUsageBadge: React.FC = () => {
                                         );
                                     })}
                                     {usageHistory.length === 0 && (
-                                        <div className="text-center py-4 text-gray-400 text-[10px] font-medium italic">
-                                            No requests logged yet
+                                        <div className="text-center py-6 text-slate-400 text-[10px] font-bold uppercase tracking-widest italic opacity-50">
+                                            No requests logged
                                         </div>
                                     )}
                                 </div>
@@ -139,11 +144,11 @@ export const TokenUsageBadge: React.FC = () => {
                         </div>
 
                         {/* Footer */}
-                        <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-                            <span className="text-[9px] text-gray-400 font-medium italic">Pricing based on OpenAI standard rates</span>
-                            <div className="flex items-center gap-1">
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">Live Tracking</span>
+                        <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
+                            <span className="text-[8px] text-slate-400 font-black uppercase tracking-widest">OpenAI Standard Rates</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Live Sync</span>
                             </div>
                         </div>
                     </div>
@@ -152,3 +157,4 @@ export const TokenUsageBadge: React.FC = () => {
         </div>
     );
 };
+
