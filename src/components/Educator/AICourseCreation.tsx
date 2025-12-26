@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Loader2, RefreshCw, ChevronLeft, Sparkles, MessageSquare, Target, BookOpen, PanelLeftClose, PanelLeftOpen, Key } from "lucide-react";
 
 import { SkillMapGraph } from "./SkillMapGraph";
@@ -110,6 +110,7 @@ export const AICourseCreation: React.FC = () => {
 	const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 	const [tempApiKey, setTempApiKey] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
 	const { 
     setAIGeneratedGraphData, 
@@ -148,6 +149,12 @@ export const AICourseCreation: React.FC = () => {
 	const [, setGeneratedGraphData] = useState<GraphData | null>(null);
 	const [graphError, setGraphError] = useState<string | null>(null);
 	const [conversationalAgent, setConversationalAgent] = useState<ConversationalAgent | null>(null);
+
+    useEffect(() => {
+        if (location.state?.resume) {
+            setCurrentStep('FLOW_DESIGN');
+        }
+    }, [location.state]);
     const [activeView, setActiveView] = useState<'graph' | 'competency'>('graph');
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -788,7 +795,9 @@ export const AICourseCreation: React.FC = () => {
                 return (
                     <div className="flex-1 relative h-full">
                         {/* Header Controls */}
-                        <div className="absolute top-4 right-4 z-20 flex gap-2">
+                        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                            <TokenUsageBadge />
+                            
                              <button
                                  onClick={handleBackToProblems}
                                  className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm transition-all"
@@ -911,7 +920,7 @@ export const AICourseCreation: React.FC = () => {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                 {/* Top Bar */}
-                <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-10">
+                <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0 z-30">
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={() => setIsLeftDrawerOpen(!isLeftDrawerOpen)}
@@ -927,7 +936,7 @@ export const AICourseCreation: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        <TokenUsageBadge />
+                        {currentStep !== 'FLOW_DESIGN' && currentStep !== 'CONTENT_ENRICHMENT' && <TokenUsageBadge />}
                         <button 
                             onClick={() => setShowApiKeyModal(true)}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${

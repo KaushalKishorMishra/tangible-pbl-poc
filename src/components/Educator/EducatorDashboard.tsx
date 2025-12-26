@@ -116,18 +116,8 @@ export const EducatorDashboard: React.FC = () => {
             setGraphData(course.graphData);
             setProblems(course.problems);
             
-            // Navigate to course creation wizard in flow design step (or a viewer)
-            // For now, let's go to create-course but we need a way to tell it to skip to flow design
-            // Maybe we can pass state or just rely on the store being populated?
-            // AICourseCreation resets state on mount. We might need to modify it to check for existing data.
-            // Or we can navigate to a different route like /educator/course/:id
-            
-            // Let's assume for now we just want to list them. 
-            // To actually edit/view, we'd need to update AICourseCreation to not reset if data exists, 
-            // or pass a flag.
-            
-            // For this task, "use it in the listing page" implies seeing it here.
-            // I'll implement the listing.
+            // Navigate to course creation wizard with resume state
+            navigate("/educator/create-course", { state: { resume: true } });
         }
     };
 
@@ -136,7 +126,7 @@ export const EducatorDashboard: React.FC = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 transition-colors duration-300">
+		<div className="h-screen overflow-y-auto bg-gray-50 transition-colors duration-300">
 			{/* Header */}
 			<div className="bg-white shadow-sm border-b border-gray-200 transition-colors duration-300">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -263,12 +253,9 @@ export const EducatorDashboard: React.FC = () => {
                                         <div className="flex gap-2">
                                             <button 
                                                 onClick={() => handleLoadCourse(course.id)}
-                                                className="flex-1 px-3 py-2 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                                                className="w-full px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                                             >
-                                                Edit
-                                            </button>
-                                            <button className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                                                View
+                                                Edit Course
                                             </button>
                                         </div>
                                     </div>
