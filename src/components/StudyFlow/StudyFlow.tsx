@@ -58,7 +58,12 @@ const edgeTypes = {
     custom: CustomEdge,
 };
 
-export const StudyFlow: React.FC = () => {
+interface StudyFlowProps {
+    onBack?: () => void;
+    hideHeader?: boolean;
+}
+
+export const StudyFlow: React.FC<StudyFlowProps> = ({ onBack, hideHeader }) => {
     const { 
         courseData,
         setIsFlowViewActive,
@@ -155,51 +160,53 @@ export const StudyFlow: React.FC = () => {
         <div className="w-full h-full bg-slate-50 relative flex">
             <div className={`flex-1 relative transition-all duration-300 ${isNodeEditorOpen && viewMode === 'graph' ? 'mr-96' : ''}`}>
                 {/* Header / Back Button */}
-                <div className="absolute top-4 left-4 z-10 flex gap-2">
-                    <button
-                        onClick={() => setIsFlowViewActive(false)}
-                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors text-gray-700 font-medium border border-gray-200"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Graph
-                    </button>
-                    
-                    <button
-                        onClick={handleSave}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 transition-colors text-white font-medium"
-                    >
-                        <Save className="w-4 h-4" />
-                        Save Course
-                    </button>
-
-                    <div className="h-full w-px bg-gray-300 mx-2"></div>
-
-                    {/* View Toggle */}
-                    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-1 flex">
+                {!hideHeader && (
+                    <div className="absolute top-4 left-4 z-10 flex gap-2">
                         <button
-                            onClick={() => setViewMode('graph')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                                viewMode === 'graph' 
-                                ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
-                                : 'text-gray-500 hover:bg-gray-50'
-                            }`}
+                            onClick={() => onBack ? onBack() : setIsFlowViewActive(false)}
+                            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors text-gray-700 font-medium border border-gray-200"
                         >
-                            <Layout className="w-4 h-4" />
-                            Graph
+                            <ArrowLeft className="w-4 h-4" />
+                            {onBack ? 'Back to Designer' : 'Back to Graph'}
                         </button>
+                        
                         <button
-                            onClick={() => setViewMode('lms')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                                viewMode === 'lms' 
-                                ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
-                                : 'text-gray-500 hover:bg-gray-50'
-                            }`}
+                            onClick={handleSave}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 transition-colors text-white font-medium"
                         >
-                            <List className="w-4 h-4" />
-                            LMS View
+                            <Save className="w-4 h-4" />
+                            Save Course
                         </button>
+
+                        <div className="h-full w-px bg-gray-300 mx-2"></div>
+
+                        {/* View Toggle */}
+                        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-1 flex">
+                            <button
+                                onClick={() => setViewMode('graph')}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    viewMode === 'graph' 
+                                    ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
+                                    : 'text-gray-500 hover:bg-gray-50'
+                                }`}
+                            >
+                                <Layout className="w-4 h-4" />
+                                Graph
+                            </button>
+                            <button
+                                onClick={() => setViewMode('lms')}
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    viewMode === 'lms' 
+                                    ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
+                                    : 'text-gray-500 hover:bg-gray-50'
+                                }`}
+                            >
+                                <List className="w-4 h-4" />
+                                LMS View
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {viewMode === 'graph' ? (
                     <ReactFlow
