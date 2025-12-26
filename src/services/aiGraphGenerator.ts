@@ -1,70 +1,8 @@
 import OpenAI from "openai";
 import { useTokenStore } from "../store/tokenStore";
+import type { CourseData, Problem, GraphData, NodeData, RelationshipData, SkillCompetency, FilterData } from "../store/graphStore";
 
-interface CourseData {
-	title: string;
-	description: string;
-	duration: string;
-	level: string;
-	targetAudience: string;
-	mainFocus: string;
-}
 
-interface Problem {
-	id: string;
-	title: string;
-	description: string;
-	difficulty: string;
-	estimatedTime: string;
-	goals?: string[];
-	constraints?: string[];
-}
-
-export interface CompetencyLevel {
-    level: "Awareness" | "Application" | "Mastery" | "Influence";
-    description: string;
-    proofOfWork: string;
-    rubric: string;
-}
-
-export interface SkillCompetency {
-    skill: string;
-    levels: CompetencyLevel[];
-}
-
-interface NodeData {
-	id: string;
-	labels: string[];
-	properties: {
-		level: string;
-		name: string;
-		source: string;
-		category: string;
-	};
-}
-
-interface RelationshipData {
-	id: string;
-	type: string;
-	start: string;
-	end: string;
-	properties: Record<string, unknown>;
-}
-
-interface GraphData {
-	nodesCount: number;
-	relationshipsCount: number;
-	nodes: NodeData[];
-	relationships: RelationshipData[];
-}
-
-interface FilterData {
-	level: string[];
-	source: string[];
-	category: string[];
-	relationshipType: string[];
-	name: string[];
-}
 
 const RELATIONSHIP_TYPES = [
 	"PREREQUISITE",

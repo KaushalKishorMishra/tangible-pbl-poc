@@ -2,7 +2,7 @@ import React from 'react';
 import { FileText, Play, File } from 'lucide-react';
 
 interface EmbeddedContentProps {
-    type: 'video' | 'pdf' | 'text';
+    type: 'video' | 'pdf' | 'text' | 'link';
     url: string;
     title: string;
     description?: string;
@@ -59,6 +59,23 @@ export const EmbeddedContentPlayer: React.FC<EmbeddedContentProps> = ({ type, ur
                         )}
                     </div>
                 );
+            case 'link':
+                return (
+                    <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <h3 className="text-xl font-bold mb-2">{title}</h3>
+                            <p className="text-gray-600 text-sm">{description}</p>
+                        </div>
+                        <a 
+                            href={url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                        >
+                            Open Link <FileText className="w-4 h-4" />
+                        </a>
+                    </div>
+                );
             default:
                 return null;
         }
@@ -70,6 +87,7 @@ export const EmbeddedContentPlayer: React.FC<EmbeddedContentProps> = ({ type, ur
                 {type === 'video' && <Play className="w-5 h-5 text-red-600" />}
                 {type === 'pdf' && <File className="w-5 h-5 text-orange-600" />}
                 {type === 'text' && <FileText className="w-5 h-5 text-blue-600" />}
+                {type === 'link' && <FileText className="w-5 h-5 text-indigo-600" />}
                 <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
             </div>
             {renderContent()}

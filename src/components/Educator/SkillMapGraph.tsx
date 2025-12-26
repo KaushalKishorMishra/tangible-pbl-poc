@@ -3,7 +3,7 @@ import { SigmaContainer, useLoadGraph, useSigma, useRegisterEvents } from "@reac
 import Graph from "graphology";
 import "@react-sigma/core/lib/style.css";
 import nodesData from "../../data/nodes.json";
-import { useGraphStore } from "../../store/graphStore";
+import { useGraphStore, type GraphData, type NodeData, type RelationshipData } from "../../store/graphStore";
 import { GraphControls } from "../Graph/GraphControls";
 import { LeftDrawer } from "../Graph/LeftDrawer";
 import { ArcMenu } from "../Graph/ArcMenu";
@@ -11,31 +11,7 @@ import { NodeInfoDock } from "../Graph/NodeInfoDock";
 import EdgeCurveProgram from "@sigma/edge-curve";
 import { EdgeArrowProgram } from "sigma/rendering";
 
-interface NodeData {
-	id: string;
-	labels: string[];
-	properties: {
-		level: string;
-		name: string;
-		source: string;
-		category: string;
-	};
-}
 
-interface RelationshipData {
-	id: string;
-	type: string;
-	start: string;
-	end: string;
-	properties: Record<string, unknown>;
-}
-
-interface GraphData {
-	nodesCount: number;
-	relationshipsCount: number;
-	nodes: NodeData[];
-	relationships: RelationshipData[];
-}
 
 interface SkillMapGraphProps {
 	selectedCategories: string[];

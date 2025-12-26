@@ -1,27 +1,16 @@
 import { create } from 'zustand';
 import type { FilterState } from '../types/filter';
 
-interface NodeData {
-  id: string;
-  labels: string[];
-  properties: {
-    level: string;
-    name: string;
-    source: string;
-    category: string;
-  };
-  // Nested Hierarchical Data
-  skills?: GraphData;
-  competencies?: SkillCompetency[];
-  content?: {
-    type: 'video' | 'pdf' | 'text';
-    url: string;
-    title: string;
-    description?: string;
-  }[];
+export interface CourseData {
+  title: string;
+  description: string;
+  duration: string;
+  level: string;
+  targetAudience: string;
+  mainFocus: string;
 }
 
-interface RelationshipData {
+export interface RelationshipData {
   id: string;
   type: string;
   start: string;
@@ -34,6 +23,38 @@ export interface GraphData {
   relationshipsCount: number;
   nodes: NodeData[];
   relationships: RelationshipData[];
+}
+
+export interface NodeData {
+  id: string;
+  labels: string[];
+  properties: {
+    level: string;
+    name: string;
+    source: string;
+    category: string;
+  };
+  // Nested Hierarchical Data
+  skills?: GraphData;
+  competencies?: SkillCompetency[];
+  content?: {
+    type: 'video' | 'pdf' | 'text' | 'link';
+    url: string;
+    title: string;
+    description?: string;
+  }[];
+  contentUnits?: {
+    id: string;
+    title: string;
+    description: string;
+    duration: string;
+  }[];
+  resources?: {
+    id: string;
+    title: string;
+    url: string;
+    type: string;
+  }[];
 }
 
 export interface FilterData {
@@ -146,6 +167,7 @@ interface GraphState {
   setAIGeneratedGraphData: (data: GraphData) => void;
   clearAIGeneratedGraphData: () => void;
   updateNodeData: (nodeId: string, data: Partial<NodeData>) => void;
+  applyStructuralChanges: (changes: any) => void;
 
   // Problem actions
   setGeneratedProblems: (problems: Problem[]) => void;
@@ -193,19 +215,19 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   isAICourseDesignerCollapsed: false,
   
   // Basic setters
-  setFocusedNode: (nodeId) => set({ focusedNode: nodeId }),
-  setHoveredNode: (nodeId) => set({ hoveredNode: nodeId }),
-  setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }), // Keep for now if used elsewhere, but we should migrate
-  setSelectedNodeIds: (nodeIds) => set({ selectedNodeIds: nodeIds }),
-  setIsDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
-  setIsLeftDrawerOpen: (isOpen) => set({ isLeftDrawerOpen: isOpen }),
-  setArcMenuNode: (node) => set({ arcMenuNode: node }),
-  setArcMenuState: (state) => set({ arcMenuState: state }),
-  setSelectedNodeForDock: (nodeId) => set({ selectedNodeForDock: nodeId, isDrawerOpen: !!nodeId }),
-  setAICourseDesignerCollapsed: (isCollapsed) => set({ isAICourseDesignerCollapsed: isCollapsed }),
+  setFocusedNode: (nodeId: string | null) => set({ focusedNode: nodeId }),
+  setHoveredNode: (nodeId: string | null) => set({ hoveredNode: nodeId }),
+  setSelectedNodeId: (nodeId: string | null) => set({ selectedNodeId: nodeId }), // Keep for now if used elsewhere, but we should migrate
+  setSelectedNodeIds: (nodeIds: string[]) => set({ selectedNodeIds: nodeIds }),
+  setIsDrawerOpen: (isOpen: boolean) => set({ isDrawerOpen: isOpen }),
+  setIsLeftDrawerOpen: (isOpen: boolean) => set({ isLeftDrawerOpen: isOpen }),
+  setArcMenuNode: (node: { nodeId: string; position: { x: number; y: number } } | null) => set({ arcMenuNode: node }),
+  setArcMenuState: (state: { isOpen: boolean; nodeId: string | null; position: { x: number; y: number } }) => set({ arcMenuState: state }),
+  setSelectedNodeForDock: (nodeId: string | null) => set({ selectedNodeForDock: nodeId, isDrawerOpen: !!nodeId }),
+  setAICourseDesignerCollapsed: (isCollapsed: boolean) => set({ isAICourseDesignerCollapsed: isCollapsed }),
   
   // New actions
-  toggleNodeSelection: (nodeId) => {
+  toggleNodeSelection: (nodeId: string) => {
     const currentSelected = get().selectedNodeIds;
     const isSelected = currentSelected.includes(nodeId);
     set({
@@ -223,7 +245,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   },
 
   // Filter actions
-  setFilter: (category, value) => {
+  setFilter: (category: string, value: string) => {
     set((state) => {
       const currentValues = state.filters[category] || [];
       const newValues = currentValues.includes(value)
@@ -252,17 +274,17 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     });
   },
 
-  setAvailableFilters: (filters) => {
+  setAvailableFilters: (filters: FilterData) => {
     set({ availableFilters: filters });
   },
 
   // Search actions
-  setSearchQuery: (query) => {
+  setSearchQuery: (query: string) => {
     set({ searchQuery: query });
     get().updateSearchSuggestions();
   },
 
-  setSearchItems: (items) => {
+  setSearchItems: (items: SearchItem[]) => {
     set({ searchItems: items });
   },
 
@@ -286,7 +308,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     set({ searchQuery: '', searchSuggestions: [] });
   },
 
-  selectSearchItem: (item) => {
+  selectSearchItem: (item: SearchItem) => {
     if (item.type === 'name') {
       // For nodes, add to name filter
       get().setFilter('name', item.label);
@@ -297,7 +319,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     get().clearSearch();
   },
 
-  setAIGeneratedGraphData: (data) => {
+  setAIGeneratedGraphData: (data: GraphData) => {
     set({ aiGeneratedGraphData: data });
   },
 
@@ -305,7 +327,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     set({ aiGeneratedGraphData: null, availableFilters: null });
   },
 
-  updateNodeData: (nodeId, data) => {
+  updateNodeData: (nodeId: string, data: Partial<NodeData>) => {
       set((state) => {
           if (!state.aiGeneratedGraphData) return state;
           
@@ -325,9 +347,81 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       });
   },
 
-  setGeneratedProblems: (problems) => set({ generatedProblems: problems }),
-  setSelectedProblem: (problem) => set({ selectedProblem: problem }),
-  cacheProblemData: (problemId, data) => set((state) => ({
+  applyStructuralChanges: (changes: any) => {
+      if (!changes || !changes.action) return;
+      const { action, details } = changes;
+      
+      set((state) => {
+          if (!state.aiGeneratedGraphData) return state;
+          
+          const updatedGraph = { ...state.aiGeneratedGraphData };
+          
+          switch (action) {
+              case 'add_content':
+                  const newNode: NodeData = {
+                      id: `node-${Date.now()}`,
+                      labels: ["Skill"],
+                      properties: {
+                          name: details.name,
+                          level: details.level || "Application",
+                          source: "AI",
+                          category: details.category || "General"
+                      }
+                  };
+                  updatedGraph.nodes.push(newNode);
+                  updatedGraph.nodesCount++;
+                  // Auto-select the new node
+                  state.selectedNodeIds.push(newNode.id);
+                  break;
+              case 'update_content':
+                  const nodeIndex = updatedGraph.nodes.findIndex(n => n.id === details.id || n.properties.name === details.name);
+                  if (nodeIndex !== -1) {
+                      updatedGraph.nodes[nodeIndex] = {
+                          ...updatedGraph.nodes[nodeIndex],
+                          properties: {
+                              ...updatedGraph.nodes[nodeIndex].properties,
+                              ...details.properties
+                          }
+                      };
+                  }
+                  break;
+              case 'add_sub_content':
+                  const parentNodeIdx = updatedGraph.nodes.findIndex(n => n.id === details.parentId || n.properties.name === details.parentName);
+                  if (parentNodeIdx !== -1) {
+                      const nodeToUpdate = { ...updatedGraph.nodes[parentNodeIdx] };
+                      if (!nodeToUpdate.contentUnits) nodeToUpdate.contentUnits = [];
+                      nodeToUpdate.contentUnits.push({
+                          id: `unit-${Date.now()}`,
+                          title: details.title,
+                          description: details.description,
+                          duration: details.duration
+                      });
+                      updatedGraph.nodes[parentNodeIdx] = nodeToUpdate;
+                  }
+                  break;
+              case 'add_resource':
+                  const targetNodeIdx = updatedGraph.nodes.findIndex(n => n.id === details.nodeId || n.properties.name === details.nodeName);
+                  if (targetNodeIdx !== -1) {
+                      const nodeToUpdate = { ...updatedGraph.nodes[targetNodeIdx] };
+                      if (!nodeToUpdate.resources) nodeToUpdate.resources = [];
+                      nodeToUpdate.resources.push({
+                          id: `res-${Date.now()}`,
+                          title: details.title,
+                          url: details.url,
+                          type: details.type || "link"
+                      });
+                      updatedGraph.nodes[targetNodeIdx] = nodeToUpdate;
+                  }
+                  break;
+          }
+          
+          return { aiGeneratedGraphData: updatedGraph };
+      });
+  },
+
+  setGeneratedProblems: (problems: Problem[]) => set({ generatedProblems: problems }),
+  setSelectedProblem: (problem: Problem | null) => set({ selectedProblem: problem }),
+  cacheProblemData: (problemId: string, data: CachedProblemData) => set((state) => ({
     problemDataCache: {
         ...state.problemDataCache,
         [problemId]: data
@@ -335,14 +429,14 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   })),
   clearProblemCache: () => set({ problemDataCache: {} }),
   
-  setCompetencyFramework: (framework) => set({ competencyFramework: framework }),
+  setCompetencyFramework: (framework: SkillCompetency[]) => set({ competencyFramework: framework }),
 
   // Combined actions
-  handleNodeClick: (nodeId, position) => {
+  handleNodeClick: (nodeId: string, position: { x: number; y: number }) => {
     set({ arcMenuNode: { nodeId, position } });
   },
   
-  handleViewDetails: (nodeId) => {
+  handleViewDetails: (nodeId: string) => {
     set({
       selectedNodeId: nodeId,
       isDrawerOpen: true,
@@ -351,7 +445,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     });
   },
   
-  handleSelectNode: (nodeId) => {
+  handleSelectNode: (nodeId: string) => {
     // Toggle selection
     get().toggleNodeSelection(nodeId);
   },

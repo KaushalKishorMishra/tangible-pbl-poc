@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loader2, RefreshCw, ChevronLeft, Sparkles, MessageSquare, Target, BookOpen, PanelLeftClose, PanelLeftOpen, Key } from "lucide-react";
+import { Loader2, RefreshCw, Sparkles, MessageSquare, Target, BookOpen, PanelLeftClose, PanelLeftOpen, Key, CheckCircle } from "lucide-react";
 
 import { SkillMapGraph } from "./SkillMapGraph";
 import { GraphErrorState } from "./GraphErrorState";
 import { AIGraphGenerator } from"../../services/aiGraphGenerator";
 import { ConversationalAgent } from"../../services/conversationalAgent";
-import { useGraphStore } from"../../store/graphStore";
+import { useGraphStore } from "../../store/graphStore";
+import type { Problem, GraphData } from "../../store/graphStore";
 import {
 	MessageBubble,
 	TypingIndicator,
@@ -16,7 +17,6 @@ import {
 
 import { ProblemSelectionPanel } from "./ProblemSelectionPanel";
 import { CompetencyMatrix } from "./CompetencyMatrix";
-import type { Problem } from "../../store/graphStore";
 import { Layout, List, Save } from "lucide-react";
 import { TokenUsageBadge } from "../Common/TokenUsageBadge";
 import { NodeDeepDiveModal } from './NodeDeepDiveModal';
@@ -25,31 +25,7 @@ import { StudyFlow } from "../StudyFlow/StudyFlow";
 import { linearizeGraph } from "../../utils/flowUtils";
 import { Eye } from "lucide-react";
 
-interface NodeData {
-	id: string;
-	labels: string[];
-	properties: {
-		level: string;
-		name: string;
-		source: string;
-		category: string;
-	};
-}
 
-interface RelationshipData {
-	id: string;
-	type: string;
-	start: string;
-	end: string;
-	properties: Record<string, unknown>;
-}
-
-interface GraphData {
-	nodesCount: number;
-	relationshipsCount: number;
-	nodes: NodeData[];
-	relationships: RelationshipData[];
-}
 
 interface Message {
 	id: string;
@@ -112,6 +88,7 @@ export const AICourseCreation: React.FC = () => {
 	const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true); // Default to open
 	const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 	const [tempApiKey, setTempApiKey] = useState("");
+    const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -124,9 +101,10 @@ export const AICourseCreation: React.FC = () => {
     setCompetencyFramework,
     problemDataCache,
     cacheProblemData,
-    clearAIGeneratedGraphData,
     updateNodeData,
-    generatedProblems
+    applyStructuralChanges,
+    generatedProblems,
+    selectedProblem
   } = useGraphStore();
 
   const {
@@ -151,6 +129,7 @@ export const AICourseCreation: React.FC = () => {
 	const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
 	const [, setGeneratedGraphData] = useState<GraphData | null>(null);
 	const [graphError, setGraphError] = useState<string | null>(null);
+	const [notification, setNotification] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
 	const [conversationalAgent, setConversationalAgent] = useState<ConversationalAgent | null>(null);
 
     useEffect(() => {
@@ -158,6 +137,13 @@ export const AICourseCreation: React.FC = () => {
             setCurrentStep('FLOW_DESIGN');
         }
     }, [location.state]);
+
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
     const [activeView, setActiveView] = useState<'graph' | 'competency'>('graph');
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -348,6 +334,76 @@ export const AICourseCreation: React.FC = () => {
 		}, 1000);
 	}, [formCourseData, conversationalAgent, setGeneratedProblems]);
 
+    const handleRegenerateProblems = async () => {
+        setIsGeneratingGraph(true);
+        try {
+            if (conversationalAgent) {
+                const problems = await conversationalAgent.generateProblems();
+                setGeneratedProblems(problems);
+                
+                const problemsMsg: Message = {
+                    id: `prob-regen-${Date.now()}`,
+                    content: `I've found some fresh problems for you. Take a look!`,
+                    sender: "ai",
+                    timestamp: new Date(),
+                };
+                setMessages((prev) => [...prev, problemsMsg]);
+            }
+        } catch (error) {
+            handleError(error);
+        } finally {
+            setIsGeneratingGraph(false);
+        }
+    };
+
+    const handleRegenerateFlow = async () => {
+        if (!selectedProblem) return;
+        
+        setIsGeneratingGraph(true);
+        setGraphError(null);
+
+        try {
+            if (!apiKey) throw new Error("OpenAI API key not found.");
+            const generator = new AIGraphGenerator(apiKey);
+            
+            const { graphData, filterData } = await generator.generateQuestionFlowForProblem(
+                selectedProblem,
+                formCourseData as CourseData
+            );
+
+            const competencies = await generator.generateCompetencyFramework(
+                selectedProblem,
+                formCourseData as CourseData
+            );
+
+            // Update cache and state
+            cacheProblemData(selectedProblem.id, {
+                graphData,
+                filterData,
+                competencyFramework: competencies
+            });
+
+            setGeneratedGraphData(graphData);
+            setAIGeneratedGraphData(graphData);
+            setAvailableFilters(filterData);
+            setSelectedCategories(filterData.category);
+            setCompetencyFramework(competencies);
+
+            const successMessage: Message = {
+                id: `success-regen-${Date.now()}`,
+                content: `🚀 I've redesigned the learning flow with a fresh perspective.`,
+                sender:"ai",
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, successMessage]);
+
+        } catch (error) {
+            handleError(error);
+        } finally {
+            setIsGeneratingGraph(false);
+        }
+    };
+
     const handleProblemSelect = async (problem: Problem) => {
         setSelectedProblem(problem);
         
@@ -437,11 +493,7 @@ export const AICourseCreation: React.FC = () => {
         setCurrentStep('LMS_VIEW');
     };
 
-    const handleBackToProblems = () => {
-        clearAIGeneratedGraphData();
-        setSelectedProblem(null);
-        setCurrentStep('PROBLEMS');
-    };
+
 
     const handleNodeClick = async (nodeId: string) => {
         // Open Deep Dive Modal
@@ -543,6 +595,15 @@ export const AICourseCreation: React.FC = () => {
 						setMessages((prev) => [...prev, aiMessage]);
 						setIsTyping(false);
 
+                        // Handle structural changes
+                        if (refinementResponse.structuralChanges) {
+                            applyStructuralChanges(refinementResponse.structuralChanges);
+                            setNotification({ 
+                                message: `Applied changes: ${refinementResponse.structuralChanges.action.replace('_', ' ')}`, 
+                                type: 'success' 
+                            });
+                        }
+
 						// Handle graph regeneration
 						if (refinementResponse.shouldRegenerateGraph) {
 							console.log("User confirmed regeneration:", refinementResponse.refinementDetails);
@@ -635,6 +696,15 @@ export const AICourseCreation: React.FC = () => {
 							};
 							setMessages((prev) => [...prev, aiMessage]);
 							setIsTyping(false);
+
+                            // Handle structural changes
+                            if (refinementResponse.structuralChanges) {
+                                applyStructuralChanges(refinementResponse.structuralChanges);
+                                setNotification({ 
+                                    message: `Applied changes: ${refinementResponse.structuralChanges.action.replace('_', ' ')}`, 
+                                    type: 'success' 
+                                });
+                            }
 
 							// Handle graph regeneration
 							if (refinementResponse.shouldRegenerateGraph) {
@@ -808,6 +878,7 @@ export const AICourseCreation: React.FC = () => {
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Select a Problem to Solve</h2>
                             <ProblemSelectionPanel 
                                 onSelectProblem={handleProblemSelect}
+                                onRegenerate={handleRegenerateProblems}
                                 isGenerating={isGeneratingGraph}
                             />
                         </div>
@@ -818,58 +889,65 @@ export const AICourseCreation: React.FC = () => {
             case 'CONTENT_ENRICHMENT':
                 return (
                     <div className="flex-1 relative h-full">
-                        {/* Header Controls */}
-                        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-                            <TokenUsageBadge />
-                            
-                             <button
-                                 onClick={handleBackToProblems}
-                                 className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm transition-all"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                                Back to Problems
-                            </button>
-                            
-                            <div className="bg-white rounded-lg shadow-md border border-gray-200 p-1 flex">
+                        {/* Premium Header Controls */}
+                        <div className="absolute top-6 right-6 z-20 flex items-center gap-4">
+                            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-white/20 ring-1 ring-black/5">
+                                <TokenUsageBadge />
+                            </div>
+
+                            <div className="flex items-center gap-1 bg-white/80 backdrop-blur-md p-1 rounded-xl shadow-lg border border-white/20 ring-1 ring-black/5">
                                 <button
                                     onClick={() => setActiveView('graph')}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                                         activeView === 'graph' 
-                                        ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
-                                        : 'text-gray-500 hover:bg-gray-50'
+                                        ? 'bg-indigo-600 text-white shadow-md' 
+                                        : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                                 >
                                     <Layout className="w-4 h-4" />
-                                    Question Flow
+                                    Graph
                                 </button>
                                 <button
                                     onClick={() => setActiveView('competency')}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                                         activeView === 'competency' 
-                                        ? 'bg-indigo-100 text-indigo-700 shadow-sm' 
-                                        : 'text-gray-500 hover:bg-gray-50'
+                                        ? 'bg-indigo-600 text-white shadow-md' 
+                                        : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                                 >
                                     <List className="w-4 h-4" />
-                                    Competency Matrix
+                                    Matrix
                                 </button>
                             </div>
 
-                            <button
-                                onClick={handlePreviewLMS}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 shadow-sm transition-all"
-                            >
-                                <Eye className="w-4 h-4" />
-                                Preview LMS View
-                            </button>
+                            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1 rounded-xl shadow-lg border border-white/20 ring-1 ring-black/5">
+                                <button
+                                    onClick={handleRegenerateFlow}
+                                    disabled={isGeneratingGraph}
+                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                                    title="Regenerate Flow"
+                                >
+                                    <RefreshCw className={`w-4 h-4 ${isGeneratingGraph ? 'animate-spin' : ''}`} />
+                                </button>
+                                
+                                <div className="w-px h-4 bg-gray-200 mx-1" />
 
-                            <button
-                                onClick={handleSaveAndExit}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 shadow-sm transition-all"
-                            >
-                                <Save className="w-4 h-4" />
-                                Save & Exit
-                            </button>
+                                <button
+                                    onClick={handlePreviewLMS}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-all"
+                                >
+                                    <Eye className="w-4 h-4" />
+                                    Preview
+                                </button>
+
+                                <button
+                                    onClick={handleSaveAndExit}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all"
+                                >
+                                    <Save className="w-4 h-4" />
+                                    Save
+                                </button>
+                            </div>
                         </div>
 
                         {/* Main Graph View */}
@@ -979,6 +1057,17 @@ export const AICourseCreation: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-2">
+                        {currentStep !== 'INTENT' && (
+                            <button 
+                                onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)}
+                                className={`p-2 rounded-md transition-colors ${
+                                    isChatSidebarOpen ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-gray-100 text-gray-500'
+                                }`}
+                                title="Toggle AI Chat"
+                            >
+                                <MessageSquare size={18} />
+                            </button>
+                        )}
                         {currentStep !== 'FLOW_DESIGN' && currentStep !== 'CONTENT_ENRICHMENT' && <TokenUsageBadge />}
                         <button 
                             onClick={() => setShowApiKeyModal(true)}
@@ -998,6 +1087,50 @@ export const AICourseCreation: React.FC = () => {
                 {renderWizardStep()}
 
             </div>
+
+            {/* Right Sidebar - AI Chat */}
+            {currentStep !== 'INTENT' && (
+                <div className={`bg-white border-l border-gray-200 transition-all duration-300 flex flex-col ${
+                    isChatSidebarOpen ? 'w-96' : 'w-0 opacity-0 overflow-hidden'
+                }`}>
+                    <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                        <div className="flex items-center gap-2 text-indigo-600 font-bold">
+                            <MessageSquare className="w-5 h-5" />
+                            <span>AI Design Assistant</span>
+                        </div>
+                        <button 
+                            onClick={() => setIsChatSidebarOpen(false)}
+                            className="p-1.5 hover:bg-gray-200 rounded-md text-gray-500 transition-colors"
+                        >
+                            <PanelLeftClose className="w-4 h-4 rotate-180" />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                            {messages.map((message) => (
+                                <ChatMessage 
+                                    key={message.id} 
+                                    message={message} 
+                                    onOptionSelect={handleOptionSelect}
+                                />
+                            ))}
+                            {isTyping && <TypingIndicator />}
+                            <div ref={messagesEndRef} />
+                        </div>
+                        <div className="p-4 border-t border-gray-100 bg-white">
+                            <ChatInput 
+                                value={inputValue}
+                                onChange={setInputValue}
+                                onSend={handleSendMessage}
+                                onKeyPress={handleKeyPress}
+                                placeholder="Ask me to add topics, resources..."
+                                inputRef={inputRef}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* API Key Modal */}
             {showApiKeyModal && (
@@ -1025,6 +1158,19 @@ export const AICourseCreation: React.FC = () => {
                                 Save Key
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+            {/* Notification Toast */}
+            {notification && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                    <div className={`px-6 py-3 rounded-full shadow-2xl border flex items-center gap-3 ${
+                        notification.type === 'success' 
+                            ? 'bg-emerald-500 border-emerald-400 text-white' 
+                            : 'bg-indigo-500 border-indigo-400 text-white'
+                    }`}>
+                        {notification.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+                        <span className="font-medium">{notification.message}</span>
                     </div>
                 </div>
             )}

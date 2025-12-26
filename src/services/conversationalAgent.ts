@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { useTokenStore } from "../store/tokenStore";
+import type { CourseData, Problem } from "../store/graphStore";
 
 interface Question {
 	key: string;
@@ -8,24 +9,7 @@ interface Question {
 	options?: string[];
 }
 
-interface CourseData {
-	title: string;
-	description: string;
-	duration: string;
-	level: string;
-	targetAudience: string;
-	mainFocus: string;
-}
 
-export interface Problem {
-	id: string;
-	title: string;
-	description: string;
-	difficulty: string;
-	estimatedTime: string;
-    goals: string[];
-    constraints: string[];
-}
 
 export class ConversationalAgent {
 	private openai: OpenAI;
@@ -235,10 +219,11 @@ How would you like to proceed?`;
 	 */
 	async refineGraph(userRequest: string): Promise<{
 		aiResponse: string;
-		refinementAction?: "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "confirm_regenerate" | "none";
+		refinementAction?: "add_content" | "update_content" | "add_sub_content" | "add_resource" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "confirm_regenerate" | "none";
 		refinementDetails?: string;
 		shouldRegenerateGraph?: boolean;
 		needsConfirmation?: boolean;
+        structuralChanges?: any;
 	}> {
 		this.conversationHistory.push({ role: "user", content: userRequest });
 
@@ -250,12 +235,23 @@ ${this.generatedGraphContext || ""}
 User's refinement request: "${userRequest}"
 
 Analyze what the user wants to do:
-- If they want to ADD skills/topics: Acknowledge what they want to add and ask if they'd like to regenerate the map
-- If they want to MODIFY depth/complexity: Acknowledge the change and ask if they want to update the map
-- If they want to ADJUST connections: Acknowledge and ask if they'd like to regenerate with updated relationships
-- If they just want EXPLANATIONS: Provide clear explanations without asking about regeneration
-- If they want to EXPORT/share: Guide them through options
-- If they explicitly say "yes", "regenerate", "update", "generate": Confirm you'll regenerate the map
+- If they want to ADD content/topics: Acknowledge what they want to add and ask if they'd like to update the map.
+- If they want to UPDATE existing content: Acknowledge the change and ask if they want to update the map.
+- If they want to ADD sub-content/break down topics: Acknowledge and ask if they want to update the map.
+- If they want to ADD resources (videos, links): Acknowledge and ask if they want to update the map.
+- If they want to MODIFY depth/complexity: Acknowledge the change and ask if they want to update the map.
+- If they want to ADJUST connections: Acknowledge and ask if they'd like to regenerate with updated relationships.
+- If they just want EXPLANATIONS: Provide clear explanations without asking about regeneration.
+- If they want to EXPORT/share: Guide them through options.
+- If they explicitly say "yes", "regenerate", "update", "generate": Confirm you'll update the map.
+
+IMPORTANT: If the user wants to make a specific structural change (add/update/delete nodes or resources), please include a JSON block at the end of your response in the following format:
+\`\`\`json
+{
+  "action": "add_content" | "update_content" | "add_sub_content" | "add_resource",
+  "details": { ... }
+}
+\`\`\`
 
 Respond naturally and helpfully as a course design assistant.`;
 
@@ -281,23 +277,44 @@ Respond naturally and helpfully as a course design assistant.`;
 		const shouldRegenerate = this.shouldRegenerateGraph(userRequest, aiResponse, actionType);
 		const needsConfirmation = this.needsRegenerationConfirmation(userRequest, actionType);
 
+        // Extract structural changes if present
+        let structuralChanges = null;
+        const jsonMatch = aiResponse.match(/```json\n([\s\S]*?)\n```/);
+        if (jsonMatch) {
+            try {
+                structuralChanges = JSON.parse(jsonMatch[1]);
+            } catch (e) {
+                console.error("Failed to parse structural changes JSON:", e);
+            }
+        }
+
 		return {
-			aiResponse,
+			aiResponse: aiResponse.replace(/```json\n[\s\S]*?\n```/, "").trim(),
 			refinementAction: actionType,
 			refinementDetails: userRequest,
 			shouldRegenerateGraph: shouldRegenerate,
 			needsConfirmation,
+            structuralChanges
 		};
 	}
 
 	/**
 	 * Detect what type of refinement the user wants
 	 */
-	private detectRefinementAction(userRequest: string, _aiResponse: string): "add_skills" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "none" {
+	private detectRefinementAction(userRequest: string, _aiResponse: string): "add_content" | "update_content" | "add_sub_content" | "add_resource" | "modify_depth" | "adjust_connections" | "explain" | "export" | "regenerate" | "none" {
 		const lowerRequest = userRequest.toLowerCase();
 
-		if (lowerRequest.includes("add") || lowerRequest.includes("more skills") || lowerRequest.includes("include") || lowerRequest.includes("expand")) {
-			return "add_skills";
+		if (lowerRequest.includes("add") || lowerRequest.includes("new topic") || lowerRequest.includes("new content")) {
+			return "add_content";
+		}
+		if (lowerRequest.includes("update") || lowerRequest.includes("change content") || lowerRequest.includes("modify content")) {
+			return "update_content";
+		}
+		if (lowerRequest.includes("sub-content") || lowerRequest.includes("break down") || lowerRequest.includes("sub-topic")) {
+			return "add_sub_content";
+		}
+		if (lowerRequest.includes("resource") || lowerRequest.includes("link") || lowerRequest.includes("url") || lowerRequest.includes("video")) {
+			return "add_resource";
 		}
 		if (lowerRequest.includes("depth") || lowerRequest.includes("detail") || lowerRequest.includes("simplify") || lowerRequest.includes("complex")) {
 			return "modify_depth";
@@ -347,7 +364,10 @@ Respond naturally and helpfully as a course design assistant.`;
 	 */
 	private needsRegenerationConfirmation(_userRequest: string, actionType: string): boolean {
 		// These actions should prompt for confirmation
-		return actionType === "add_skills" || 
+		return actionType === "add_content" || 
+               actionType === "update_content" ||
+               actionType === "add_sub_content" ||
+               actionType === "add_resource" ||
 		       actionType === "modify_depth" || 
 		       actionType === "adjust_connections";
 	}
