@@ -21,6 +21,9 @@ import { Layout, List, Save } from "lucide-react";
 import { TokenUsageBadge } from "../Common/TokenUsageBadge";
 import { NodeDeepDiveModal } from './NodeDeepDiveModal';
 import { useCourseStore } from "../../store/courseStore";
+import { StudyFlow } from "../StudyFlow/StudyFlow";
+import { linearizeGraph } from "../../utils/flowUtils";
+import { Eye } from "lucide-react";
 
 interface NodeData {
 	id: string;
@@ -101,7 +104,7 @@ const questions = [
 ];
 
 // Wizard Steps
-type WizardStep = 'INTENT' | 'PROBLEMS' | 'FLOW_DESIGN' | 'CONTENT_ENRICHMENT' | 'FINAL_REVIEW';
+type WizardStep = 'INTENT' | 'PROBLEMS' | 'FLOW_DESIGN' | 'CONTENT_ENRICHMENT' | 'LMS_VIEW' | 'FINAL_REVIEW';
 
 export const AICourseCreation: React.FC = () => {
 	const [currentStep, setCurrentStep] = useState<WizardStep>('INTENT');
@@ -126,9 +129,9 @@ export const AICourseCreation: React.FC = () => {
     generatedProblems
   } = useGraphStore();
 
-  // const {
-  //   isFlowViewActive
-  // } = useCourseStore();
+  const {
+    setCourseData
+  } = useCourseStore();
 
 	const [messages, setMessages] = useState<Message[]>([
 		{
@@ -411,6 +414,27 @@ export const AICourseCreation: React.FC = () => {
         } finally {
             setIsGeneratingGraph(false);
         }
+    };
+
+    const handlePreviewLMS = () => {
+        if (!aiGeneratedGraphData) return;
+
+        // 1. Linearize the graph to create content units
+        const selectedNodeIds = aiGeneratedGraphData.nodes.map(n => n.id);
+        const contentUnits = linearizeGraph(selectedNodeIds, aiGeneratedGraphData);
+
+        // 2. Populate courseStore with this temporary data for preview
+        setCourseData({
+            id: 'preview-course',
+            title: formCourseData.title || "Preview Course",
+            description: formCourseData.description || "",
+            nodes: contentUnits,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
+        // 3. Switch to LMS View step
+        setCurrentStep('LMS_VIEW');
     };
 
     const handleBackToProblems = () => {
@@ -832,6 +856,14 @@ export const AICourseCreation: React.FC = () => {
                             </div>
 
                             <button
+                                onClick={handlePreviewLMS}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 shadow-sm transition-all"
+                            >
+                                <Eye className="w-4 h-4" />
+                                Preview LMS View
+                            </button>
+
+                            <button
                                 onClick={handleSaveAndExit}
                                 className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 shadow-sm transition-all"
                             >
@@ -879,6 +911,16 @@ export const AICourseCreation: React.FC = () => {
 						)}
 					</div>
 				);
+
+            case 'LMS_VIEW':
+                return (
+                    <div className="flex-1 h-full overflow-hidden">
+                        <StudyFlow 
+                            onBack={() => setCurrentStep('FLOW_DESIGN')} 
+                            hideHeader={false} 
+                        />
+                    </div>
+                );
         }
     };
 
@@ -901,6 +943,7 @@ export const AICourseCreation: React.FC = () => {
                         { id: 'PROBLEMS', label: '2. Define Problem', icon: Target },
                         { id: 'FLOW_DESIGN', label: '3. Design Flow', icon: Layout },
                         { id: 'CONTENT_ENRICHMENT', label: '4. Enrich Content', icon: BookOpen },
+                        { id: 'LMS_VIEW', label: '5. LMS Preview', icon: Eye },
                     ].map((step) => (
                         <div 
                             key={step.id}
