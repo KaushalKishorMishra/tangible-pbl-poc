@@ -1,0 +1,37 @@
+[
+  {
+    "id": "p1",
+    "title": "Build a Scalable E-commerce API",
+    "description": "Design and implement a RESTful API for a high-traffic e-commerce platform. Focus on database schema design, authentication, and caching strategies.",
+    "difficulty": "Advanced",
+    "estimatedTime": "10 hours"
+  },
+  {
+    "id": "p2",
+    "title": "Real-time Chat Application",
+    "description": "Create a real-time chat interface using WebSockets. Implement features like private messaging, typing indicators, and message persistence.",
+    "difficulty": "Intermediate",
+    "estimatedTime": "6 hours"
+  },
+  {
+    "id": "p3",
+    "title": "Task Management Dashboard",
+    "description": "Develop a productivity dashboard with drag-and-drop task management. Focus on state management and responsive UI design.",
+    "difficulty": "Intermediate",
+    "estimatedTime": "8 hours"
+  },
+  {
+    "id": "p4",
+    "title": "Authentication System",
+    "description": "Build a secure authentication system with JWT, OAuth integration, and password reset functionality.",
+    "difficulty": "Beginner",
+    "estimatedTime": "4 hours"
+  },
+  {
+    "id": "p5",
+    "title": "Blog Platform with CMS",
+    "description": "Create a blog platform where users can write, edit, and publish posts. Include a markdown editor and image upload capability.",
+    "difficulty": "Intermediate",
+    "estimatedTime": "12 hours"
+  }
+]

@@ -44,6 +44,14 @@ export interface SearchItem {
   category: string;
 }
 
+export interface Problem {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: string;
+  estimatedTime: string;
+}
+
 interface GraphState {
   // Node states
   focusedNode: string | null;
@@ -62,6 +70,10 @@ interface GraphState {
 
   // AI-generated graph data
   aiGeneratedGraphData: GraphData | null;
+  
+  // Problem Generation
+  generatedProblems: Problem[];
+  selectedProblem: Problem | null;
 
   // UI states
   isDrawerOpen: boolean;
@@ -101,6 +113,10 @@ interface GraphState {
   setAIGeneratedGraphData: (data: GraphData) => void;
   clearAIGeneratedGraphData: () => void;
 
+  // Problem actions
+  setGeneratedProblems: (problems: Problem[]) => void;
+  setSelectedProblem: (problem: Problem | null) => void;
+
   // Combined actions
   handleNodeClick: (nodeId: string, position: { x: number; y: number }) => void;
   handleViewDetails: (nodeId: string) => void;
@@ -127,6 +143,8 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   searchItems: [],
   searchSuggestions: [],
   aiGeneratedGraphData: null,
+  generatedProblems: [],
+  selectedProblem: null,
   isDrawerOpen: false,
   isLeftDrawerOpen: true,
   arcMenuNode: null,
@@ -246,6 +264,9 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   clearAIGeneratedGraphData: () => {
     set({ aiGeneratedGraphData: null, availableFilters: null });
   },
+
+  setGeneratedProblems: (problems) => set({ generatedProblems: problems }),
+  setSelectedProblem: (problem) => set({ selectedProblem: problem }),
 
   // Combined actions
   handleNodeClick: (nodeId, position) => {

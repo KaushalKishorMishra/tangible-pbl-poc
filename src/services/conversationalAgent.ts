@@ -16,6 +16,14 @@ interface CourseData {
 	mainFocus: string;
 }
 
+export interface Problem {
+	id: string;
+	title: string;
+	description: string;
+	difficulty: string;
+	estimatedTime: string;
+}
+
 export class ConversationalAgent {
 	private ai: GoogleGenAI;
 	private chat: ReturnType<typeof this.ai.chats.create> | null = null;
@@ -347,5 +355,55 @@ Respond naturally and helpfully as a course design assistant.`;
 		this.conversationHistory = [];
 		this.isInRefinementMode = false;
 		this.generatedGraphContext = null;
+	}
+	/**
+	 * Generate 5 distinct problems based on the collected course data
+	 */
+	async generateProblems(): Promise<Problem[]> {
+		if (!this.chat) {
+			throw new Error("Chat session not initialized");
+		}
+
+		const prompt = `Based on the course "${this.collectedData.title}" and the context gathered so far, generate 5 distinct, real-world problems or projects that a student could solve to demonstrate their mastery of the material.
+
+		Requirements:
+		1. Problems should vary in complexity but fit within the course level (${this.collectedData.level}).
+		2. Each problem should be practical and "hands-on".
+		3. Provide a title, brief description, difficulty level, and estimated time to complete.
+
+		Response format (MUST be valid JSON array):
+		[
+			{
+				"id": "1",
+				"title": "Problem Title",
+				"description": "Brief description of the problem...",
+				"difficulty": "Beginner/Intermediate/Advanced",
+				"estimatedTime": "2 hours"
+			}
+		]
+		
+		Return ONLY the JSON array.`;
+
+		try {
+			const response = await this.chat.sendMessage({ message: prompt });
+			const text = response.text || "[]";
+			const jsonText = this.extractJSON(text);
+			const problems = JSON.parse(jsonText);
+			return problems;
+		} catch (error) {
+			console.error("Error generating problems:", error);
+			throw new Error("Failed to generate problems");
+		}
+	}
+
+	private extractJSON(text: string): string {
+		const start = text.indexOf('[');
+		const end = text.lastIndexOf(']');
+
+		if (start === -1 || end === -1 || start > end) {
+			return "[]";
+		}
+
+		return text.substring(start, end + 1);
 	}
 }

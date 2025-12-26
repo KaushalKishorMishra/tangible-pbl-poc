@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Loader2, Settings, RefreshCw, Database, ChevronLeft, Bot } from "lucide-react";
 import nodesData from "../../data/nodes.json";
+import problemsData from "../../data/problems.json";
 import { ApiKeySetup } from "../setup/ApiKeySetup";
 import { StudyFlow } from "../StudyFlow/StudyFlow";
 import { SkillMapGraph } from "./SkillMapGraph";
@@ -16,6 +17,8 @@ import {
 	CompletionState,
 } from"./ChatComponents";
 import { useCourseStore } from "../../store/courseStore";
+import { ProblemSelectionPanel } from "./ProblemSelectionPanel";
+import type { Problem } from "../../store/graphStore";
 
 interface NodeData {
 	id: string;
@@ -101,7 +104,11 @@ export const AICourseCreation: React.FC = () => {
     setAICourseDesignerCollapsed, 
     isAICourseDesignerCollapsed,
     setAvailableFilters,
-    aiGeneratedGraphData
+    aiGeneratedGraphData,
+    setGeneratedProblems,
+    generatedProblems,
+    setSelectedProblem,
+    selectedProblem
   } = useGraphStore();
 
   const {
@@ -296,6 +303,9 @@ export const AICourseCreation: React.FC = () => {
 			setAvailableFilters(filterData);
 			setSelectedCategories(filterData.category.slice(0, 5));
 
+            // Load static problems
+            setGeneratedProblems(problemsData);
+
 			const successMessage: Message = {
 				id: `static-load-${Date.now()}`,
 				content: `📂 Loaded static dataset with ${graphData.nodesCount} nodes and ${graphData.relationshipsCount} relationships.`,
@@ -319,7 +329,7 @@ export const AICourseCreation: React.FC = () => {
 			const messageId = `completion-${Date.now()}-${Math.random()}`;
 			const completionMessage: Message = {
 				id: messageId,
-				content: `Perfect! I've gathered all the information I need. Based on your course"${formCourseData.title}" focused on ${formCourseData.mainFocus}, I'm now generating a custom skill map for your curriculum. This will take a moment...`,
+				content: `Perfect! I've gathered all the information I need. Based on your course "${formCourseData.title}", I'm now generating some real-world problems for you to choose from.`,
 				sender:"ai",
 				timestamp: new Date(),
 			};
@@ -327,10 +337,68 @@ export const AICourseCreation: React.FC = () => {
 			setIsTyping(false);
 			setIsComplete(true);
 
-			// Generate graph using AI
-			await generateGraphWithAI();
+			// Generate Problems instead of full graph
+            setIsGeneratingGraph(true);
+            try {
+                if (conversationalAgent) {
+                    const problems = await conversationalAgent.generateProblems();
+                    console.log("DEBUG: Generated problems:", problems);
+                    setGeneratedProblems(problems);
+                    
+                    const problemsMsg: Message = {
+                        id: `prob-${Date.now()}`,
+                        content: `I've found ${problems.length} interesting problems. Please select one from the panel on the right to generate your study plan.`,
+                        sender: "ai",
+                        timestamp: new Date(),
+                    };
+                    setMessages((prev) => [...prev, problemsMsg]);
+                }
+            } catch (error) {
+                handleError(error);
+            } finally {
+                setIsGeneratingGraph(false);
+            }
 		}, 1000);
-	}, [formCourseData, generateGraphWithAI]);
+	}, [formCourseData, conversationalAgent, setGeneratedProblems]);
+
+    const handleProblemSelect = async (problem: Problem) => {
+        setSelectedProblem(problem);
+        setIsGeneratingGraph(true);
+        setGraphError(null);
+
+        try {
+             // Get API key from state
+             if (!apiKey) {
+                throw new Error("Google AI API key not found.");
+            }
+
+            const generator = new AIGraphGenerator(apiKey);
+            
+            // Generate linear graph for the selected problem
+            const { graphData, filterData } = await generator.generateLinearGraphForProblem(
+                problem,
+                formCourseData as CourseData
+            );
+
+            setGeneratedGraphData(graphData);
+            setAIGeneratedGraphData(graphData);
+            setAvailableFilters(filterData);
+            setSelectedCategories(filterData.category);
+
+             const successMessage: Message = {
+                id: `success-${Date.now()}`,
+                content: `🚀 Study plan generated for "${problem.title}"! You can now explore the step-by-step path on the right.`,
+                sender:"ai",
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, successMessage]);
+
+        } catch (error) {
+            handleError(error);
+        } finally {
+            setIsGeneratingGraph(false);
+        }
+    };
 
 	const askQuestion = React.useCallback(
 		(index: number) => {
@@ -596,7 +664,13 @@ export const AICourseCreation: React.FC = () => {
 		return <ApiKeySetup onComplete={handleSetupComplete} onCancel={apiKey ? handleCancelSetup : undefined} onUseStaticData={handleLoadStaticData} />;
 	}
 
-	const isGraphVisible = !!generatedGraphData || isGeneratingGraph || !!graphError;
+	console.log("DEBUG: generatedProblems length:", generatedProblems.length);
+	console.log("DEBUG: isGeneratingGraph:", isGeneratingGraph);
+	console.log("DEBUG: generatedGraphData:", !!generatedGraphData);
+	console.log("DEBUG: graphError:", graphError);
+
+	const isGraphVisible = !!generatedGraphData || isGeneratingGraph || !!graphError || generatedProblems.length > 0;
+	console.log("DEBUG: isGraphVisible:", isGraphVisible);
 
 	return (
 		<div className="h-screen flex bg-gray-50 transition-colors duration-300 relative">
@@ -724,10 +798,17 @@ export const AICourseCreation: React.FC = () => {
 							isFlowViewActive ? (
 								<StudyFlow />
 							) : (
-								<SkillMapGraph 
-									selectedCategories={selectedCategories} 
-									graphData={aiGeneratedGraphData} 
-								/>
+                                !aiGeneratedGraphData && generatedProblems.length > 0 ? (
+                                    <ProblemSelectionPanel 
+                                        onSelectProblem={handleProblemSelect} 
+                                        isGenerating={isGeneratingGraph}
+                                    />
+                                ) : (
+								    <SkillMapGraph 
+									    selectedCategories={selectedCategories} 
+									    graphData={aiGeneratedGraphData} 
+								    />
+                                )
 							)
 						)}
 

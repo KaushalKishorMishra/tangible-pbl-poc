@@ -9,6 +9,14 @@ interface CourseData {
 	mainFocus: string;
 }
 
+interface Problem {
+	id: string;
+	title: string;
+	description: string;
+	difficulty: string;
+	estimatedTime: string;
+}
+
 interface NodeData {
 	id: string;
 	labels: string[];
@@ -122,6 +130,80 @@ export class AIGraphGenerator {
 			throw new Error("Failed to parse AI response as JSON. The AI might have returned malformed data.");
 		}
 		throw new Error("Failed to generate skill graph from course data");
+		}
+	}
+
+
+
+	async generateLinearGraphForProblem(
+		problem: Problem,
+		courseData: CourseData
+	): Promise<{
+		graphData: GraphData;
+		filterData: FilterData;
+	}> {
+		const prompt = `You are a curriculum designer creating a step-by-step study plan to solve a specific problem.
+		
+		Problem: "${problem.title}"
+		Description: "${problem.description}"
+		Course Context: "${courseData.title}" (${courseData.level})
+
+		Generate a LINEAR sequence of 5-10 steps (nodes) that a student must follow to solve this problem.
+		
+		IMPORTANT RULES:
+		1. The graph MUST be linear: Node 0 -> Node 1 -> Node 2 ... -> Node N.
+		2. Relationship type MUST be "PREREQUISITE".
+		3. Each node represents a specific task, concept, or sub-problem to solve.
+		4. Node IDs must be sequential numbers starting from "0".
+		
+		Response format (MUST be valid JSON):
+		{
+			"nodes": [
+				{
+					"id": "0",
+					"labels": ["Task"],
+					"properties": {
+						"level": "Application",
+						"name": "Step 1: Setup Environment",
+						"source": "${problem.title}",
+						"category": "Setup"
+					}
+				}
+			],
+			"relationships": [
+				{
+					"id": "0",
+					"type": "PREREQUISITE",
+					"start": "0",
+					"end": "1",
+					"properties": {
+						"mandatory": true
+					}
+				}
+			]
+		}
+		
+		Return ONLY the JSON object.`;
+
+		try {
+			const response = await this.ai.models.generateContent({
+				model: "gemini-2.5-flash-lite",
+				contents: prompt,
+			});
+
+			if (!response.text) {
+				throw new Error("No response text from AI model");
+			}
+
+			const jsonText = this.extractJSON(response.text);
+			const parsedData = JSON.parse(jsonText);
+			const graphData = this.formatGraphData(parsedData);
+			const filterData = this.generateFilters(graphData);
+
+			return { graphData, filterData };
+		} catch (error) {
+			console.error("Error generating linear graph:", error);
+			throw new Error("Failed to generate study plan for problem");
 		}
 	}
 
