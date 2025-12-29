@@ -1,15 +1,16 @@
 import { useSigma } from "@react-sigma/core";
-import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
-import { useLayoutCircular } from "@react-sigma/layout-circular";
-import { useLayoutRandom } from "@react-sigma/layout-random";
-import { animateNodes } from "sigma/utils";
-import { applyLinearLayout } from "../utils/linearLayout";
+// import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
+// import { useLayoutCircular } from "@react-sigma/layout-circular";
+// import { useLayoutRandom } from "@react-sigma/layout-random";
+// import { animateNodes } from "sigma/utils";
+// import { applyLinearLayout } from "../utils/linearLayout";
 import { applyTreeLayout } from "../utils/treeLayout";
 
-export type LayoutType = 'fa2' | 'circular' | 'random' | 'linear' | 'tree';
+export type LayoutType = /* 'fa2' | 'circular' | 'random' | 'linear' | */ 'tree';
 
 export const useGraphLayouts = () => {
 	const sigma = useSigma();
+	/*
 	const { positions: circularPositions } = useLayoutCircular();
 	const { positions: randomPositions } = useLayoutRandom();
 	const { assign: assignFA2 } = useLayoutForceAtlas2({
@@ -21,9 +22,11 @@ export const useGraphLayouts = () => {
 			slowDown: 10 
 		}
 	});
+	*/
 
 	const handleLayout = (type: LayoutType) => {
 		switch (type) {
+			/*
 			case 'fa2':
 				assignFA2();
 				break;
@@ -36,6 +39,7 @@ export const useGraphLayouts = () => {
 			case 'linear':
 				applyLinearLayout(sigma.getGraph());
 				break;
+			*/
 			case 'tree':
 				applyTreeLayout(sigma.getGraph());
 				break;

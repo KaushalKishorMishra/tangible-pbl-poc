@@ -8,6 +8,7 @@ import { linearizeGraph } from "../../utils/flowUtils";
 import type { CourseModule } from "../../types/course";
 
 export const GraphControls = () => {
+
   const sigma = useSigma();
   const { zoomIn, zoomOut, reset } = useCamera();
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -103,8 +104,8 @@ export const GraphControls = () => {
 
 
   return (
+    
     <div className="flex flex-row gap-2 p-2 bg-white/40 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 ring-1 ring-black/5 transition-all hover:shadow-indigo-100/50 relative">
-      {/* Generate Flow Button (visible when nodes are selected) */}
       {selectedNodeIds.length > 0 && (
         <button
           onClick={handleGenerateFlow}
@@ -115,7 +116,6 @@ export const GraphControls = () => {
         </button>
       )}
 
-      {/* Load Saved Flow Button */}
       <button
         onClick={loadCourseFromStorage}
         className="p-2.5 text-slate-600 hover:text-indigo-600 hover:bg-white rounded-xl transition-all duration-300"
@@ -162,7 +162,6 @@ export const GraphControls = () => {
 			
 			<div className="h-8 w-px bg-slate-200/50 my-auto mx-1"></div>
 
-			{/* Layout Dropdown */}
 			<div className="relative" ref={layoutRef}>
 				<button
 					onClick={() => setIsLayoutOpen(!isLayoutOpen)}
@@ -177,10 +176,10 @@ export const GraphControls = () => {
 				{isLayoutOpen && (
 					<div className="absolute bottom-full right-0 mb-4 w-48 bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 py-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-300 ring-1 ring-black/5">
 						{[
-							{ id: 'fa2', label: 'Force Atlas 2', icon: Share2 },
-							{ id: 'circular', label: 'Circular', icon: Circle },
-							{ id: 'random', label: 'Random', icon: Shuffle },
-							{ id: 'linear', label: 'Linear', icon: ArrowRight },
+							// { id: 'fa2', label: 'Force Atlas 2', icon: Share2 },
+							// { id: 'circular', label: 'Circular', icon: Circle },
+							// { id: 'random', label: 'Random', icon: Shuffle },
+							// { id: 'linear', label: 'Linear', icon: ArrowRight },
 							{ id: 'tree', label: 'Tree Architecture', icon: Network }
 						].map((layout) => (
 							<button
@@ -212,5 +211,6 @@ export const GraphControls = () => {
 				)}
 			</button>
 		</div>
+
 	);
 };

@@ -1,10 +1,11 @@
-import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
-import { useLayoutCircular } from "@react-sigma/layout-circular";
-import { useLayoutRandom } from "@react-sigma/layout-random";
-import { useSigma } from "@react-sigma/core";
-import { animateNodes } from "sigma/utils";
+// import { useLayoutForceAtlas2 } from "@react-sigma/layout-forceatlas2";
+// import { useLayoutCircular } from "@react-sigma/layout-circular";
+// import { useLayoutRandom } from "@react-sigma/layout-random";
+// import { useSigma } from "@react-sigma/core";
+// import { animateNodes } from "sigma/utils";
 
 export const LayoutControls = () => {
+    /*
     const sigma = useSigma();
     const { positions: circularPositions } = useLayoutCircular();
     const { positions: randomPositions } = useLayoutRandom();
@@ -48,4 +49,6 @@ export const LayoutControls = () => {
             </button>
         </div>
     );
+    */
+    return null;
 };
