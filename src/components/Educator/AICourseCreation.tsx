@@ -101,7 +101,7 @@ type WizardStep =
 export const AICourseCreation: React.FC = () => {
 	const [currentStep, setCurrentStep] = useState<WizardStep>("INTENT");
 	const [deepDiveNodeId, setDeepDiveNodeId] = useState<string | null>(null);
-	const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(true); // Default to open
+	const [isWizardSidebarOpen, setIsWizardSidebarOpen] = useState(true); // Default to open
 	const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 	const [tempApiKey, setTempApiKey] = useState("");
 	const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false);
@@ -116,7 +116,7 @@ export const AICourseCreation: React.FC = () => {
 		setSelectedProblem,
 		setCompetencyFramework,
 		problemDataCache,
-		cacheProblemData,
+		cacheProblemData,F
 		updateNodeData,
 		applyStructuralChanges,
 		generatedProblems,
@@ -1157,8 +1157,8 @@ export const AICourseCreation: React.FC = () => {
 		<div className="flex h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 overflow-hidden font-sans text-slate-900">
 			{/* Left Sidebar - Wizard Progress */}
 			<div
-				className={`relative z-40 transition-all duration-500 ease-in-out flex flex-col ${
-					isLeftDrawerOpen ? "w-80" : "w-0 opacity-0 -translate-x-full"
+				className={`relative z-50 transition-all duration-500 ease-in-out flex flex-col ${
+					isWizardSidebarOpen ? "w-80" : "w-0 opacity-0 -translate-x-full pointer-events-none overflow-hidden"
 				}`}
 			>
 				<div className="h-full bg-white/40 backdrop-blur-2xl border-r border-white/20 shadow-[20px_0_50px_-20px_rgba(79,70,229,0.1)] flex flex-col rounded-r-[40px]">
@@ -1285,10 +1285,10 @@ export const AICourseCreation: React.FC = () => {
 				<div className="h-20 flex items-center justify-between px-8 shrink-0 z-30">
 					<div className="flex items-center gap-6">
 						<button
-							onClick={() => setIsLeftDrawerOpen(!isLeftDrawerOpen)}
+							onClick={() => setIsWizardSidebarOpen(!isWizardSidebarOpen)}
 							className="p-3 bg-white/50 backdrop-blur-md hover:bg-white rounded-2xl text-slate-400 hover:text-indigo-600 transition-all shadow-sm border border-white/40 active:scale-90"
 						>
-							{isLeftDrawerOpen ? (
+							{isWizardSidebarOpen ? (
 								<PanelLeftClose size={20} />
 							) : (
 								<PanelLeftOpen size={20} />
