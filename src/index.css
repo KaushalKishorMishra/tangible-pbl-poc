@@ -43,7 +43,7 @@ input,
 textarea,
 select,
 button {
-	font-family: var(--font-sans);
+	font-family: var(--font-mono);
 }
 
 body {
