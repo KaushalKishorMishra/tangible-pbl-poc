@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { SigmaContainer, useLoadGraph, useSigma, useRegisterEvents } from "@react-sigma/core";
+import {
+	SigmaContainer,
+	useLoadGraph,
+	useSigma,
+	useRegisterEvents,
+} from "@react-sigma/core";
 import Graph from "graphology";
 import "@react-sigma/core/lib/style.css";
 import nodesData from "../../data/nodes.json";
-import { useGraphStore } from "../../store/graphStore";
+import {
+	useGraphStore,
+	type GraphData,
+	type NodeData,
+	type RelationshipData,
+} from "../../store/graphStore";
 import { GraphControls } from "../Graph/GraphControls";
 import { LeftDrawer } from "../Graph/LeftDrawer";
 import { ArcMenu } from "../Graph/ArcMenu";
@@ -11,35 +21,11 @@ import { NodeInfoDock } from "../Graph/NodeInfoDock";
 import EdgeCurveProgram from "@sigma/edge-curve";
 import { EdgeArrowProgram } from "sigma/rendering";
 
-interface NodeData {
-	id: string;
-	labels: string[];
-	properties: {
-		level: string;
-		name: string;
-		source: string;
-		category: string;
-	};
-}
-
-interface RelationshipData {
-	id: string;
-	type: string;
-	start: string;
-	end: string;
-	properties: Record<string, unknown>;
-}
-
-interface GraphData {
-	nodesCount: number;
-	relationshipsCount: number;
-	nodes: NodeData[];
-	relationships: RelationshipData[];
-}
-
 interface SkillMapGraphProps {
 	selectedCategories: string[];
 	graphData?: GraphData | null;
+	isEmbedded?: boolean;
+	onNodeClick?: (nodeId: string) => void;
 }
 
 const GraphThemeUpdater: React.FC = () => {
@@ -75,7 +61,9 @@ const GraphThemeUpdater: React.FC = () => {
 	return null;
 };
 
-const GraphEventsHandler: React.FC = () => {
+const GraphEventsHandler: React.FC<{
+	onNodeClick?: (nodeId: string) => void;
+}> = ({ onNodeClick }) => {
 	const sigma = useSigma();
 	const registerEvents = useRegisterEvents();
 	const { selectedNodeIds, setArcMenuState } = useGraphStore();
@@ -86,13 +74,17 @@ const GraphEventsHandler: React.FC = () => {
 		registerEvents({
 			clickNode: (event) => {
 				const nodeId = event.node;
-				// Use event coordinates which are already relative to the page
-				// We'll calculate position relative to the containing div
-				setArcMenuState({
-					isOpen: true,
-					nodeId,
-					position: { x: event.event.x, y: event.event.y },
-				});
+
+				if (onNodeClick) {
+					onNodeClick(nodeId);
+				} else {
+					// Default behavior (ArcMenu)
+					setArcMenuState({
+						isOpen: true,
+						nodeId,
+						position: { x: event.event.x, y: event.event.y },
+					});
+				}
 			},
 			enterNode: (event) => {
 				setHoveredNode(event.node);
@@ -109,12 +101,14 @@ const GraphEventsHandler: React.FC = () => {
 		// If nodes are selected, collect all connected nodes
 		const connectedNodes = new Set<string>();
 		if (selectedNodeIds.length > 0) {
-			selectedNodeIds.forEach(nodeId => {
-				connectedNodes.add(nodeId);
-				// Add all neighbors
-				graph.forEachNeighbor(nodeId, (neighbor) => {
-					connectedNodes.add(neighbor);
-				});
+			selectedNodeIds.forEach((nodeId) => {
+				if (graph.hasNode(nodeId)) {
+					connectedNodes.add(nodeId);
+					// Add all neighbors
+					graph.forEachNeighbor(nodeId, (neighbor) => {
+						connectedNodes.add(neighbor);
+					});
+				}
 			});
 		}
 
@@ -148,15 +142,21 @@ const GraphEventsHandler: React.FC = () => {
 					Mastery: "#8b5cf6",
 					Influence: "#f59e0b",
 				};
-				graph.setNodeAttribute(node, "color", colorMap[level as string] || "#6b7280");
+				graph.setNodeAttribute(
+					node,
+					"color",
+					colorMap[level as string] || "#6b7280",
+				);
 			}
 		});
 
 		// Update edge visibility
 		graph.forEachEdge((edge, _attributes, source, target) => {
 			// Show edge only if both nodes are visible
-			const sourceVisible = selectedNodeIds.length === 0 || connectedNodes.has(source);
-			const targetVisible = selectedNodeIds.length === 0 || connectedNodes.has(target);
+			const sourceVisible =
+				selectedNodeIds.length === 0 || connectedNodes.has(source);
+			const targetVisible =
+				selectedNodeIds.length === 0 || connectedNodes.has(target);
 			graph.setEdgeAttribute(edge, "hidden", !(sourceVisible && targetVisible));
 		});
 	}, [sigma, selectedNodeIds, hoveredNode]);
@@ -164,10 +164,10 @@ const GraphEventsHandler: React.FC = () => {
 	return null;
 };
 
-const GraphLoader: React.FC<{ selectedCategories: string[]; graphData?: GraphData | null }> = ({
-	selectedCategories,
-	graphData,
-}) => {
+const GraphLoader: React.FC<{
+	selectedCategories: string[];
+	graphData?: GraphData | null;
+}> = ({ selectedCategories, graphData }) => {
 	const loadGraph = useLoadGraph();
 	const { aiGeneratedGraphData } = useGraphStore();
 
@@ -233,8 +233,17 @@ const GraphControlsWrapper: React.FC = () => {
 };
 
 const ArcMenuWrapper: React.FC = () => {
-	const { arcMenuState, setArcMenuState, handleSelectNode, selectedNodeIds, setSelectedNodeForDock } = useGraphStore();
-	const [containerOffset, setContainerOffset] = React.useState({ left: 0, top: 0 });
+	const {
+		arcMenuState,
+		setArcMenuState,
+		handleSelectNode,
+		selectedNodeIds,
+		setSelectedNodeForDock,
+	} = useGraphStore();
+	const [containerOffset, setContainerOffset] = React.useState({
+		left: 0,
+		top: 0,
+	});
 	const containerRef = React.useRef<HTMLDivElement>(null);
 
 	// Update container offset on mount and window resize
@@ -247,8 +256,8 @@ const ArcMenuWrapper: React.FC = () => {
 		};
 
 		updateOffset();
-		window.addEventListener('resize', updateOffset);
-		return () => window.removeEventListener('resize', updateOffset);
+		window.addEventListener("resize", updateOffset);
+		return () => window.removeEventListener("resize", updateOffset);
 	}, []);
 
 	if (!arcMenuState.isOpen || !arcMenuState.nodeId) return null;
@@ -266,14 +275,26 @@ const ArcMenuWrapper: React.FC = () => {
 				isSelected={isSelected}
 				onSelect={() => {
 					handleSelectNode(arcMenuState.nodeId!);
-					setArcMenuState({ isOpen: false, nodeId: null, position: { x: 0, y: 0 } });
+					setArcMenuState({
+						isOpen: false,
+						nodeId: null,
+						position: { x: 0, y: 0 },
+					});
 				}}
 				onView={() => {
 					setSelectedNodeForDock(arcMenuState.nodeId!);
-					setArcMenuState({ isOpen: false, nodeId: null, position: { x: 0, y: 0 } });
+					setArcMenuState({
+						isOpen: false,
+						nodeId: null,
+						position: { x: 0, y: 0 },
+					});
 				}}
 				onClose={() => {
-					setArcMenuState({ isOpen: false, nodeId: null, position: { x: 0, y: 0 } });
+					setArcMenuState({
+						isOpen: false,
+						nodeId: null,
+						position: { x: 0, y: 0 },
+					});
 				}}
 			/>
 		</div>
@@ -281,7 +302,8 @@ const ArcMenuWrapper: React.FC = () => {
 };
 
 const NodeInfoDockWrapper: React.FC = () => {
-	const { isDrawerOpen, selectedNodeForDock, setSelectedNodeForDock } = useGraphStore();
+	const { isDrawerOpen, selectedNodeForDock, setSelectedNodeForDock } =
+		useGraphStore();
 
 	return (
 		<NodeInfoDock
@@ -292,11 +314,14 @@ const NodeInfoDockWrapper: React.FC = () => {
 	);
 };
 
-
-
-export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories, graphData }) => {
+export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({
+	selectedCategories,
+	graphData,
+	isEmbedded = false,
+	onNodeClick,
+}) => {
 	return (
-		<div className="w-full h-full relative bg-gray-50">
+		<div className="w-full h-full relative bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
 			<SigmaContainer
 				style={{ height: "100%", width: "100%" }}
 				settings={{
@@ -304,7 +329,7 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 					defaultNodeColor: "#6b7280",
 					defaultEdgeColor: "#cbd5e1",
 					defaultEdgeType: "arrow",
-					labelFont: "Inter, sans-serif",
+					labelFont: "'DM Sans', sans-serif",
 					labelSize: 12,
 					labelWeight: "500",
 					labelColor: { color: "#1f2937" },
@@ -318,14 +343,16 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 				}}
 			>
 				<GraphThemeUpdater />
-				<GraphLoader selectedCategories={selectedCategories} graphData={graphData} />
-				<GraphEventsHandler />
-				<LeftDrawer />
+				<GraphLoader
+					selectedCategories={selectedCategories}
+					graphData={graphData}
+				/>
+				<GraphEventsHandler onNodeClick={onNodeClick} />
+				{!isEmbedded && <LeftDrawer />}
 				<GraphControlsWrapper />
-				<NodeInfoDockWrapper />
-
+				{!isEmbedded && <NodeInfoDockWrapper />}
 			</SigmaContainer>
-			<ArcMenuWrapper />
+			{!isEmbedded && <ArcMenuWrapper />}
 		</div>
 	);
 };

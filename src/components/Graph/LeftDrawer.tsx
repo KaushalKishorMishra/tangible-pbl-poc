@@ -11,7 +11,7 @@ export const LeftDrawer = () => {
       {!isLeftDrawerOpen && (
         <button
           onClick={() => setIsLeftDrawerOpen(true)}
-          className="absolute top-4 left-4 z-20 bg-white p-2 rounded-lg shadow-md border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
+          className="absolute top-4 left-4 z-40 bg-white p-2 rounded-lg shadow-md border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
           title="Open Controls"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +22,7 @@ export const LeftDrawer = () => {
 
       {isLeftDrawerOpen && (
         <div 
-          className="absolute top-0 left-0 bottom-0 w-80 h-full bg-white border-r border-gray-200 flex flex-col shadow-xl z-20"
+          className="absolute top-0 left-0 bottom-0 w-80 h-full bg-white border-r border-gray-200 flex flex-col shadow-xl z-40"
         >
         {/* Header */}
         <div className="p-4 border-b border-gray-100 flex justify-between items-start">
