@@ -130,10 +130,18 @@ export const AICourseCreation: React.FC = () => {
 		if (saved) {
 			try {
 				const parsed = JSON.parse(saved);
-				return parsed.map((m: any) => ({
-					...m,
-					timestamp: new Date(m.timestamp),
-				}));
+				return parsed.map(
+					(m: {
+						id: string;
+						content: string;
+						sender: string;
+						timestamp: string;
+					}) => ({
+						...m,
+						sender: m.sender as "ai" | "user",
+						timestamp: new Date(m.timestamp),
+					}),
+				);
 			} catch (e) {
 				console.error("Failed to parse chat history", e);
 			}
@@ -189,11 +197,6 @@ export const AICourseCreation: React.FC = () => {
 			sessionStorage.getItem("api-key") ||
 			import.meta.env.VITE_OPENAI_API_KEY ||
 			""
-		);
-	});
-	const [, _setShowSetup] = useState(() => {
-		return (
-			!sessionStorage.getItem("api-key") && !import.meta.env.VITE_OPENAI_API_KEY
 		);
 	});
 
