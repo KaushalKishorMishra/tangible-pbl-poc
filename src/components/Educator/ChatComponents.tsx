@@ -13,12 +13,16 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 	const isAI = message.sender === "ai";
-	
+
 	return (
-		<div className={`flex w-full mb-4 ${isAI ? "justify-start" : "justify-end"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-			<div className={`flex max-w-[85%] ${isAI ? "flex-row" : "flex-row-reverse"} items-end gap-2`}>
+		<div
+			className={`flex w-full mb-4 ${isAI ? "justify-start" : "justify-end"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+		>
+			<div
+				className={`flex max-w-[85%] ${isAI ? "flex-row" : "flex-row-reverse"} items-end gap-2`}
+			>
 				{isAI && (
-					<div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shrink-0">
+					<div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shrink-0">
 						<Sparkles className="w-4 h-4 text-white" />
 					</div>
 				)}
@@ -26,11 +30,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 					className={`relative px-4 py-3 rounded-2xl shadow-sm ${
 						isAI
 							? "bg-white border border-gray-100 text-gray-800 rounded-bl-none"
-							: "bg-linear-to-br from-indigo-600 to-violet-700 text-white rounded-br-none shadow-indigo-200"
+							: "bg-gradient-to-br from-indigo-600 to-violet-700 text-white rounded-br-none shadow-indigo-200"
 					}`}
 				>
-					<p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-					<div className={`text-[10px] mt-1.5 font-medium opacity-50 ${isAI ? "text-gray-500" : "text-indigo-100"}`}>
+					<p className="text-sm leading-relaxed whitespace-pre-wrap">
+						{message.content}
+					</p>
+					<div
+						className={`text-[10px] mt-1.5 font-medium opacity-50 ${isAI ? "text-gray-500" : "text-indigo-100"}`}
+					>
 						{new Date(message.timestamp).toLocaleTimeString([], {
 							hour: "2-digit",
 							minute: "2-digit",
@@ -47,7 +55,7 @@ export const TypingIndicator: React.FC = () => {
 	return (
 		<div className="flex justify-start mb-4 animate-in fade-in duration-300">
 			<div className="flex items-center gap-2">
-				<div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shrink-0">
+				<div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shrink-0">
 					<Sparkles className="w-4 h-4 text-white" />
 				</div>
 				<div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
@@ -137,14 +145,18 @@ interface FloatingChatButtonProps {
 	hasUnread?: boolean;
 }
 
-export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ isOpen, onClick, hasUnread }) => {
+export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
+	isOpen,
+	onClick,
+	hasUnread,
+}) => {
 	return (
 		<button
 			onClick={onClick}
 			className={`fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 group ${
-				isOpen 
-					? "bg-white text-gray-500 rotate-90 scale-90 border border-gray-100" 
-					: "bg-linear-to-br from-indigo-600 to-violet-700 text-white hover:scale-110 hover:shadow-indigo-300"
+				isOpen
+					? "bg-white text-gray-500 rotate-90 scale-90 border border-gray-100"
+					: "bg-gradient-to-br from-indigo-600 to-violet-700 text-white hover:scale-110 hover:shadow-indigo-300"
 			}`}
 		>
 			{isOpen ? (
@@ -157,7 +169,7 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ isOpen, 
 					)}
 				</div>
 			)}
-			
+
 			{!isOpen && (
 				<div className="absolute right-full mr-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
 					AI Design Assistant
@@ -167,4 +179,3 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({ isOpen, 
 		</button>
 	);
 };
-

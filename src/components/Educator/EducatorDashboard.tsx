@@ -40,7 +40,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 		<div className="relative z-10">
 			<div className="flex items-start justify-between mb-6">
 				<div
-					className={`p-4 bg-linear-to-br ${gradient} rounded-2xl text-white shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform duration-500`}
+					className={`p-4 bg-gradient-to-br ${gradient} rounded-2xl text-white shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform duration-500`}
 				>
 					{icon}
 				</div>
@@ -65,7 +65,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 			</button>
 		</div>
 		<div
-			className={`absolute -bottom-12 -right-12 w-40 h-40 rounded-full blur-3xl opacity-10 bg-linear-to-br ${gradient} group-hover:scale-150 transition-transform duration-700`}
+			className={`absolute -bottom-12 -right-12 w-40 h-40 rounded-full blur-3xl opacity-10 bg-gradient-to-br ${gradient} group-hover:scale-150 transition-transform duration-700`}
 		></div>
 	</div>
 );
@@ -155,14 +155,14 @@ export const EducatorDashboard: React.FC = () => {
 	}
 
 	return (
-		<div className="h-screen overflow-y-auto bg-linear-to-br from-slate-50 via-white to-indigo-50/50 font-sans text-slate-900 scroll-smooth">
+		<div className="h-screen overflow-y-auto bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 font-sans text-slate-900 scroll-smooth">
 			{/* Header */}
 			<div className="relative overflow-hidden bg-white/30 backdrop-blur-md border-b border-white/20">
 				<div className="max-w-7xl mx-auto px-8 py-10 relative z-10">
 					<div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
 						<div className="animate-in fade-in slide-in-from-left-4 duration-700">
 							<div className="flex items-center gap-3 mb-4">
-								<div className="p-2.5 bg-linear-to-br from-indigo-600 to-violet-700 rounded-xl shadow-lg shadow-indigo-200">
+								<div className="p-2.5 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl shadow-lg shadow-indigo-200">
 									<Sparkles className="w-5 h-5 text-white" />
 								</div>
 								<span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] font-title">
@@ -184,7 +184,7 @@ export const EducatorDashboard: React.FC = () => {
 						<div className="flex items-center animate-in fade-in slide-in-from-right-4 duration-700">
 							<button
 								onClick={handleCreateCourse}
-								className="bg-linear-to-br from-indigo-600 to-violet-700 text-white px-8 py-4 rounded-[20px] hover:scale-105 transition-all duration-300 flex items-center gap-3 font-black text-sm shadow-xl shadow-indigo-200 active:scale-95"
+								className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white px-8 py-4 rounded-[20px] hover:scale-105 transition-all duration-300 flex items-center gap-3 font-black text-sm shadow-xl shadow-indigo-200 active:scale-95"
 							>
 								<Plus size={20} strokeWidth={3} />
 								<span>New Course</span>
@@ -350,7 +350,7 @@ export const EducatorDashboard: React.FC = () => {
 						</div>
 					) : (
 						<div className="bg-white/40 backdrop-blur-xl rounded-[40px] border-4 border-dashed border-slate-200 p-20 text-center animate-in zoom-in duration-700">
-							<div className="w-24 h-24 bg-linear-to-br from-indigo-50 to-violet-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner">
+							<div className="w-24 h-24 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner">
 								<BookOpen className="w-10 h-10 text-indigo-300" />
 							</div>
 							<h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
@@ -362,7 +362,7 @@ export const EducatorDashboard: React.FC = () => {
 							</p>
 							<button
 								onClick={handleCreateCourse}
-								className="inline-flex items-center gap-3 px-10 py-5 bg-linear-to-br from-indigo-600 to-violet-700 text-white rounded-[24px] hover:scale-105 transition-all duration-300 font-black text-sm shadow-2xl shadow-indigo-200 active:scale-95"
+								className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-br from-indigo-600 to-violet-700 text-white rounded-[24px] hover:scale-105 transition-all duration-300 font-black text-sm shadow-2xl shadow-indigo-200 active:scale-95"
 							>
 								<Plus className="w-5 h-5" strokeWidth={3} />
 								Start Creating

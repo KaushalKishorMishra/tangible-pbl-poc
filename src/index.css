@@ -116,7 +116,8 @@ button.react-sigma-control-item svg {
 	animation: fadeIn 0.2s ease-out forwards;
 }
 
-/* Custom Scrollbar for Light Mode */
+/* Custom Scrollbar for Light-Background Components */
+/* Used in panels, modals, and drawers with white/light backgrounds */
 .custom-scrollbar::-webkit-scrollbar {
 	width: 6px;
 	height: 6px;
@@ -127,12 +128,12 @@ button.react-sigma-control-item svg {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-	background: #cbd5e1;
+	background: #cbd5e1; /* slate-300 - light gray thumb for contrast on white */
 	border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	background: #94a3b8;
+	background: #94a3b8; /* slate-400 - darker on hover for better visibility */
 }
 
 /* Firefox */

@@ -917,7 +917,7 @@ export const AICourseCreation: React.FC = () => {
 					<div className="flex justify-center mt-4 mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
 						<button
 							onClick={generateGraphWithAI}
-							className="flex items-center gap-3 bg-linear-to-br from-indigo-600 to-violet-700 text-white px-6 py-3 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-indigo-200 font-bold active:scale-95"
+							className="flex items-center gap-3 bg-gradient-to-br from-indigo-600 to-violet-700 text-white px-6 py-3 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-indigo-200 font-bold active:scale-95"
 						>
 							<RefreshCw className="w-5 h-5" />
 							<span>Apply Structural Changes</span>
@@ -1154,7 +1154,7 @@ export const AICourseCreation: React.FC = () => {
 	};
 
 	return (
-		<div className="flex h-screen bg-linear-to-br from-slate-50 via-white to-indigo-50/50 overflow-hidden font-sans text-slate-900">
+		<div className="flex h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 overflow-hidden font-sans text-slate-900">
 			{/* Left Sidebar - Wizard Progress */}
 			<div
 				className={`relative z-40 transition-all duration-500 ease-in-out flex flex-col ${
@@ -1163,7 +1163,7 @@ export const AICourseCreation: React.FC = () => {
 			>
 				<div className="h-full bg-white/40 backdrop-blur-2xl border-r border-white/20 shadow-[20px_0_50px_-20px_rgba(79,70,229,0.1)] flex flex-col rounded-r-[40px]">
 					<div className="p-8 pb-4">
-						<div className="flex items-center gap-3 bg-linear-to-br from-indigo-600 to-violet-700 w-fit p-3 rounded-2xl shadow-lg shadow-indigo-200 mb-6">
+						<div className="flex items-center gap-3 bg-gradient-to-br from-indigo-600 to-violet-700 w-fit p-3 rounded-2xl shadow-lg shadow-indigo-200 mb-6">
 							<Sparkles className="w-6 h-6 text-white" />
 						</div>
 						<h2 className="text-2xl font-black text-slate-900 tracking-tight font-title">
@@ -1356,9 +1356,9 @@ export const AICourseCreation: React.FC = () => {
 					}`}
 				>
 					<div className="flex-1 bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl overflow-hidden flex flex-col ring-1 ring-black/5">
-						<div className="p-5 border-b border-gray-100/50 flex items-center justify-between bg-linear-to-br from-indigo-50/50 to-purple-50/50">
+						<div className="p-5 border-b border-gray-100/50 flex items-center justify-between bg-gradient-to-br from-indigo-50/50 to-purple-50/50">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-200">
+								<div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-200">
 									<Sparkles className="w-5 h-5 text-white" />
 								</div>
 								<div>
