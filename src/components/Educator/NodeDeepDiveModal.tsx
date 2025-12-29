@@ -121,7 +121,7 @@ export const NodeDeepDiveModal: React.FC<NodeDeepDiveModalProps> = ({ nodeId, on
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center gap-2.5 px-6 py-5 text-xs font-black uppercase tracking-[0.15em] transition-all relative group ${
+                            className={`flex items-center gap-2.5 px-6 py-5 text-xs font-black uppercase tracking-[0.15em] transition-all relative group font-title ${
                                 activeTab === tab.id 
                                     ? 'text-indigo-600' 
                                     : 'text-slate-400 hover:text-slate-600'

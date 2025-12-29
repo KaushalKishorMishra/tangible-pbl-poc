@@ -147,7 +147,7 @@ export const EducatorDashboard: React.FC = () => {
 								<div className="p-2.5 bg-linear-to-br from-indigo-600 to-violet-700 rounded-xl shadow-lg shadow-indigo-200">
 									<Sparkles className="w-5 h-5 text-white" />
 								</div>
-								<span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Educator Portal</span>
+								<span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] font-title">Educator Portal</span>
 							</div>
 							<h1 className="text-4xl font-black text-slate-900 tracking-tight leading-tight">
 								Welcome back, <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-violet-700">Educator</span>!
@@ -260,9 +260,9 @@ export const EducatorDashboard: React.FC = () => {
 								>
                                     <div className="p-8">
                                         <div className="flex justify-between items-start mb-6">
-                                            <span className="px-4 py-1.5 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-xl border border-indigo-100">
+                                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-600/10 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] border border-indigo-600/20 font-title">
                                                 {(course.courseData as any).level || "General"}
-                                            </span>
+                                            </div>
                                             <div className="flex items-center text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                                                 <Calendar className="w-3 h-3 mr-1.5" />
                                                 {new Date(course.updatedAt).toLocaleDateString()}

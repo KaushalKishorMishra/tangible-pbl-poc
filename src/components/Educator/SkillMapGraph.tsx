@@ -288,7 +288,7 @@ export const SkillMapGraph: React.FC<SkillMapGraphProps> = ({ selectedCategories
 					defaultNodeColor: "#6b7280",
 					defaultEdgeColor: "#cbd5e1",
 					defaultEdgeType: "arrow",
-					labelFont: "Inter, sans-serif",
+					labelFont: "'DM Sans', sans-serif",
 					labelSize: 12,
 					labelWeight: "500",
 					labelColor: { color: "#1f2937" },

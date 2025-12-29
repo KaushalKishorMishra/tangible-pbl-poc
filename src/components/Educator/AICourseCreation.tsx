@@ -1035,7 +1035,7 @@ export const AICourseCreation: React.FC = () => {
                         <div className="flex items-center gap-3 bg-linear-to-br from-indigo-600 to-violet-700 w-fit p-3 rounded-2xl shadow-lg shadow-indigo-200 mb-6">
                             <Sparkles className="w-6 h-6 text-white" />
                         </div>
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">Course Wizard</h2>
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight font-title">Course Wizard</h2>
                         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1 opacity-60">AI Design Studio</p>
                     </div>
                     
@@ -1069,9 +1069,7 @@ export const AICourseCreation: React.FC = () => {
                                         <step.icon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <div className={`text-sm font-bold ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
-                                            {step.label}
-                                        </div>
+                                        <span className={`text-sm font-black tracking-tight font-title ${isActive ? 'text-indigo-600' : 'text-slate-600'}`}>{step.label}</span>
                                         <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
                                             {step.desc}
                                         </div>

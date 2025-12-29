@@ -23,7 +23,7 @@ export const ProblemSelectionPanel: React.FC<ProblemSelectionPanelProps> = ({
         <div className="w-full h-full bg-linear-to-br from-slate-50/50 to-indigo-50/30 p-8 overflow-y-auto scroll-smooth">
             <div className="max-w-6xl mx-auto">
                 <div className="mb-12 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-600/10 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-indigo-600/20">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-600/10 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-indigo-600/20 font-title">
                         <Sparkles className="w-3.5 h-3.5" />
                         AI Synthesis Complete
                     </div>
