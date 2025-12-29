@@ -116,7 +116,7 @@ export const AICourseCreation: React.FC = () => {
 		setSelectedProblem,
 		setCompetencyFramework,
 		problemDataCache,
-		cacheProblemData,F
+		cacheProblemData,
 		updateNodeData,
 		applyStructuralChanges,
 		generatedProblems,
